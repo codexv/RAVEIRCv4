@@ -8,6 +8,22 @@
   let joinServer = $state<number | null>(null);
   let joinChan = $state("");
   let joinKey = $state("");
+  // Offline "add channel" form.
+  let addChan = $state("");
+  let addNet = $state("dalnet");
+
+  // Networks a channel can belong to (match detectNetwork() ids).
+  const NETS = [
+    { value: "dalnet", label: "DALnet" },
+    { value: "undernet", label: "Undernet" },
+    { value: "libera", label: "Libera.Chat" },
+    { value: "rizon", label: "Rizon" },
+    { value: "quakenet", label: "QuakeNet" },
+    { value: "efnet", label: "EFnet" },
+    { value: "ircnet", label: "IRCnet" },
+    { value: "generic", label: "Other" },
+  ];
+  const netLabel = (id: string) => NETS.find((n) => n.value === id)?.label ?? id;
 
   // Per-channel protections that are simple enable/ban toggles.
   const PROTS = [
@@ -35,13 +51,31 @@
       const srv = irc.servers.find((s) => s.id === b.serverId);
       const net = srv ? detectNetwork(srv) : "generic";
       const k = channelKey(net, b.name);
-      map.set(k, { key: k, label: `${b.name} · ${net}`, joined: true, override: !!config!.channelProtections[k] });
+      map.set(k, { key: k, label: `${b.name} · ${netLabel(net)}`, joined: true, override: !!config!.channelProtections[k] });
     }
     for (const k of Object.keys(config.channelProtections)) {
-      if (!map.has(k)) map.set(k, { key: k, label: k, joined: false, override: true });
+      if (!map.has(k)) {
+        const slash = k.indexOf("/");
+        const net = slash >= 0 ? k.slice(0, slash) : "generic";
+        const chan = slash >= 0 ? k.slice(slash + 1) : k;
+        map.set(k, { key: k, label: `${chan} · ${netLabel(net)}`, joined: false, override: true });
+      }
     }
     return [...map.values()];
   });
+
+  /** Add a channel to manage offline (creates a per-channel override entry). */
+  function addChannel() {
+    if (!config || !addChan.trim()) return;
+    let chan = addChan.trim();
+    if (!/^[#&!+]/.test(chan)) chan = "#" + chan;
+    const key = channelKey(addNet, chan);
+    if (!config.channelProtections[key]) {
+      config.channelProtections[key] = structuredClone($state.snapshot(config.protections)) as ProtectionsConfig;
+    }
+    selectedKey = key;
+    addChan = "";
+  }
 
   const activeProt = $derived(config && selectedKey ? config.channelProtections[selectedKey] ?? null : null);
 
@@ -102,7 +136,16 @@
       </div>
 
       <div class="join">
-        <span class="group-label">Join a channel</span>
+        <span class="group-label">Add a channel (edit protections offline)</span>
+        <div class="join-row">
+          <select bind:value={addNet}>
+            {#each NETS as n (n.value)}<option value={n.value}>{n.label}</option>{/each}
+          </select>
+          <input class="chan" bind:value={addChan} placeholder="#channel" onkeydown={(e) => e.key === "Enter" && addChannel()} />
+          <button class="go" onclick={addChannel}>Add</button>
+        </div>
+
+        <span class="group-label" style="margin-top:10px">Join a channel</span>
         <div class="join-row">
           {#if irc.servers.length > 1}
             <select bind:value={joinServer}>
@@ -113,7 +156,7 @@
           <input class="key" bind:value={joinKey} placeholder="key (optional)" />
           <button class="go" onclick={doJoin} disabled={joinServer == null}>Join</button>
         </div>
-        {#if irc.servers.length === 0}<p class="hint">Connect to a server first to join channels.</p>{/if}
+        {#if irc.servers.length === 0}<p class="hint">Not connected — you can still add channels above and set their protections offline.</p>{/if}
       </div>
 
       <div class="body">
