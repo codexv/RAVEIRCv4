@@ -147,73 +147,97 @@ pub async fn run(
     rave: Arc<RwLock<RaveConfig>>,
     out_rx: UnboundedReceiver<String>,
     out_tx: UnboundedSender<String>,
+    reconnect: Arc<std::sync::atomic::AtomicBool>,
 ) {
-    emit(
-        &app,
-        IrcEvent::Connecting {
-            server_id,
-            host: config.host.clone(),
-            port: config.port,
-        },
-    );
+    use std::sync::atomic::Ordering;
 
-    let stream: Box<dyn Stream> = match establish(&config).await {
-        Ok(s) => s,
-        Err(e) => {
-            emit(
-                &app,
-                IrcEvent::Error {
-                    server_id,
-                    message: format!("connect failed: {e}"),
-                },
-            );
-            emit(
-                &app,
-                IrcEvent::Disconnected {
-                    server_id,
-                    reason: Some(e),
-                },
-            );
-            return;
-        }
-    };
-
-    emit(&app, IrcEvent::Connected { server_id });
-
-    let (read_half, write_half) = tokio::io::split(stream);
-
-    // Writer task: drain the outgoing channel to the socket.
+    // One long-lived writer task drains the outgoing channel to whichever socket
+    // is current; the write half is swapped on each (re)connection so the task
+    // and the channel survive reconnects.
+    type Writer = tokio::io::WriteHalf<Box<dyn Stream>>;
+    let current: Arc<tokio::sync::Mutex<Option<Writer>>> = Arc::new(tokio::sync::Mutex::new(None));
     let writer_app = app.clone();
+    let writer_current = Arc::clone(&current);
     let writer = tauri::async_runtime::spawn(async move {
-        let mut write_half = write_half;
         let mut out_rx = out_rx;
         while let Some(line) = out_rx.recv().await {
-            let framed = format!("{line}\r\n");
-            if write_half.write_all(framed.as_bytes()).await.is_err() {
-                break;
+            let mut guard = writer_current.lock().await;
+            if let Some(w) = guard.as_mut() {
+                let framed = format!("{line}\r\n");
+                if w.write_all(framed.as_bytes()).await.is_ok() {
+                    let _ = w.flush().await;
+                    drop(guard);
+                    emit(&writer_app, IrcEvent::Sent { server_id, raw: line });
+                }
             }
-            let _ = write_half.flush().await;
-            emit(
-                &writer_app,
-                IrcEvent::Sent {
-                    server_id,
-                    raw: line,
-                },
-            );
+            // else: between connections — drop the line.
         }
     });
 
-    // Kick off registration.
-    register(&config, &out_tx);
+    let mut attempt: u32 = 0;
+    let mut last_reason: Option<String>;
+    loop {
+        emit(
+            &app,
+            IrcEvent::Connecting {
+                server_id,
+                host: config.host.clone(),
+                port: config.port,
+            },
+        );
 
-    // Reader loop.
-    let reason = read_loop(&app, server_id, &config, &rave, read_half, &out_tx).await;
+        match establish(&config).await {
+            Ok(stream) => {
+                attempt = 0; // reset backoff once we actually connect
+                emit(&app, IrcEvent::Connected { server_id });
+                let (read_half, write_half) = tokio::io::split(stream);
+                *current.lock().await = Some(write_half);
+                register(&config, &out_tx);
+                last_reason = read_loop(&app, server_id, &config, &rave, read_half, &out_tx).await;
+                *current.lock().await = None;
+            }
+            Err(e) => {
+                emit(&app, IrcEvent::Error { server_id, message: format!("connect failed: {e}") });
+                last_reason = Some(e);
+            }
+        }
 
-    // Closing the channel ends the writer task.
-    drop(out_tx);
+        if !reconnect.load(Ordering::Relaxed) {
+            break; // user-initiated disconnect
+        }
+        attempt += 1;
+        if attempt > 10 {
+            last_reason = Some(format!(
+                "gave up after 10 reconnect attempts{}",
+                last_reason.as_deref().map(|r| format!(" ({r})")).unwrap_or_default()
+            ));
+            break;
+        }
+        let delay = (5u64 * (1u64 << (attempt - 1).min(4))).min(60); // 5,10,20,40,60…
+        emit(
+            &app,
+            IrcEvent::Error {
+                server_id,
+                message: format!(
+                    "Disconnected{}. Reconnecting in {delay}s (attempt {attempt})…",
+                    last_reason.as_deref().map(|r| format!(": {r}")).unwrap_or_default()
+                ),
+            },
+        );
+        // Interruptible backoff so a user disconnect during the wait stops promptly.
+        for _ in 0..delay {
+            if !reconnect.load(Ordering::Relaxed) {
+                break;
+            }
+            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        }
+        if !reconnect.load(Ordering::Relaxed) {
+            break;
+        }
+    }
+
     writer.abort();
-
-    emit(&app, IrcEvent::Disconnected { server_id, reason });
+    emit(&app, IrcEvent::Disconnected { server_id, reason: last_reason });
 }
 
 /// Establish the TCP (and optionally TLS) transport.
@@ -276,15 +300,39 @@ async fn read_loop(
     let mut ghost_tried = false;
     let mut release_tried = false;
 
+    // Keepalive: if the link is idle, ping the server (PING is NOT counted as
+    // user activity, so the whois idle timer keeps climbing). If nothing comes
+    // back for DEAD_AFTER, treat the link as dead so we reconnect.
+    const TICK: u64 = 30;
+    const KEEPALIVE_AFTER: u64 = 90;
+    const DEAD_AFTER: u64 = 240;
+    let mut idle: u64 = 0;
+
     loop {
-        buf.clear();
-        match reader.read_until(b'\n', &mut buf).await {
-            Ok(0) => return Some("connection closed by server".to_string()),
-            Ok(_) => {}
-            Err(e) => return Some(e.to_string()),
+        let read = tokio::time::timeout(
+            std::time::Duration::from_secs(TICK),
+            reader.read_until(b'\n', &mut buf),
+        )
+        .await;
+        match read {
+            Err(_) => {
+                // No data this tick — buf may hold a partial line; keep it.
+                idle += TICK;
+                if idle >= DEAD_AFTER {
+                    return Some("ping timeout".to_string());
+                }
+                if idle >= KEEPALIVE_AFTER {
+                    let _ = out.send("PING :raveirc-keepalive".to_string());
+                }
+                continue;
+            }
+            Ok(Ok(0)) => return Some("connection closed by server".to_string()),
+            Ok(Ok(_)) => idle = 0,
+            Ok(Err(e)) => return Some(e.to_string()),
         }
 
         let raw = String::from_utf8_lossy(&buf).trim_end_matches(['\r', '\n']).to_string();
+        buf.clear();
         if raw.is_empty() {
             continue;
         }
