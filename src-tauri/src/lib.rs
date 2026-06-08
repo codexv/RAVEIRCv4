@@ -2,9 +2,11 @@
 
 mod irc;
 mod rave;
+mod socket;
 
 use irc::{IrcManager, ServerConfig};
 use rave::RaveConfig;
+use socket::SocketManager;
 use tauri::{AppHandle, Manager, State};
 
 /// Connect to an IRC server. Returns the assigned server id.
@@ -121,6 +123,21 @@ fn script_data_remove(app: AppHandle, name: String) -> Result<(), String> {
     rave::persist::remove_script_file(&app, &name)
 }
 
+#[tauri::command]
+fn sock_open(app: AppHandle, sockets: State<SocketManager>, name: String, host: String, port: u16, tls: bool) {
+    sockets.open(app, name, host, port, tls);
+}
+
+#[tauri::command]
+fn sock_write(sockets: State<SocketManager>, name: String, data: String) -> Result<(), String> {
+    sockets.write(&name, data.into_bytes())
+}
+
+#[tauri::command]
+fn sock_close(sockets: State<SocketManager>, name: String) {
+    sockets.close(&name);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Install the ring crypto provider for rustls before any TLS work.
@@ -129,6 +146,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(IrcManager::new())
+        .manage(SocketManager::new())
         .setup(|app| {
             // Load persisted RAVE config (if any) into the manager at startup.
             let config = rave::persist::load(app.handle());
@@ -151,6 +169,9 @@ pub fn run() {
             script_data_load,
             script_data_save,
             script_data_remove,
+            sock_open,
+            sock_write,
+            sock_close,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

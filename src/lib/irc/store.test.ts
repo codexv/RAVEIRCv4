@@ -4,15 +4,16 @@ import type { IrcEvent, IrcMessage } from "./types";
 // --- Mock the Tauri bridge so we can drive events and capture invoke calls ---
 const h = vi.hoisted(() => ({
   invokeMock: vi.fn(),
-  handler: { fn: null as null | ((e: { payload: IrcEvent }) => void) },
+  // Listeners keyed by event name (the store registers irc-event + socket-event).
+  handlers: {} as Record<string, (e: { payload: unknown }) => void>,
 }));
 
 vi.mock("@tauri-apps/api/core", () => ({
   invoke: h.invokeMock,
 }));
 vi.mock("@tauri-apps/api/event", () => ({
-  listen: (_name: string, cb: (e: { payload: IrcEvent }) => void) => {
-    h.handler.fn = cb;
+  listen: (name: string, cb: (e: { payload: unknown }) => void) => {
+    h.handlers[name] = cb;
     return Promise.resolve(() => {});
   },
 }));
@@ -22,7 +23,7 @@ import { defaultRaveConfig } from "./rave";
 
 /** Emit an engine event into the store under test. */
 function emit(ev: IrcEvent) {
-  h.handler.fn!({ payload: ev });
+  h.handlers["irc-event"]({ payload: ev });
 }
 
 /** Build a parsed IRC message like the Rust engine sends. */

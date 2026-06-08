@@ -17,6 +17,7 @@ import type { MslHost } from "../msl/exec";
 import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
 import { FileStore } from "../msl/files";
+import { SocketStore, type SockEvent } from "../msl/sockets";
 import {
   aiAnalyze,
   aiModerate,
@@ -88,6 +89,28 @@ export class IrcStore {
       invoke("script_data_remove", { name }).catch(() => {});
     },
   });
+  /** mIRC sockets (/sockopen, $sock, on SOCK*) — Rust-backed TCP/TLS bridge. */
+  private sockets = new SocketStore(
+    {
+      open: (name, host, port, tls) => {
+        invoke("sock_open", { name, host, port, tls }).catch(() => {});
+      },
+      write: (name, data) => {
+        invoke("sock_write", { name, data }).catch(() => {});
+      },
+      close: (name) => {
+        invoke("sock_close", { name }).catch(() => {});
+      },
+    },
+    (event, sockName) => {
+      const sid = this.active?.serverId ?? this.servers[0]?.id ?? 0;
+      this.msl.dispatch(
+        event,
+        this.mslData(sid, { chan: sockName, target: sockName }),
+        this.mslHost(sid),
+      );
+    },
+  );
   /** /timer scheduler — fires commands in the window they were created in. */
   private timers = new TimerManager({
     fire: (command, ctx) => this.fireTimer(command, ctx),
@@ -109,6 +132,7 @@ export class IrcStore {
   async init() {
     if (this.unlisten) return;
     this.unlisten = await listen<IrcEvent>("irc-event", (e) => this.onEvent(e.payload));
+    await listen<SockEvent>("socket-event", (e) => this.sockets.onEvent(e.payload));
     try {
       const cfg = await loadRaveConfig();
       if (cfg) this.raveConfig = cfg;
@@ -142,10 +166,11 @@ export class IrcStore {
         this.add(b, "echo", text);
       },
       ident: (name, args, prop) => this.mslIdent(serverId, name, args, prop),
-      command: (name, rest) =>
+      command: (name, rest, ctx) =>
         this.hash.command(name, rest) ||
         this.files.command(name, rest) ||
-        this.mslCommand(serverId, name, rest),
+        this.mslCommand(serverId, name, rest) ||
+        this.sockets.command(name, rest, ctx),
     };
   }
 
@@ -212,8 +237,12 @@ export class IrcStore {
       case "ialchan":
         return this.ialLookup(serverId, args[0] ?? "", parseInt(args[2] ?? "1", 10) || 1, args[1] ?? null);
       default:
-        // Hash tables ($hget/$hfind), then file I/O ($read/$readini/…).
-        return this.hash.ident(name, args, prop) ?? this.files.ident(name, args, prop);
+        // Hash tables, then file I/O, then sockets ($sock/$sockname/…).
+        return (
+          this.hash.ident(name, args, prop) ??
+          this.files.ident(name, args, prop) ??
+          this.sockets.ident(name, args, prop)
+        );
     }
   }
 
@@ -1415,6 +1444,7 @@ export class IrcStore {
             "Tools: /scanip /memo /memos /uptime /acronym /chanstats /scratchpad /editor · " +
             "Timers: /timer[name] [-mo] <reps> <interval> <cmd> · /timers · /timer<name> off · " +
             "Topic art: /topicart list · /topicart <id> <text> · " +
+            "Scripting: aliases-as-$id, hash (/hadd $hget), files ($read /write), sockets (/sockopen $sock) · " +
             "Crypto: /setkey /enc · Ops: /gkick /gban /away /back · " +
             "AI: /catchup [n] /analyze <nick> · " +
             "Keys: Ctrl+B/U/I/K/O/R format · Alt+1-9 windows · Ctrl+Tab cycle · //cmd evaluates",

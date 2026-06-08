@@ -15,8 +15,8 @@ export interface MslHost {
    * the value, or null if this host doesn't handle it. Optional.
    */
   ident?(name: string, args: string[], prop?: string): string | null;
-  /** Run a host-backed command ($amsg, $hadd, /write, …). Returns true if handled. */
-  command?(name: string, args: string): boolean;
+  /** Run a host-backed command (/hadd, /write, /sockread, …). Returns true if handled. */
+  command?(name: string, args: string, ctx: EvalCtx): boolean;
 }
 
 type Stmt =
@@ -293,8 +293,8 @@ function dispatch(cmd: string, rest: string, ctx: EvalCtx, host: MslHost): Signa
       host.sendRaw(rest);
       return "normal";
     default:
-      // Host-backed commands ($hadd, /amsg, /write, …) get first refusal.
-      if (host.command && host.command(cmd, rest)) return "normal";
+      // Host-backed commands (/hadd, /amsg, /write, /sockread, …) get first refusal.
+      if (host.command && host.command(cmd, rest, ctx)) return "normal";
       // Unknown command: pass through as raw (mIRC-ish) so e.g. /cs works.
       host.sendRaw(`${cmd.toUpperCase()} ${rest}`.trim());
       return "normal";

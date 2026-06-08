@@ -155,11 +155,12 @@ export class MslEngine {
       if (!wildMatch(matchText, data.text ?? "")) return false;
     }
 
-    // Channel filter: "#" = any channel, "?" = query, "*" = anywhere, or a name.
+    // Channel/name filter: "#" = any channel, "?" = query, "*" = anywhere, or a
+    // name/wildcard (channels and socket names alike, e.g. SOCKREAD:rss.*).
     const chan = data.chan ?? "";
     if (chanFilter === "*" || chanFilter === "") return true;
     if (chanFilter === "#") return chan.startsWith("#");
     if (chanFilter === "?") return !chan.startsWith("#");
-    return chan.toLowerCase() === chanFilter.toLowerCase();
+    return wildMatch(chanFilter, chan);
   }
 }
