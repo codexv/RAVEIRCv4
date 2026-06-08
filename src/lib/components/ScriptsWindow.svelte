@@ -80,7 +80,7 @@
 
 <div class="win">
   <div class="head">
-    <span class="title">Scripts <span class="msl">mIRC scripting</span></span>
+    <span class="title">Scripts <span class="msl">mIRC Compatible</span></span>
     <div class="tabs">
       <button class:active={tab === "aliases"} onclick={() => (tab = "aliases")}>Aliases</button>
       <button class:active={tab === "remote"} onclick={() => (tab = "remote")}>Remote</button>
