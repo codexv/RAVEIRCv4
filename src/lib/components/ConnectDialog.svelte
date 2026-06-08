@@ -175,9 +175,9 @@
         <label class="wide">Auto-join (comma separated)<input bind:value={autojoin} placeholder="#channel, #another" /></label>
         <label class="wide">SASL password (optional)<input type="password" bind:value={saslPassword} /></label>
         <label class="wide">NickServ password<input type="password" bind:value={nickservPassword} /></label>
-        <label class="check wide"><input type="checkbox" bind:checked={autoIdentify} /> Auto-identify to NickServ on connect</label>
-        <label class="check wide"><input type="checkbox" bind:checked={autoGhost} /> Auto-ghost / regain my nick if in use</label>
-        <label class="check wide"><input type="checkbox" bind:checked={autoRelease} /> Auto-release my nick if held</label>
+        <label class="check-line"><input type="checkbox" bind:checked={autoIdentify} /> Auto-identify to NickServ on connect</label>
+        <label class="check-line"><input type="checkbox" bind:checked={autoGhost} /> Auto-ghost / regain my nick if in use</label>
+        <label class="check-line"><input type="checkbox" bind:checked={autoRelease} /> Auto-release my nick if held</label>
       </div>
 
       <div class="actions">
@@ -274,6 +274,22 @@
     align-items: center;
     gap: 6px;
     grid-column: 3;
+  }
+  /* One full-width, left-aligned row per toggle (no cramping on the right). */
+  label.check-line {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 0;
+  }
+  label.check-line input[type="checkbox"] {
+    width: auto;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--accent);
   }
   input {
     background: var(--bg);
