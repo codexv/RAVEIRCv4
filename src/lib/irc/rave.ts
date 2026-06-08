@@ -170,6 +170,7 @@ raw 317:*:{
 }
 raw 330:*:{ echo -a $chr(3) $+ 15 Account: $+ $chr(3) $+ 4 $3 | haltdef }
 raw 313:*:{ echo -a $chr(3) $+ 15 IRC Oper: $+ $chr(3) $+ 4 Yes | haltdef }
+raw 338:*:{ echo -a $chr(3) $+ 15 Real Host: $+ $chr(3) $+ 14 $3- | haltdef }
 raw 378:*:{ echo -a $chr(3) $+ 15 Connecting from: $6- | haltdef }
 raw 379:*:{ echo -a $chr(3) $+ 15 Modes: $2- | haltdef }
 raw 301:*:{ echo -a $chr(3) $+ 15 Away: $+ $chr(3) $+ 7 $3- | haltdef }

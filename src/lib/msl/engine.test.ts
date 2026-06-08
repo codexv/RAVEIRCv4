@@ -86,6 +86,14 @@ describe("MslEngine events", () => {
     expect(echoed).toContain("bob is ident@host.com");
   });
 
+  it("echo with only a flag echoes a blank line (not the literal flag)", () => {
+    const e = new MslEngine();
+    e.load("", "raw 311:*:{\n  echo -a\n  echo -a name $2\n  haltdef\n}", "");
+    const { echoed, host } = harness();
+    e.dispatchRaw("311", ["me", "bob", "u", "h"], data(), host);
+    expect(echoed).toEqual(["", "name bob"]);
+  });
+
   it("fires on KICK with $knick and on NICK with $newnick", () => {
     const e = new MslEngine();
     e.load(

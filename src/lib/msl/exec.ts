@@ -240,7 +240,8 @@ function dispatch(cmd: string, rest: string, ctx: EvalCtx, host: MslHost): Signa
     case "echo": {
       // /echo [-flags] [@window|#chan] text — strip flags + an explicit window
       // target (we always echo to the active window), keep the rest verbatim.
-      const t = rest.replace(/^(-\S+\s+)+/, "").replace(/^([@#]\S+)\s+/, "");
+      // The flag may be the whole argument (e.g. `echo -a` → a blank line).
+      const t = rest.replace(/^(-\S+(?:\s+|$))+/, "").replace(/^([@#]\S+)\s+/, "");
       host.echo(t);
       return "normal";
     }
