@@ -198,12 +198,13 @@
               <button
                 class="theme-chip"
                 class:active={appearance.theme === t}
-                style="background:{THEMES[t as ThemeId].bg}; border-color:{appearance.theme === t
+                style="background:{THEMES[t as ThemeId].bg}; color:{THEMES[t as ThemeId]
+                  .fg}; border-color:{appearance.theme === t
                   ? 'var(--accent)'
                   : THEMES[t as ThemeId].border}"
                 onclick={() => setTheme(t as ThemeId)}
               >
-                {t}
+                {THEMES[t as ThemeId].label}
               </button>
             {/each}
           </div>

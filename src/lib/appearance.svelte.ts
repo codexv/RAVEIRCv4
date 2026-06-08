@@ -2,19 +2,40 @@
 // CSS custom properties on :root and persisted to localStorage. Pure
 // presentation — no backend round-trip needed.
 
-export type ThemeId = "black" | "charcoal" | "midnight";
+export type ThemeId = "black" | "charcoal" | "midnight" | "light";
 
 interface Theme {
+  label: string;
+  /** True for light backgrounds — flips text colours for readability. */
+  light?: boolean;
   bg: string;
   panel: string;
   border: string;
   hover: string;
+  /** Base text colours (foreground / dim / faint). */
+  fg: string;
+  fgDim: string;
+  fgFaint: string;
 }
 
+// Dark themes share the same readable light-on-dark text palette.
+const DARK_FG = { fg: "#e6edf3", fgDim: "#adbac7", fgFaint: "#6e7681" };
+
 export const THEMES: Record<ThemeId, Theme> = {
-  black: { bg: "#000000", panel: "#0c0e12", border: "#20262e", hover: "#15191f" },
-  charcoal: { bg: "#14161a", panel: "#1c1f25", border: "#2c313a", hover: "#23272e" },
-  midnight: { bg: "#0d1117", panel: "#161b22", border: "#30363d", hover: "#1f262e" },
+  black: { label: "Black", bg: "#000000", panel: "#0c0e12", border: "#20262e", hover: "#15191f", ...DARK_FG },
+  charcoal: { label: "Charcoal", bg: "#14161a", panel: "#1c1f25", border: "#2c313a", hover: "#23272e", ...DARK_FG },
+  midnight: { label: "Midnight", bg: "#0d1117", panel: "#161b22", border: "#30363d", hover: "#1f262e", ...DARK_FG },
+  light: {
+    label: "Light",
+    light: true,
+    bg: "#ffffff",
+    panel: "#f6f8fa",
+    border: "#d0d7de",
+    hover: "#eaeef2",
+    fg: "#1f2328",
+    fgDim: "#57606a",
+    fgFaint: "#8c959f",
+  },
 };
 
 export const UI_FONTS: { label: string; value: string }[] = [
@@ -124,6 +145,14 @@ const DEFAULTS = {
 
 const KEY = "raveirc.appearance";
 
+/** Relative luminance (0=black, 1=white) of a #rrggbb colour, for contrast checks. */
+function relLuminance(hex: string): number {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return 1; // unknown → treat as light so we err toward swapping
+  const n = parseInt(m[1], 16);
+  return (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
+}
+
 class Appearance {
   theme = $state<ThemeId>(DEFAULTS.theme);
   accent = $state(DEFAULTS.accent);
@@ -136,21 +165,21 @@ class Appearance {
 
   /** Resolve the colour for a nick given its prefix and whether it's you. */
   nickColor(prefix: string, isSelf: boolean): string {
-    if (isSelf) return this.nickColors.self;
-    switch (prefix) {
-      case "~":
-        return this.nickColors.owner;
-      case "&":
-        return this.nickColors.admin;
-      case "@":
-        return this.nickColors.op;
-      case "%":
-        return this.nickColors.halfop;
-      case "+":
-        return this.nickColors.voice;
-      default:
-        return this.nickColors.normal;
-    }
+    let c: string;
+    if (isSelf) c = this.nickColors.self;
+    else
+      switch (prefix) {
+        case "~": c = this.nickColors.owner; break;
+        case "&": c = this.nickColors.admin; break;
+        case "@": c = this.nickColors.op; break;
+        case "%": c = this.nickColors.halfop; break;
+        case "+": c = this.nickColors.voice; break;
+        default: c = this.nickColors.normal;
+      }
+    // On a light theme, swap near-white nick colours for dark text so they stay visible.
+    const t = THEMES[this.theme];
+    if (t.light && relLuminance(c) > 0.62) return t.fg;
+    return c;
   }
 
   /** Load saved appearance and apply it. Call once at startup. */
@@ -182,6 +211,9 @@ class Appearance {
     r.setProperty("--panel", t.panel);
     r.setProperty("--border", t.border);
     r.setProperty("--hover", t.hover);
+    r.setProperty("--fg", t.fg);
+    r.setProperty("--fg-dim", t.fgDim);
+    r.setProperty("--fg-faint", t.fgFaint);
     r.setProperty("--accent", this.accent);
     r.setProperty("--accent-soft", this.accent + "33"); // ~20% alpha tint
     r.setProperty("--ui", this.uiFont);
@@ -190,6 +222,16 @@ class Appearance {
     // Per-event line colours as CSS variables consumed by MessageView.
     for (const [k, v] of Object.entries(this.eventColors)) {
       r.setProperty(`--line-${k}`, v);
+    }
+    // On light themes the neutral line kinds (tuned for dark) must follow the
+    // theme's dark text instead, or they'd vanish on a pale background.
+    if (t.light) {
+      r.setProperty("--line-message", t.fg);
+      r.setProperty("--line-self", t.fgDim);
+      r.setProperty("--line-system", t.fgDim);
+      r.setProperty("--line-mode", t.fgFaint);
+      r.setProperty("--line-part", t.fgFaint);
+      r.setProperty("--line-quit", t.fgFaint);
     }
     this.save();
   }
