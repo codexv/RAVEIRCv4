@@ -11,3 +11,7 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Tauri update-signing keys (NEVER commit)
+.tauri-signing-key.txt
+.tauri-signing-key.txt.pub

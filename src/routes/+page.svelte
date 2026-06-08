@@ -13,7 +13,9 @@
   import Scratchpad from "$lib/components/Scratchpad.svelte";
   import ScriptsWindow from "$lib/components/ScriptsWindow.svelte";
   import DialogHost from "$lib/components/DialogHost.svelte";
+  import UpdateBanner from "$lib/components/UpdateBanner.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
+  import { updater } from "$lib/update.svelte";
 
   // This page boots in two modes: the main app, or the standalone scripts window
   // (a separate OS window opened with ?view=scripts).
@@ -48,6 +50,7 @@
     if (isScriptsWindow) return; // standalone editor view: no IRC init
     irc.init();
     appearance.init();
+    updater.check(); // silent auto-check for a new version on startup
     // The scripts window asks the main app to reload + recompile after saving.
     import("@tauri-apps/api/event").then(({ listen }) =>
       listen("scripts-applied", async () => {
@@ -201,6 +204,7 @@
 <Scratchpad />
 <NickManager />
 <DialogHost />
+<UpdateBanner />
 {/if}
 
 <style>

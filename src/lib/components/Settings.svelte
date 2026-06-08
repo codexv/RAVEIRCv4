@@ -20,9 +20,11 @@
     type ThemeId,
   } from "$lib/appearance.svelte";
 
+  import { updater } from "$lib/update.svelte";
+
   let { open = $bindable() }: { open: boolean } = $props();
 
-  type Section = "appearance" | "ctcp" | "protections" | "antispam" | "friends" | "ai";
+  type Section = "appearance" | "ctcp" | "protections" | "antispam" | "friends" | "ai" | "updates";
   let section = $state<Section>("appearance");
 
   function setTheme(t: ThemeId) {
@@ -190,6 +192,9 @@
           }}
         >
           AI Co-pilot
+        </button>
+        <button class="s-item" class:active={section === "updates"} onclick={() => (section = "updates")}>
+          Updates
         </button>
       </div>
 
@@ -605,6 +610,22 @@
               </fieldset>
             </div>
           </fieldset>
+        {:else if section === "updates"}
+          <h3>Updates</h3>
+          <p class="muted">RAVEIRC checks for new versions on startup and installs them with one click — no reinstall.</p>
+          <button class="check-upd" onclick={() => updater.check(true)} disabled={updater.status === "checking" || updater.status === "downloading"}>
+            {updater.status === "checking" ? "Checking…" : "Check for updates now"}
+          </button>
+          {#if updater.status === "available"}
+            <p class="hint">Update <b>v{updater.version}</b> is available — use the banner to install &amp; restart.</p>
+          {:else if updater.status === "none"}
+            <p class="hint">You're on the latest version.</p>
+          {:else if updater.status === "downloading"}
+            <p class="hint">Downloading… {updater.progress}%</p>
+          {:else if updater.status === "error"}
+            <p class="hint">Last check failed: {updater.error}</p>
+          {/if}
+          <p class="hint">Updates are cryptographically signed; only builds signed with the project key are accepted.</p>
         {/if}
       </div>
 
@@ -869,6 +890,21 @@
     border-color: var(--accent);
     background: var(--accent-soft);
     color: var(--fg);
+  }
+  .check-upd {
+    margin-top: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .check-upd:disabled {
+    opacity: 0.6;
+    cursor: default;
   }
   .color-grid {
     display: grid;
