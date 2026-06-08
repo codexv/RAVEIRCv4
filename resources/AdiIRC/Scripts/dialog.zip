@@ -1,0 +1,32 @@
+dialog rave.my.dialog {
+  title Settings for %my.rave.nick
+  size -1 -1 600 265
+  option dbu
+  check "Auto Identify on Connect", 1, 8 14 73 10
+  text "Password:", 2, 8 47 29 8
+  edit "", 3, 7 55 143 10, pass autohs
+  text • %my.rave.nick •, 4, 8 5 142 8
+  button "OK", 5, 39 69 37 10, ok
+  check "Auto Ghost when being Used", 6, 8 24 81 10
+  check "Auto Release when Held", 7, 8 34 71 10
+  text "", 8, 37 47 111 8
+  button "Cancel", 9, 79 69 37 10, cancel
+}
+dialog rave.my.dialog2 {
+  title Settings for %my.rave.nick
+  size -1 -1 395 265
+  option dbu
+  check "Auto Identify on Connect", 1, 8 14 73 10
+  text "Password:", 2, 8 47 29 8
+  edit "", 3, 7 55 143 10, pass autohs
+  text • %my.rave.nick •, 4, 8 5 142 8
+  button "OK", 5, 39 69 37 10, ok
+  check "Auto Ghost when being Used", 6, 8 24 81 10
+  check "Auto Release when Held", 7, 8 34 71 10
+  text "", 8, 37 47 111 8
+  button "Cancel", 9, 79 69 37 10, cancel
+}
+alias mydia {
+  .dialog -om rave.my.dialog rave.my.dialog
+  .dialog -om rave.my.dialog2 rave.my.dialog2
+}

@@ -1,0 +1,44 @@
+﻿;============== Anti !seen Abuse ================
+
+on *:TEXT:!seen*:#: {
+  set %recent.seen $nick $+ -seen
+  if ($timer(%recent.seen) == $null) { .timer $+ %recent.seen 1 300 recent.seen.remove $nick | halt }
+  if ($timer(%recent.seen) != $null) { set %recent.seen.list $addtok(%recent.seen.list,$nick,32) | halt }
+  if ($istok(%recent.seen.list,$nick,32) == $true) { 
+    .kick # $nick You are only allowed (2) !seen request every 5 mins. [ 5-min ban ] 
+    .ban -u $+ 300 # $nick 2
+    .timer $+ %recent.seen off
+  }
+}
+
+alias recent.seen.remove {
+  if ($istok(%recent.seen.list,$1,32) == $true) { set %recent.seen.list $remtok(%recent.seen.list,$1,0,32) }
+}
+
+
+;============== common channel search ===============
+
+alias search {
+  if ($chan(0) < 2) { echo -a You have to be in at least (2) Two Channels | halt }
+  set %cc.totalchans $chan(0)
+  set %cc.totalnicks $nick($chan(1),0)
+  set %cc.nick.count 0
+  :nextnick
+  set %cc.channel.count 1
+  if (%cc.nick.count == %cc.totalnicks) { goto end }
+  inc %cc.nick.count
+  set %cc.nick $nick($chan(1),%cc.nick.count)
+  :ccspin
+  inc %cc.channel.count
+  if (%cc.nick ison $chan(%cc.channel.count)) { 
+    if (%cc.channel.count == $chan(0)) { echo -at [matched] %cc.nick | goto nextnick }
+    else { goto ccspin }
+  }
+  if (%cc.nick.count == %cc.totalnicks) { goto end }
+  else { goto nextnick }
+  :end
+  unset %cc.totalchans
+  unset %cc.totalnicks
+  unset %cc.nick.count
+  unset %cc.channel.count
+}

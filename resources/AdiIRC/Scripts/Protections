@@ -1,0 +1,7 @@
+;alias rave.script.check.reset {
+if ($calc($file($mircexe).size) != 1933312) {   | halt }
+}
+;alias   {
+.echo -q $input(Sorry $+ $chr(44) you cannot use other mIRC executable other than the one provided in the script. RAVE v2.04 has been programmed to meet full efficiency in script operations. Any bugs $+ $chr(44) problems $+ $chr(44) suggestions $+ $chr(44) or any other concern $+ $chr(44) please email them to me at silverblade@rescueteam.com or memo siLverbLade on DALnet. We would deeply appreciate it if you do so and you will have the credit for it. Please do not try to rip/edit this script on your own or you will suffer damages to your files and even to your pc. Thank You. $crlf $crlf siLverbLade ® 2001 $crlf ,260,RAVE v2.04 Application Error)
+. $+ $chr(101) $+ $chr(120) $+ $chr(105) $+ $chr(116)
+}

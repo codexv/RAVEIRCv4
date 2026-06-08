@@ -1,0 +1,139 @@
+AdiIRC 2.8 - 28-05-2017
+
+	Added remove ban timer support for except/invite/quiet lists in Channel Editor
+	Added sha256 fingerprint to ssl certificate dialog
+	Added option to show/hide Treebar arrow icons
+	Added extended random nick colors option to themes
+	Added right-click menu to set animate trayicon per window
+	Added option to enable/disable animate show/hiding tips
+	Added option to allow Statusbar to expand to multiple lines
+	Added option to match a highlight only on a specific channel
+	Added right-click menu to toggle channel auto join/minimize on join in Serverlist
+	Added command line parameter to the custom browser options
+	Added all monitor panel to current layout by default
+	Added support for ircv3 account-tag,invite-notify tags
+	Added option to set dcc send/get buffer size
+	Added a copy link menu item in Url Catcher monitor panel	
+
+	Fixed some invalid numeric up/down values in options can cause a crash
+	Fixed Monitor panel data should be saved using the timstamp instead of the timestamp text
+	Fixed raw 329 is not parsed correctly on some networks
+	Fixed Rawlog should be docked as a MDI window by default
+	Fixed set extended random nick colors should be enabled by default
+	Fixed pressing space key in the Nicklist causes the nicklist to scroll to the wrong place
+	Fixed main window is sometimes saved/restored with 0 width/height size
+	Fixed large Notify lists is not properly split into 512 byte messages
+	Fixed some invalid fonts can cause a crash
+	Fixed relative paths without a trailing slash is not replaced properly
+	Fixed Update.exe/Update45.exe should upgrade API file when necessary and display errors when updates fails
+	Fixed loading away options with some invalid options can cause a crash
+	Fixed a error dialog should be shown with instructions if updating the API file fails
+	Fixed copy/paste right-click menu for highlight/nick color should always be visible, and change to custom color item on paste
+	Fixed the "highlight" color should be selected when creating a new highlight item
+	Fixed disabling icons in Switchbar doesn't work
+	Fixed ACTION/emote messages and other features/options doesn't work properly on turkish locale
+	Fixed some "?" help links is pointing to the wrong location
+	Fixed tab complete channels should include channels from all servers
+	Fixed auto away/back should work per server instead of globally
+	Fixed autohide Nicklist should not be shown if the scroll to bottom icon is visiable and mouse height aligns with the icon
+	Fixed highlight flashing is sometimes not reset when restoring main window
+	Fixed undocking/detaching a monitor panel doesn't always give the new window focus
+	Fixed Monitor panel header should be hidden when the panel is undocked as a window
+	Fixed Topicbox menus doesn't work properly
+	Fixed Treebar tooltip doesn't work everywhere
+	Fixed Nicklist 'Sort by prefix' doesn't sort in correct order when there's +y mode
+	Fixed all select color dialogs should share custom colors
+	Fixed CTRL + W/ALT + Z should not close main window
+	Fixed some theme icons are not applied/deleted properly
+	Fixed Notify list panel is not cleared properly when removing a nick
+	Fixed Menu Editor should remember last menu section
+	Fixed opening channel editor can cause a crash
+	Fixed KICK/PART message are in some cases not shown correctly
+	Fixed Channel list grid should save/restore column width
+	Fixed nick~ is not clickable in text buffer
+	Fixed fake transparency wallpapers should be resized according to the wallpaper fit option
+	Fixed Winamp now playing plugin doesn't work for portable/custom winamp
+	Fixed closing itunes when media player is set to itunes can cause a crash
+	Fixed urls captures from server lines should show the server hostname as the nick in the url catcher
+	Fixed sometimes crashes when running through Wine
+	Fixed Treebar should remember collapsed folder status when toggling folders and showing/hiding windows
+	Fixed logging into a server with no response should time out after a while
+
+	Plugins:
+	
+	Added new plugin API event that triggers when options are changed
+	Added new plugin API to listen for keydown events and modify Editbox text/selection
+	Added new plugin API to target any window with NotifyUser
+	Added new plugin API to target custom windows with ICustomWindow
+	Added new plugin API to evaluate $identifiers
+	Added new plugin API to get the active window object
+	Added new plugin API to add context menu items
+	
+	Fixed IUser.GetChannels API should be a IChannel list not a dictionary
+	Fixed IChannel.GetUsers API is not properly locked and can cause a crash when enumerated and should be IUser not string
+	Fixed IServer.GetChannels API is not properly locked and can cause a crash when enumerated
+	Fixed sometimes plugin parameters is null
+	Fixed the higgest value of EatData from plugins should be returned to AdiIRC instead of the last
+	Fixed Plugin manager should only show AdiIRC plugin dll's
+	
+	Scripting:
+	
+	Added new parameters -luixo filename for /plugins
+	Allow using nick!ident@host format to resolve host for /dns /resolve
+	Added new property .channel for $highlight()
+	Added new property .collapsed for $window()
+	Added Show on Desktop/On Top menu for /dialog
+	Added new events mclick/dmclick/drclick for form and tabs for /dialog
+	Added new parameter -x for /findtext /search
+	Added $menuicon support for $submenu
+	Added new parameter -g for /linemarker
+	Added missing parameter -n for /sockopen
+	Added missing parameters -nrw [name] for /ialmark 
+	Added missing property .secs for $iel() $iil() $iql()
+	Added missing parameters -beIq for /ban
+	Added missing parameter -a for /bset /bread
+	Added missing wildcards support for /timer -pr
+	Added missing parameter &var|&binvar for $regsubex()
+	Added missing parameter &binvar for $regsub()
+	Added missing properties .gecos .id for $ial()
+	Added missing propery .method for $server()
+	Added missing parameters pass,sasl,external,msg,nickserv for /server -l
+	Added missing event on SERVEROP
+	Added missing parameters "small" "large" "actual" for icons for /dialog 
+	Added missing properties .name .away for $ial()
+	Added missing alias /firewall
+	Added missing switches -p -f -o -c -jn [-j -n] for /server and allow combining switches at the beginning
+	Added new/missing identifiers $boldify,$sslcertsha1,$sslcertsha256,$mode,$ialmark
+	
+	Fixed ":" is stripped from RAW 338 and 352
+	Fixed /bset /bread -t sometimes adds wrong value
+	Fixed $instok returns wrong value with some invalid parameters
+	Fixed $chan().iql doesn't work properly
+	Fixed /beep can cause a crash with some parameters
+	Fixed /statusbar icons is not padded/aligned properly
+	Fixed on KEYDOWN doesn't work with multiple targets for non picture windows
+	Fixed [ ] square brackets doesn't work inside /var
+	Fixed [ ] square brackets sometimes adds extra spaces and not evaluating $+ correctly
+	Fixed /showmenu without x y parameters is sometimes now shown relative to editbox
+	Fixed /topicbox [text] is not replaced correctly
+	Fixed /parseline should not print to status window during on PARSELINE
+	Fixed /showmenu Y parameter doesn't work properly
+	Fixed /dialog "flat" button should only work on dialogs with no theme
+	Fixed some command parameters are not validated correctly
+	Fixed {} brackets in menus is not always parsed correctly
+	Fixed merging menus doesn't work properly
+	Fixed $gettok() $deltok() $puttok() $bvar() /dline N-N2 range doesn't work properly
+	Fixed spaces in identifiers is not always properly removed/preserved
+	Fixed /if /while ">" "<" ">=" "<=" operators doesn't return correct value with some parameters
+	Fixed /dialog some sclick/dclick/uclick events are not triggered correctly
+	Fixed /toolbar -zN doesn't always use the correct icon
+	Fixed $input title is empty in some cases
+	Fixed $status sometimes returns wrong value
+	Fixed $ctime is sometimes not parsed correctly
+	Fixed $utfencode/$utfdecode doesn't work properly
+	Fixed $input() using the 'm' and 'e' parameter does not include tbe first text in the dropdown
+	Fixed on OWNER/DEOWNER/ADMIN/DEADMIN/OP/DEOP/HELP/DEHELP/VOICE/DEVOICE should be haltable
+	Fixed on MODE/on SERVERMODE should only trigger when channel modes is changed
+	Fixed $wildtok $wildtokcs parameters is not always validated correctly
+	Fixed on HOTLINK does not trigger in some cases when changing word on different lines
+	Fixed $hotlink should include control codes

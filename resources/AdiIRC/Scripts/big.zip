@@ -1,0 +1,22 @@
+﻿; --- Aliases Tab ---
+; /big <text> -- Big Text Font for mIRC. (Simple version)
+big {
+  if (!$0) { echo -atic notice * Usage: /.big <text> (and without the dot) | return }
+  var %big = $chr(32) $+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`{|}~
+  var %big1 = .. .xx. xx..xx .xx..xx. xxxxxxx. xx..xx .xxx.. .xx ...xx xx... ...xx... ...... ... ...... .. ....xx .xxxx. .xxxx xxxxx. xxxxx. ...xxx. xxxxx .xxxx. xxxxxx .xxxx. .xxxx. .. ... ....xx ...... xx.... xxxxx .xxxx. .xxxx. xxxxx. .xxxx. xxxx.. xxxxx xxxxx .xxxx. xx...xx xxxx ....xx xx..xx xx... xx....xx xx..xx .xxxx. xxxxx. .xxxx.. xxxxx. .xxxx. xxxxxx xx..xx xx....xx xx...xx xx...xx xx..xx xxxxxx xxxxx xx.... xxxxx ..xx.. ...... xxx. ...xx .xx. xx... .xxx.xx
+  var %big2 = .. xxxx xx..xx xxxxxxxx xx.xx... ...xx. xx.xx. xx. .xx.. ..xx. xxxxxxxx ..xx.. ... ...... .. ...xx. xx..xx xx.xx ....xx ....xx .xx.xx. xx... xx.... ...xx. xx..xx xx..xx xx .xx ..xx.. xxxxxx ..xx.. ...xx xx..xx xx..xx xx..xx xx..xx xx.xx. xx... xx... xx.... xx...xx .xx. ....xx xx.xx. xx... xxx..xxx xxx.xx xx..xx xx..xx xx..xx. xx..xx xx.... ..xx.. xx..xx xx....xx xx...xx .xx.xx. xx..xx ...xx. xx... .xx... ...xx xx..xx ...... ..xx ..xx. .xx. .xx.. xx.xxx.
+  var %big3 = .. .xx. ...... .xx..xx. xxxxxxxx ..xx.. .xxx.x ... xx... ...xx .xx..xx. xxxxxx xxx xxxxxx .. ..xx.. xx.xxx ...xx ..xx.. .xxxx. xx..xx. xxxx. xxxxx. ..xx.. .xxxx. .xxxxx .. ... xx.... ...... ....xx ..xx. xx.xxx xxxxxx xxxxx. xx.... xx..xx xxxx. xxxx. xx.xxx xxxxxxx .xx. ....xx xxxx.. xx... xxxxxxxx xxxxxx xx..xx xxxxx. xx..xx. xxxxx. .xxxx. ..xx.. xx..xx .xx..xx. xx.x.xx ..xxx.. .xxxx. ..xx.. xx... ..xx.. ...xx ...... ...... .... xx... .xx. ...xx .......
+  var %big4 = .. .... ...... xxxxxxxx ...xx.xx .xx... xx..x. ... .xx.. ..xx. xxxxxxxx ..xx.. .xx ...... .. .xx... xxx.xx ...xx xx.... ....xx xxxxxxx ...xx xx..xx .xx... xx..xx ....xx xx .xx ..xx.. xxxxxx ..xx.. ..... xx.... xx..xx xx..xx xx..xx xx..xx xx... xx... xx..xx xx...xx .xx. xx..xx xx.xx. xx... xx.xx.xx xx.xxx xx..xx xx.... xx..xx. xx..xx ....xx ..xx.. xx..xx ..xxxx.. xxxxxxx .xx.xx. ..xx.. .xx... xx... ...xx. ...xx ...... ...... .... ..xx. .xx. .xx.. .......
+  var %big5 = .. .xx. ...... .xx..xx. .xxxxxxx xx..xx .xxx.x ... ...xx xx... ...xx... ...... xx. ...... xx xx.... .xxxx. ...xx xxxxxx xxxxx. ....xx. xxxx. .xxxx. xx.... .xxxx. .xxxx. .. xx. ....xx ...... xx.... ..xx. .xxxxx xx..xx xxxxx. .xxxx. xxxxx. xxxxx xx... .xxxxx xx...xx xxxx .xxxx. xx..xx xxxxx xx....xx xx..xx .xxxx. xx.... .xxxxxx xx..xx xxxxx. ..xx.. .xxxx. ...xx... .xx.xx. xx...xx ..xx.. xxxxxx xxxxx ....xx xxxxx ...... xxxxxx .... ...xx .xx. xx... .......
+  set -eu300 %_bigrb $iif(%_bigrb,$gettok($v1,2-,32) $gettok($v1,1,32),$regsubex(4 7 8 9 11 12 2 6 13,/(\d+)/g,0 $+ $chr(44) $+ \1))
+  var %string = $regsubex($replace($upper($1-),$chr(160),$chr(32)),/[^ $+ %big $+ ] /g,)
+  var %i = 1
+  while (%big [ $+ [ %i ] ] ) {
+    var %bigi = $v1
+    var %bigi = $regsubex(racc,%string,/(*UTF8)(.)/g,$regsubex(coon,$gettok(%bigi,$poscs(%big,\t),32) $+ $chr(32),/(x+)/g $& ,$chr(3) $+ $gettok(%_bigrb,$calc(( [[ \n ]] -1) % 9 +1),32) $+ [[ \ $+ t ]] $+ $chr(3)))
+    $iif($show,say,echo -a) $$replace(%bigi,x,.,.,$chr(160))
+    inc %i
+  } 
+  if (!$event) && (!$editbox($active)) editbox -ap /big
+} ; by Raccoon 2016 2017
+; Based on http://pastebin.ca/824605 (Author Unknown, 2007)

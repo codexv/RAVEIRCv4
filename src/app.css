@@ -1,0 +1,43 @@
+:root {
+  --bg: #000000;
+  --panel: #0c0e12;
+  --border: #20262e;
+  --hover: #15191f;
+  --fg: #e6edf3;
+  --fg-dim: #adbac7;
+  --fg-faint: #6e7681;
+  --accent: #a61e4d;
+  --accent-soft: #2e0f1a;
+  /* Default system fonts only — no bundled/third-party typefaces. */
+  --ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Adjustable from Settings → Appearance. */
+  --msg-size: 13px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--ui);
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

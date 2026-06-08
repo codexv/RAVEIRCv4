@@ -1,0 +1,143 @@
+﻿; Editbox History Overview
+; http://dev.adiirc.com/boards/5/topics/584
+; v0.2 by pereba
+
+alias EditboxHistory {
+  if ($dialog(EditboxHistory)) dialog -x EditboxHistory
+  dialog -ma EditboxHistory EditboxHistory
+}
+
+menu status,channel,query {
+  -
+  Editbox History: /EditboxHistory
+  -
+}
+
+dialog EditboxHistory {
+  title "Editbox History" 
+  size -1 -1 200 160
+  option dbu
+  text "Filter", 6, 135 2 12 8
+  edit "", 4, 149 1 50 9
+  list 11, -1 11 202 90, size hide
+  list 1, -1 11 202 90, size
+  edit "", 2, -1 100 202 45, read multi vsbar
+  button "Copy", 3, 0 145 200 15, disable flat
+  tab "$active ( $+ $editboxhistory($active,0) $+ )", 5, 0 0 99 47
+}
+
+on *:DIALOG:EditboxHistory:*:*: {
+  if ($devent == init) {
+    var %i $editboxhistory($active,0)
+    while (%i) {
+      did -a $dname 1 $editboxhistory($active,%i)
+      dec %i
+    }
+  }
+
+  ; Filter field
+  if ($devent == edit && $did == 4) {
+    if ($did($dname,$did) == $null) {
+      did -h $dname 11 | did -v $dname 1 | did -r $dname 2
+      return
+    }
+    filter -ioc $dname 1 $dname 11 * $+ $did($dname,$did) $+ *
+    did -v $dname 11 | did -h $dname 1
+  }
+
+  if ($devent == sclick) {
+    ; List item
+    if ($did == 1 || $did == 11) {
+      did -e $dname 3
+      did -ra $dname 2 $replace($did($dname,$did).seltext,$chr(13),$crlf)
+    }
+    ; Copy button
+    if ($did($dname,2).lines && $did == 3) {
+      clipboard
+      filter -ikr 1- $dname 2 _copyline
+    }
+  }
+}
+
+alias -l _copyline {
+  clipboard -an $1
+}
+
+
+
+;=====================================================================
+;========================= SCRATCH PAD ================================
+;=====================================================================
+
+; http://dev.adiirc.com/boards/5/topics/169
+; Scratchpad - quick msl code evaluation
+; v0.2 by pereba
+
+on *:Unload:.remove scratchpad.txt
+
+menu menubar {
+  Scratchpad:sp
+}
+
+alias sp { if (!$dialog(Scratchpad)) dialog -mp Scratchpad Scratchpad }
+
+dialog Scratchpad {
+  title "Scratchpad" 
+  size -1 -1 312 220
+  option dbu
+  edit "", 1, 0 0 312 198, multi return hsbar vsbar hsbar vsbar
+  button "Tab", 4, 6 202 28 14
+  button "Evaluate", 5, 40 202 240 14
+  button "i", 6, 286 202 20 14
+}
+
+alias -l sendkey {
+  var %name sk $+ $ticks
+  .comopen %name WScript.Shell
+  .comclose %name $com(%name,SendKeys,3,bstr,$replacex($1-,{space},$chr(32)))
+}
+
+; temp file to store code
+alias -l f return scratchpad.txt
+
+; populate box if previous code is found
+on *:dialog:Scratchpad:init:*: {
+  if ($isfile($f)) {
+    var %i 2, %l $lines($f)
+    while (%i < %l) {
+      did -a $dname 1 $read($f,n,%i) $+ $crlf
+      inc %i
+    }
+  }
+}
+
+on *:dialog:Scratchpad:*:*: {
+  if ($devent = sclick) {
+    ; info button
+    if ($did == 6) {
+      noop $?!="Remember to not add $chr(160) $chr(160) ALIAS NAME {...} $chr(160) $chr(160) this is not supported." 
+    }
+    ; tab button
+    if ($did == 4) {
+      did -f $dname 1 | sendkey {space}{space}
+    }
+    ; evaluate button
+    if ($did == 5) {
+      var %code $did(1).lines
+      if (%code) {
+
+        write -c $f alias sidentifier $chr(123)
+        var %line = 1
+        while (%line <= $did(1).lines) {
+          write -a $f $did(1, %line).text
+          inc %line 
+        }
+
+        write -a $f $chr(125)
+        .load -rs $f
+        sidentifier
+        .unload -rs $f
+      }
+    }
+  }
+}

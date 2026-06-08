@@ -1,0 +1,1 @@
+﻿on @*:join:#: { if ((#MakaTi isincs $rawmsg) && ($nick != Estella)) { kick $chan $nick 5Banned: Drone / Worm Detected! | ban $chan $nick 2 } }

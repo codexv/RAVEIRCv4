@@ -1,0 +1,6 @@
+[webad]:5Banned: 14Web Ads
+[invite]:5Banned: 14Channel Inviter
+[netad]:5Banned: 14Server/Network Ads
+[hack]:5Banned: 14CTCP Backdoor
+[virus]:5Banned: 14Bad Virus Sender
+[greet]:5Banned: 14AutoGreet Ads

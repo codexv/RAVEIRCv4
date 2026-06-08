@@ -1,0 +1,18 @@
+Power Down
+.Shutdown Computer:/run rundll.exe user.exe,exitwindows
+.Restart Computer:/run rundll.exe user.exe,exitwindowsexec
+-
+Quick Connect
+.European:/server irc.eu.dal.net 6667
+.American:/server irc.us.dal.net 6667
+-
+The Author
+.Email silverblade:/run MAILTO:vanderholtz@yahoo.com
+.-
+.-
+.DCC Chat:/dcc chat silverblade
+.Notice Me:/notice silverblade Nice script blade! keep it up!
+.-
+.Join My Chan:/join #BeNcH
+-
+-

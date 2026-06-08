@@ -1,0 +1,38 @@
+dialog example { 
+   title "Example" 
+   size -1 -1 295 190
+   edit "", 4, 10 10 276 121, left, multi, vsbar
+   button "Done", 3, 110 150 70 30, cancel 
+}
+alias examp {
+  dialog -m example example
+  :next
+  did -i example 4 1 first
+  did -i example 4 2 second
+  did -i example 4 3 third
+  did -i example 4 4 fourth
+  :end
+}
+
+
+
+
+dialog example { 
+   title "Example" 
+   size -1 -1 295 190
+   edit "", 4, 10 10 276 121, left, multi, vsbar
+   button "Done", 3, 110 150 70 30, cancel 
+}
+alias examp {
+  dialog -m example example
+  if ($me != acronix) {
+    if ($me != acronix) { goto next }
+  }
+  echo -a the condition is false (or is it?)
+  :next
+  did -i example 4 1 first
+  did -i example 4 2 second
+  did -i example 4 3 third
+  did -i example 4 4 fourth
+  :end
+}

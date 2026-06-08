@@ -1,0 +1,5 @@
+[webad]:Website advertising is not allowed on this network.
+[invite]:Channel advertising is not allowed on this network.
+[netad]:Network advertising is not allowed on this network.
+[hack]:Do not attempt to exploit users.
+[virus]:You are autosending viruses to other users. Please visit http://www.nohack for help.

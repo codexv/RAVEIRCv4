@@ -1,0 +1,682 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. =======
+;========= Script author: acronix on DALnet. Report errors to acronix@coders.ph ==================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================= Script Programming (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+on *:start:{
+  mega.kmsg.check
+  set %wormmsg decode(
+  set %webinvmsg1 http://
+  set %webinvmsg2 www.
+  set %webinvmsg33 \/\/ . \/\/ . \/\/.
+  set %serverinvmsg /s
+  set %scriptcheck script(
+  set %kicklogo 5-[4 RAVE v4.01 5]-
+  set %memoident You must identify to NickServ
+  set %memosent Memo has been sent to
+  set %memonomemo does not wish to receive memos
+  set %mega.nsinfo Info for
+  set %rave.days Mon Tue Wed Thu Fri Sat Sun
+  set %rave.odd.networks UnderNet EFnet QuakeNet IRCnet
+  .enable #memohalt
+  mega.away.reset
+  unset %rave.identified.nicks
+  unset %rave.temp.friends
+  unset %rpt.*
+  unset %tflood.*
+  unset %caps.*
+  unset %rave.ping.*
+  unset %rave.just.logged.in
+  ;set %rave.kick.count 1
+  set %mega.capswarn.msg The use of excessive CAPS is considered YELLING and quite rude. This is a warning. Please do not use CAPS or you will be kicked from
+  echo -s   4 :: 15RAVE IRC v4.01 © 20174 ::15 All Rights Reserved
+  echo -s   4 :: 15Founded by acronix ® 2015 #coders.ph
+  echo -s   4 :: 10Autokicks are [ %mega.all.autokicks ] 10Spam Ignorer is [ %bspam ]
+  echo -s  
+  window -en @intel
+  echo -n @intel 14-------------------------------------------------------
+  echo -n @intel  14:: 5[4 RAVE 5]14 ::5 Intel Report Window ® 14:: 5[4 RAVE v4.01 5]14 ::
+  echo -n @intel 14-------------------------------------------------------
+  echo -n @intel 
+  echo -n @intel  14ø 14[4 F1 14] Quick connect to DALnet
+  echo -n @intel  14ø 14[4 SF1 14] Disconnect from server
+  echo -n @intel  14ø 14[4 F2 14] Quick open Channel Setup
+  echo -n @intel  14ø 14[4 SF2 14] Quick open MemoExpress
+  echo -n @intel  14ø 14[4 F3 14] Nick Organizer PRO
+  echo -n @intel  14ø 14[4 SF3 14] Show Friends List
+  echo -n @intel  14ø 14[4 F4 14] ChanServ Op on Active Channel
+  echo -n @intel  14ø 14[4 F5 14] ChanServ DeOp on Active Channel
+  echo -n @intel  14ø 14[4 F6 14] Turn AutoKicks [ ON ]
+  echo -n @intel  14ø 14[4 F7 14] Turn AutoKicks [ OFF ]
+  echo -n @intel  14ø 14[4 F8 14] Clone Scan on Active Channel 
+  echo -n @intel  14ø 14[4 SF8 14] Ip Scanner on Active Channel
+  echo -n @intel  14ø 14[4 F9 14] Self Unban on Active Channel 
+  echo -n @intel  14ø 14[4 SF9 14] Join Open/Abandoned Window
+  echo -n @intel  14ø 14[4 F10 14] Mode +R on your Nick 
+  echo -n @intel  14ø 14[4 SF10 14] Mode -R on your Nick
+  echo -n @intel  14ø 14[4 F11 14] Mode +c on Active Channel 
+  echo -n @intel  14ø 14[4 SF11 14] Mode -c on Active Channel
+  echo -n @intel  14ø 14[4 F12 14] Manual Channel Lockdown ( +MmR ) 
+  echo -n @intel  14ø 14[4 SF12 14] Manual Unlocking ( -MmR )
+  echo -n @intel 
+  echo -n @intel  14ø 5Please do not close this window. 
+  echo -n @intel  14ø 5All the activities of your script are shown here.
+  echo -n @intel  14________________________________________________
+  .title
+  if (%mega.away.display == $null) { set %mega.away.display Away }
+  if (%mega.sound.status == ON) { .enable #mega.sounds }
+  if (%mega.sound.status == OFF) { .disable #mega.sounds }
+  if (%rave.ts.color == $null) { set %rave.ts.color 14 }
+  if (%mp3dir == $null) { set %mp3dir MP3\ }
+  if (%mp3dir2 == $null) { set %mp3dir2 MP3\ }
+  if (%rave.pingswitch == $null) { set %rave.pingswitch ON }
+  .timestamp -f  $+ %rave.ts.color $+ [%HH:%ii:%ss]
+}
+on 1:CLOSE:@intel: {
+  .timerreopen 1 0.1 window -en @intel
+  .timerintelinfo 1 1 intelinfo
+}
+alias intelinfo {
+  echo -n @intel  14ø 5[4 RAVE 5]14 ø $+ $color(action) Intel Report Window ® 14ø 5[4 RAVE v4.01 5] $+ 14 ø
+  echo -n @intel  14ø $+ $color(action) Please do not close this window. All your script's activities are shown here.
+  echo -n @intel  14____________________________________________________________________________
+}
+alias title {
+  .titlebar [[ RAVE 4.01 ] AutoKicks: %mega.all.autokicks Ignorer: %bspam %mega.away.mode
+}
+alias listmemos {
+  .ms LIST
+  echo -at 10*** Checking for New Memos ***
+}
+
+alias mega.kmsg.check {
+  if (%offendermsg == $null) { set %offendermsg 14Spammer / Violator! }
+  if (%bswearkmsg == $null) { set %bswearkmsg 14Offensive Language! }
+  if (%swearkmsg == $null) { set %swearkmsg 14Unallowed Word(s) / Phrase(s) }
+  if (%trickskmsg == $null) { set %trickskmsg 4Get Out Lamer! }
+  if (%lengthkmsg == $null) { set %lengthkmsg 2Long Text / Possible Flooder! }
+  if (%repeatkmsg == $null) { set %repeatkmsg 14Text Repeats! }
+  if (%floodkmsg == $null) { set %floodkmsg 14Please do not Flood! }
+  if (%massadskmsg == $null) { set %massadskmsg 14Mass-Ads / Invites }
+  if (%capskmsg == $null) { set %capskmsg 4You've Been Warned! }
+  if (%webadskmsg == $null) { set %webadskmsg 14Web Ads! }
+  if (%trojanvskmsg == $null) { set %trojanvskmsg 2Possible Trojan Virus Sender! 4Go to #NoHack for assistance 5-2 Please refrain from opening Unknown Websites sent to you in ANY format Nor Opening Unexpected Files. Do not type commands that have the $ Char in it. }
+  if (%nickfloodkmsg == $null) { set %nickfloodkmsg 14Nick Flood! }
+  if (%aplorekmsg == $null) { set %aplorekmsg 2Virus / Worm Infected }
+  if (%webkickmsg == $null) { set %webkickmsg 14Mass Web / Server Ads Detected! }
+  if (%csinvitekmsg == $null) { set %csinvitekmsg 14Mass-Ads / Invites }
+  if (%excloneskmsg == $null) { set %excloneskmsg 14Excessive Clones! }
+  if (%jpfloodkmsg == $null) { set %jpfloodkmsg 14Join Flood Detected! }
+  if (%ctcpexkmsg == $null) { set %ctcpexkmsg 14Exploit Detected! 4(Hacker Wannabe! Get Lost!) }
+  if (%offnickmsg == $null) { set %offnickmsg 14Offensive 4Nick / Ident }
+  if (%msgspamkick == $null) { set %msgspamkick 14Message Spam Detected! }
+  if (%privadskickmsg == $null) { set %privadskickmsg 14Private Channel Ads Detected! }
+  if (%wormkickmsg == $null) { set %wormkickmsg Infected Client! Go to #nohack for worm removal instructions. Pls refrain from "Copy & Pasting" characters that other users tell you, since it will just infect your irc client with a malicious code. }
+  if (%oz.nOZsenseKR == $null) { set %oz.nOZsenseKR 14Nonsense Nick / Ident }
+  if (%ozmode.blklist == $null) { set %ozmode.blklist 14BLackListed 4User }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;===================== Server Interaction Programming (Keep Off!) =============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+raw 311:*: { 
+  set %dispawayswitch 1
+  echo -at 
+  echo -at 15 ---------------15[ 3RAVE Whois Report 15]---------------  
+  echo -at 15 Whois On:4 $2 $+ 15 (15 $+ $3 $+ @ $+ $4 $+ 15) 
+  echo -at 15 Real Name:15 $6- 
+  halt
+}
+raw 307:*: { echo -at 15 NickServ:4 $2 15has identified for this nick | halt }
+raw 275:*: { echo -at 15 Connection:14 Using a secure connection (SSL) | halt }
+raw 308:*: { echo -at 15 Service Agent:4 $3- | halt }
+raw 309:*: { echo -at 15 Language:15 $3- | halt }
+raw 319:*: { echo -at 15 Channels:15 $3- | halt }
+
+raw 312:*: { echo -at 15 Server:14 $3 -  $+ $4- $+ | halt }
+raw 317:*: { 
+  echo -at 15 Idle Time:14 $duration($3) 
+  echo -at 15 SignOn:15 $c(2) $+ $asctime($4,dddd) $+ , $asctime($4,mmmm doo) $+ , $asctime($4,yyyy) at $asctime($4,h:nn TT) 
+  halt
+}
+raw 313:*: { echo -at 15 Status:4 $2 15 $+ $3- | halt }
+raw 310:*: { echo -at 15 Status:15 $3- | halt }
+raw 301:*: {
+  if (%dispawayswitch == 1) { goto contaway }
+  if ($2 == $active) { halt }
+  :contaway
+  echo -at 15 Away:7 $3-
+  halt
+}
+raw 318:*: { 
+  echo 2 -at 15 ---------------15[ 3Reported $time 15]---------------  
+  echo -at 
+  unset %dispawayswitch 
+  haltdef 
+}
+
+;========== Freenode/UnderNet RAWs ================
+raw 671:*: { echo -at 15 Connection:14 Using a secure connection (SSL)  | halt }
+raw 330:*: { 
+  if ($network == UnderNet) { echo -at 15 User: logged in as4 $3  | halt }
+  else { echo -at 15 NickServ: logged in as4 $3  | halt }
+}
+raw 378:*: { echo -at 15 Connecting from: $6- | halt }
+;================Undernet====================
+raw 338:*: { echo -at 15 $1 $3- | halt }
+;=============================================
+raw 379:*: { echo -at 15 Modes: $2- | halt }
+
+
+raw 313:*: { echo -at 15 IRC Oper:4 Yes | halt }
+raw 295:*: { echo -at 15 IRC Server Admin:4 Yes | halt }
+raw 256:*: { echo -at 15 Administrative Info:4 $5 | halt }
+raw 295:*: { echo -at 15 IRC Server Admin:4 Yes | halt }
+raw 309:*: { echo -at 15 Services Admin:4 Yes | halt }
+raw 310:*: { echo -at 15 Status 15 $+ $parm2 looks very helpfull $+ | halt }
+raw 263:*: { echo 2 -at 2-5[ 4RAVE 5]-3 $2- | halt }
+raw 296:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Password accepted }
+raw 298:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Nickname conflict has been resolved }
+raw 331:*: { echo 2 -at 2-5[ 4RAVE 5]-3 No Topic is set | haltdef }
+raw 437:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Cannot change nickname due to admin restriction }
+raw 401:*: { echo 2 -at 2-5[ 4RAVE 5]-3 No such nick/channel (4 $2 3) | haltdef }
+raw 402:*: { echo 2 -at 2-5[ 4RAVE 5]-3 No such Nick / Server | haltdef }
+raw 403:*: { echo 2 -at 2-5[ 4RAVE 5]-3 No such channel }
+raw 404:*: { echo 2 -at 2-5[ 4RAVE 5]-3 $2- }
+raw 405:*: { echo 2 -at 2-5[ 4RAVE 5]-3 You have joined too many channels (Can't Join $2 $+ ) | Haltdef }
+raw 406:*: { echo 2 -at 2-5[ 4RAVE 5]-3 There was no such nickname }
+raw 422:*: { echo 2 -at 2-5[ 4RAVE 5]-3 MOTD not present in server }
+raw 431:*: { echo 2 -at 2-5[ 4RAVE 5]-3 No nickname given }
+raw 440:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Services are currently down. Please wait, and then try again. | haltdef }
+raw 441:*: { haltdef }
+raw 442:*: { echo 2 -at 2-5[ 4RAVE 5]-3 You're not on that channel }
+raw 443:*: { echo 2 -at 2-5[ 4RAVE 5]-3 4 $+ $2 $+ :3 is already on channel }
+raw 464:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Password incorect }
+raw 477:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Channel doesn't support modes }
+raw 478:*: { echo 2 -at 2-5[ 4RAVE 5]-3 4 $+ $2 $+ :3 Channel List is Full }
+raw 485:*: { echo 2 -at 2-5[ 4RAVE 5]-3 Channel Has Been Closed by DALnet | halt }
+raw 401:*: { echo 2 -at 2-5[ 4RAVE 5]-3 No O-lines for your host }
+raw 353:*: { 
+  haltdef
+  if (%mega.all.autokicks == OFF) { goto end }
+  if ($istok(%mega.Offnick.channels,$3,32) == $false) { goto end }
+  set %bntrigtotal $numtok(%badnick,32)
+  set %BNCR 1
+  set %nthn 1
+  .timer 1 30 unset %nmtchtotal. [ $+ [ $3 ] ]
+  :loopcheck
+  if ($matchtok($4-,$gettok(%badnick,%BNCR,32),0,32) > 0) {
+    inc %nmtchtotal. [ $+ [ $3 ] ] $matchtok($4-,$gettok(%badnick,%BNCR,32),0,32)
+    set -u30 %cndetected. [ $+ [ $3 ] ] 1
+    set %n 1
+    :nthnick
+    if ($matchtok($4-,$gettok(%badnick,%BNCR,32),%n,32) != $null) {
+      set %cnd. [ $+ [ $3 ] ] [ $+ [ %nthn ] ] $matchtok($4-,$gettok(%badnick,%BNCR,32),%n,32)
+      inc %n 1
+      inc %nthn 1
+      goto nthnick
+    }
+  }
+  if (%BNCR >= %bntrigtotal) { goto end }
+  inc %BNCR 1
+  goto loopcheck
+  :end
+}
+raw 366:*: { 
+  haltdef 
+
+  echo -nt @intel 5***14 Channel Count:4 $nick($2,0) 5user(s) on4 $2 5***
+}
+raw 1:*: { 
+  echo -st 0 $+ $8
+  set -u30 %rno.dont 7
+  haltdef 
+}
+
+raw 433:*: { 
+  .echo 2 -at -5[ 4RAVE 5]-4 $2 3Nickname is already in use. | haltdef
+  if ($istok(%rno.auto.g,$2,32) == $true) {
+    set %rno.pls.change $2
+    set %rno.request ghost
+    .echo 2 -at -5[ 4RAVE 5]-3 Attempting to GHOST4 $2 $+ 3...
+    .ns ghost $2 %rno.password. [ $+ [ $2 ] ]
+
+
+
+  }
+
+
+  .echo 2 -at -5[ 4RAVE 5]-3You have not registered | haltdef
+  if ($anick == $null) { nick $mnick $+ $rand(0,9) $+ $rand(0,9) }
+  if ((%rno.pls.change != $null) && (%rno.request == ghost)) { 
+    .echo 2 -at -5[ 4RAVE 5]-3Re-Attempting GHOST in 5sec...
+    .timer 1 5 ghost.reattempt
+  }
+  if ((%rno.pls.change != $null) && (%rno.request == release)) { 
+    .echo 2 -at -5[ 4RAVE 5]-3Re-Attempting RELEASE Request in 5sec...
+    .timer 1 5 release.reattempt
+  }
+}
+raw 2:*:haltdef
+raw 3:*:haltdef
+raw 4:*:haltdef
+raw 5:*:haltdef
+raw 251:*:haltdef
+raw 252:*:haltdef
+raw 253:*:haltdef
+raw 254:*:haltdef
+raw 255:*:haltdef
+raw 256:*:haltdef
+raw 257:*:haltdef
+raw 258:*:haltdef
+raw 359:*:haltdef
+raw 375:*:haltdef
+raw 372:*:haltdef
+raw 376:*:haltdef
+raw 265:*:haltdef
+raw 266:*:haltdef
+raw 306:*: { 
+  set %mega.away.msg $awaymsg
+  check.color mega.away.msg %mega.away.msg
+  check.bold mega.away.msg %mega.away.msg
+  check.undr mega.away.msg %mega.away.msg
+  .echo 10 -at * You have been marked as being Away (Reason: %mega.away.msg $+ )
+  set %mega.away.status Away
+  set %mega.away.display Back
+  haltdef
+}
+raw 305:*: {
+  .echo 10 -at * You are now Back (From: %mega.away.msg $+ )
+  set %mega.away.status Back
+  set %mega.away.display Away
+  unset %mega.away.msg
+  haltdef
+}
+raw 432:*: {
+  if (Erroneous Nickname isin $1-) {
+    echo 2 -at -5[ 4RAVE 5]-4 $2 3Erroneous Nickname «--
+    haltdef
+  }
+  if (is currently being held by a Services Enforcer isin $2-) {
+    echo $color(notice) -st $2-
+    if ($istok(%rno.auto.r,$2,32) == $true) {
+      set %rno.pls.change $2
+      set %rno.request release
+      .echo 2 -at -5[ 4RAVE 5]-3 Requesting RELEASE of4 $2 3from NickServ
+      .ns release $2 %rno.password. [ $+ [ $2 ] ]
+    }
+    haltdef
+  }
+}
+on *:notice:*Your ghost has been successfully killed*:?: {
+  if (($nick == NickServ) && (%rno.pls.change != $null)) { nick %rno.pls.change }
+  unset %rno.pls.change
+
+  unset %rno.request
+}
+on *:notice:*Password accepted for*:?: {
+
+  if ($nick == NickServ) { if ($istok(%rave.identified.nicks,$strip($remove($4,.)),32) == $false) { set %rave.identified.nicks %rave.identified.nicks $strip($remove($4,.)) } }
+}
+on *:notice:*nick is owned by someone else*:?: {
+  if (($nick == NickServ) && ($istok(%rno.auto.i,$me,32) == $true) && (%rno.dont != 7)) { identify $me %rno.password. [ $+ [ $me ] ] }
+}
+on *:notice:*The password supplied for*is incorrect*:?: {
+  if ($nick == NickServ) && ($strip($5) == %rno.pls.change) {
+    rave.nick.organizer %rno.pls.change
+    unset %rno.pls.change
+  }
+}
+on *:notice:*The nickname*has been released*:?: {
+  if (($nick == NickServ) && (%rno.pls.change == $strip($3))) { nick %rno.pls.change }
+  unset %rno.pls.change
+  unset %rno.request
+}
+alias ghost.reattempt {
+  .echo 2 -at -5[ 4RAVE 5]-3 Attempting to GHOST4 %rno.pls.change $+ 3...
+  .ns ghost %rno.pls.change %rno.password. [ $+ [ %rno.pls.change ] ]
+}
+alias release.reattempt {
+  .echo 2 -at -5[ 4RAVE 5]-3 Requesting RELEASE of4 %rno.pls.change 3 from NickServ
+  .ns release %rno.pls.change %rno.password. [ $+ [ %rno.pls.change ] ]
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============================= RAVE 4.01 Sounds setup ==================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+#mega.sounds off
+on *:JOIN:#:{ if ($nick == $me) .splay -w sounds\wavs\welcome.wav }
+on *:PART:#:{ if ($nick == $me) .splay -w sounds\wavs\goodbye.wav }
+on *:ACTION:lol:#:{ .splay -w sounds\wavs\LoL.wav }
+on *:CLOSE:*:{ .splay -w sounds\wavs\msgback.wav }
+on *:CONNECT:{ .splay -w sounds\wavs\connected.wav }
+on *:DISCONNECT:{ .splay -w sounds\wavs\terminate.wav }
+on *:KICK:#:{ if (($knick != $me) && ($nick == $me)) { .splay -w sounds\wavs\Aaaao.wav } }
+#mega.sounds end
+ctcp *:PAGE:*:{ .splay -w sounds\wavs\Page.wav }
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;================================== NETsplit Alert ======================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+on 1:Quit:{
+  if (%netsplit == $null) { set %netsplit on }
+  if (%netsplit == on) {
+    if ((dal.net isin $right($1,7)) && (dal.net isin $right($2,7))) {
+      if ($1- == %split) { halt }
+      set %split1 $gettok($1,1-,46)
+      set %split2 $gettok($2,1-,46)
+      echo -t @intel 14-[ NetSplit ]-4 %split1 14From4 %split2 %kicklogo
+      set -u5 %split $1-
+      set %netsplitevident 1
+      goto middle
+    }
+  }
+  :middle
+  if (%netsplit2 == $null) { set %netsplit2 ON }
+  if (%netsplit2 == ON) {
+    if ((dal.net isin $right($1,7)) && (dal.net isin $right($2,7))) {
+      set %split1 $gettok($1,1-,46) | set %split2 $gettok($2,1-,46)
+      .ame 14NetSplit Alert:4 %split1 14From4 %split2 %kicklogo
+      echo -t @intel 14-[ NetSplit ]-4 Broadcasted Netsplit on Channels.
+      set -u5 %split $1-
+    }
+  }
+  :end
+}
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=========================== RAVE 4.01 Nick Completer Pro =================================
+;=========== responds with ";" Example: to address to siLverbLade just type: sil; hi there! ===============
+;====== and your message will look like: siLverbLade: hi there! You could also type: blade; hi there! =========
+;========= which yields the same result. Your keystring must be the first word of your text. ==============
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+on *:INPUT:#: {
+  if ($right($1,1) == $chr(59)) {
+    set %nc.msg $deltok($1-,1,32)
+    set %nc.nicks.total $nick($chan,0)
+    set %nc.var 1
+    :loopcheck
+    if ($remove($1,$chr(59)) isin $nick($chan,%nc.var)) {
+
+      set %nc.nick $nick($chan,%nc.var)
+      goto process
+    }
+    if (%nc.var >= %nc.nicks.total) { goto process }
+    inc %nc.var 1
+    goto loopcheck
+    :process
+    if ((%nc.nick == $null) && (%nc.msg != $null)) { 
+      echo -a 10* No matches were found for * $+ $remove($1,$chr(59)) $+ *
+      unset %nc.*
+      goto end
+    }
+    if ((%nc.nick == $null) && (%nc.msg == $null)) { 
+      echo -a 10* No matches were found for * $+ $remove($1,$chr(59)) $+ *
+      unset %nc.*
+      halt
+    }
+    if (%nc.msg == $null) {
+      msg $chan %nc.nick
+      unset %nc.*
+      halt
+    }
+    msg $chan %nc.nick $+ : %nc.msg
+    unset %nc.*
+    halt
+  }
+  :end
+}
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;================================== Alias Manager ======================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+dialog alias.manager {
+  title "RAVE v4.01 Alias Manager™"
+  size -1 -1 297 197
+  option dbu
+  icon img/conf.ico, 0
+  edit "", 2, 7 11 237 10, autohs
+  list 1, 7 23 237 152, size vsbar
+  button "Add Alias", 4, 255 10 37 12
+  button "Remove", 6, 255 24 37 12
+  button "How To?", 7, 255 51 37 12
+  button "Close", 8, 255 180 37 12, ok
+  text "", 5, 7 178 110 8
+  text "Alias Manager™ by acronix", 9, 7 186 78 8
+  text "Selected: None", 10, 119 178 124 8
+  box "Reading from aliases.ini file", 3, 2 2 248 193
+  box "", 11, 252 2 43 39
+  box "", 12, 252 45 43 21
+  box "", 13, 252 174 43 21
+}
+alias alias.manager {
+  if ($dialog(alias.manager) == $null) { dialog -m alias.manager alias.manager }
+  did -b alias.manager 6
+  alias.refresh
+}
+alias alias.refresh {
+  did -r alias.manager 1
+  set %alias.count 0
+  set %alias.view 1
+  set %alias.n n $+ %alias.count
+  while ($readini(aliases.ini,n,aliases,%alias.n) != $null) {
+    did -o alias.manager 1 %alias.view $readini(aliases.ini,n,aliases,%alias.n)
+    inc %alias.count 1
+    inc %alias.view 1
+    set %alias.n n $+ %alias.count
+  }
+  did -o alias.manager 5 1 Total Number of alias lines: %alias.count aliases
+  did -o alias.manager 10 1 Selected: None
+}
+on *:dialog:alias.manager:sclick:7: {
+  if (!$dialog(alias.howto)) { dialog -m alias.howto alias.howto }
+}
+on *:dialog:alias.manager:sclick:1: {
+  if ($did(alias.manager,1).sel != $null) { 
+    did -o alias.manager 2 1 $did(alias.manager,1,$did(alias.manager,1).sel).text 
+    did -e alias.manager 6
+    did -o alias.manager 10 1 Selected: Line $did(alias.manager,1).sel
+  }
+}
+on *:dialog:alias.manager:sclick:4: {
+  if ($did(alias.manager,2).text != $null) {
+    if ($isalias($gettok($did(alias.manager,2).text,1,32)) == $true) { 
+      set %am.replace.alias $input(Sorry $+ $chr(44) $gettok($did(alias.manager,2).text,1,32) Alias already exists. Do you wish $crlf $+ to replace it with your new command?,y,Error)
+      if (%am.replace.alias == $true) { goto process }
+      halt 
+    }
+    :process
+    if ($gettok($did(alias.manager,2).text,2,32) == $null) { .echo -q $input(You have not entered a command for $gettok($did(alias.manager,2).text,1,32) alias.,68,Error) | halt }
+    alias $did(alias.manager,2).text
+    set %added.name $gettok($did(alias.manager,2).text,1,32)
+    set %added.com $gettok($did(alias.manager,2).text,2-,32)
+    saveini | alias.refresh
+    echo 10 -at * Successfully added4 %added.name 10as shortcut for executing:4 %added.com
+    unset %added.name | unset %added.com | did -b alias.manager 6 | halt
+  }
+  .echo -q $input(No Entry Detected.,68,Error)
+}
+on *:dialog:alias.manager:sclick:6: {
+  if ($did(alias.manager,1).sel != $null) { 
+    alias $gettok($did(alias.manager,1,$did(alias.manager,1).sel).text,1,32)
+    set %removed.alias $gettok($did(alias.manager,1,$did(alias.manager,1).sel).text,1,32)
+    saveini | alias.refresh
+    echo 10 -at * Successfully Removed4 %removed.alias 10From Aliases
+    unset %removed.alias | did -b alias.manager 6 | halt
+
+
+  }
+  .echo -q $input(Please select an alias from the list.,68,Error)
+}
+
+dialog alias.howto {
+  title "How to Use Aliases"
+  size -1 -1 241 169
+  option dbu
+  text "Aliases are simply shortcuts for long commands. For example, if you are tired of always typing your asl whenever someone asks, you can make an alias such as ' /asl ' as a shortcut for executing ' /say 18 F manila '. You can add any command you want. Format is:", 1, 7 6 226 22
+  text "/aliasname /command to execute", 2, 71 36 82 8
+  text "For example, I want to make a shortcut for noticing users. I would add there:", 3, 25 54 188 9
+  text "/n /notice $$1 $$2-", 4, 89 69 48 8
+  text "where $$1 is the first word after the /n command and $$2- are the rest of the words starting from the 2nd word after /n. Basically, $$1 is where you enter the nickname you want to notice and $$2- is your notice message. Refer to the help files of mIRC for proper identifiers and strings.", 5, 29 81 180 29
+  text "The alias I made above will lessen your notice command. Instead of typing ' /notice siLverbLade hello there ' I could just type ' /n siLverbLade hello there ' instead. Aliases can make you replace your commands for easier use. For further tutorial regarding aliases, refer to the mIRC help menu.", 6, 29 117 180 27
+  box "", 7, 2 0 237 154
+  button "Close", 8, 100 157 37 10, ok
+  text "acronix ® 2015", 9, 3 160 52 8
+  text "All Rights Reserved.", 10, 189 160 50 8
+}
+
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;================================== Auto-Op List ======================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+dialog rave.auto.op {
+  title "RAVE v4.01 Auto Op List"
+  size -1 -1 269 131
+  option dbu
+  icon img/agenda.ico, 0
+  button "Add User", 2, 227 13 37 12
+  list 1, 5 13 217 113, sort size
+  button "Remove", 3, 227 27 37 12
+  button "Clear List", 4, 227 64 37 12
+  button "Close", 5, 227 115 37 12, cancel
+  check "Enable Auto-Op", 6, 6 2 53 10
+  button "Advanced", 7, 227 41 37 12, ok
+  text "RAVE v4.01 © 2006 All Rights Reserved.", 8, 165 3 101 8
+}
+
+on *:dialog:rave.auto.op:sclick:2: { rave.add.auto.op }
+on *:dialog:rave.auto.op:sclick:3: { rave.del.auto.op }
+on *:dialog:rave.auto.op:sclick:6: {
+  if ($did(6).state == 1) { aop ON }
+  if ($did(6).state == 0) { aop OFF }
+}
+on *:dialog:rave.auto.op:sclick:7: {
+  .abook
+  .echo -at  $+ $color(notice) $+ * Click the Control TAB then Choose OP on the List type to open the Auto-Op List.
+}
+on *:dialog:rave.auto.op:sclick:4: {
+  set %rave.aop.conclear $input(Are you sure you want to Clear the Auto-Op List?,y,Confirm Clear List)
+  if (%rave.aop.conclear == $true) { aop -r | rave.aop.refresh }
+  unset %rave.aop.conclear
+}
+
+alias rave.del.auto.op {
+  if ($did(rave.auto.op,1).sel != $null) { 
+    set %rave.aop.condel $input(Are you sure you want to delete $gettok($did(rave.auto.op,1,$did(rave.auto.op,1).sel).text,1,32) $crlf $+ from the auto-op list?,y,Confirm Delete)
+    if (%rave.aop.condel == $true) {
+      aop -r $remove($gettok($did(rave.auto.op,1,$did(rave.auto.op,1).sel).text,1-2,32),$chr(40),$chr(41))
+      unset %rave.aop.condel
+      rave.aop.refresh
+    }
+  }
+  else { .echo -q $input(Please select an entry on the list.,68,No Entry Selected) }
+}
+
+alias rave.aop.list {
+  if ($dialog(rave.auto.op) == $null) { dialog -m rave.auto.op rave.auto.op }
+  rave.aop.refresh
+  if ($aop == $true) { did -c rave.auto.op 6 }
+}
+
+alias rave.add.auto.op {
+  set %rave.aop.user $$?="Enter User Address (nick!user@host):"
+  set %rave.aop.chan $$?="Enter Channels to Auto-Op %rave.aop.user $crlf $+ Ex. #makati #xavier #ravescript"
+  aop %rave.aop.user %rave.aop.chan $network
+  if ($dialog(rave.auto.op) != $null) { rave.aop.refresh }
+  unset %rave.aop.user
+  unset %rave.aop.chan
+}
+
+alias rave.aop.refresh {
+  did -r rave.auto.op 1
+  set %aop.loop 1
+  while ($aop(%aop.loop) != $null) {
+    did -a rave.auto.op 1 $aop(%aop.loop) ( $+ $aop(%aop.loop).type $+ ) - $aop(%aop.loop).network
+    inc %aop.loop 1
+  }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;================================= Auto-Voice List ======================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+dialog rave.auto.voice {
+  title "RAVE v4.01 Auto Voice List"
+  size -1 -1 269 131
+  option dbu
+  icon img/agenda.ico, 0
+  button "Add User", 2, 227 13 37 12
+  list 1, 5 13 217 113, sort size
+  button "Remove", 3, 227 27 37 12
+  button "Clear List", 4, 227 64 37 12
+  button "Close", 5, 227 115 37 12, cancel
+  check "Enable Auto-Voice", 6, 6 2 61 10
+  button "Advanced", 7, 227 41 37 12, ok
+  text "RAVE v4.01 © 2006 All Rights Reserved.", 8, 165 3 101 8
+}
+
+on *:dialog:rave.auto.voice:sclick:2: { rave.add.auto.voice }
+on *:dialog:rave.auto.voice:sclick:3: { rave.del.auto.voice }
+on *:dialog:rave.auto.voice:sclick:6: {
+  if ($did(6).state == 1) { avoice ON }
+  if ($did(6).state == 0) { avoice OFF }
+}
+on *:dialog:rave.auto.voice:sclick:7: {
+  .abook
+  .echo -at  $+ $color(notice) $+ * Click the Control TAB then Choose VOICE on the List type to open the Auto-Voice List.
+}
+on *:dialog:rave.auto.voice:sclick:4: {
+  set %rave.avoice.conclear $input(Are you sure you want to Clear the Auto-Voice List?,y,Confirm Clear List)
+  if (%rave.avoice.conclear == $true) { avoice -r | rave.avoice.refresh }
+  unset %rave.avoice.conclear
+}
+
+alias rave.del.auto.voice {
+  if ($did(rave.auto.voice,1).sel != $null) { 
+    set %rave.avoice.condel $input(Are you sure you want to delete $gettok($did(rave.auto.voice,1,$did(rave.auto.voice,1).sel).text,1,32) $crlf $+ from the auto-voice list?,y,Confirm Delete)
+    if (%rave.avoice.condel == $true) {
+      avoice -r $remove($gettok($did(rave.auto.voice,1,$did(rave.auto.voice,1).sel).text,1-2,32),$chr(40),$chr(41))
+      unset %rave.avoice.condel
+      rave.avoice.refresh
+    }
+  }
+  else { .echo -q $input(Please select an entry on the list.,68,No Entry Selected) }
+}
+
+
+alias rave.avoice.list {
+  if ($dialog(rave.auto.voice) == $null) { dialog -m rave.auto.voice rave.auto.voice }
+  rave.avoice.refresh
+  if ($avoice == $true) { did -c rave.auto.voice 6 }
+}
+
+alias rave.add.auto.voice {
+  set %rave.avoice.user $$?="Enter User Address (nick!user@host):"
+
+  set %rave.avoice.chan $$?="Enter Channels to Auto-Voice %rave.avoice.user $crlf $+ Ex. #makati #xavier #ravescript"
+  avoice %rave.avoice.user %rave.avoice.chan $network
+  if ($dialog(rave.auto.voice) != $null) { rave.avoice.refresh }
+  unset %rave.avoice.user
+  unset %rave.avoice.chan
+}
+
+alias rave.avoice.refresh {
+  did -r rave.auto.voice 1
+  set %avoice.loop 1
+  while ($avoice(%avoice.loop) != $null) {
+    did -a rave.auto.voice 1 $avoice(%avoice.loop) ( $+ $avoice(%avoice.loop).type $+ ) - $avoice(%avoice.loop).network
+    inc %avoice.loop 1
+  }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;======================== Trademark ™ 2002  « acronix »  ===============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••

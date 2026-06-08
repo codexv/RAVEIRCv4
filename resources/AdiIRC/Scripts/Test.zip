@@ -1,0 +1,171 @@
+===================== LOG MAKER Script by siLverbLade =====================
+on *:TEXT:*:#makati: {
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  set %log.maker.text $strip($1-)
+  if ($chr(60) isin %log.maker.text) { set %log.maker.text $replace(%log.maker.text,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.text) { set %log.maker.text $replace(%log.maker.text,$chr(62),&gt;) }
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> } 
+  if ($nick isop #makati) { write %log.maker.file $strip($timestamp) <font color="blue"><strong> $chr(91) $+ @ $+ $nick $+ $chr(93) </strong><font color="000000"> %log.maker.text </font></font><br> | halt }
+  if ($nick isvoice #makati) { write %log.maker.file <text> $strip($timestamp) <font color="red"><strong> $chr(91) $+ + $+ $nick $+ $chr(93) </strong><font color="000000"> %log.maker.text </font></font></text><br> | halt }
+  write %log.maker.file $strip($timestamp) <font color="000000"><strong> $chr(91) $+ $nick $+ $chr(93) </strong> %log.maker.text </font><br>
+}
+on *:ACTION:*:#makati: {
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  set %log.maker.text $strip($1-)
+  if ($chr(60) isin %log.maker.text) { set %log.maker.text $replace(%log.maker.text,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.text) { set %log.maker.text $replace(%log.maker.text,$chr(62),&gt;) }
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> } 
+  if ($nick isop #makati) { write %log.maker.file $strip($timestamp) <font color="990099"><strong> * @ $+ $nick </strong> %log.maker.text </font><br> | halt }
+  if ($nick isvoice #makati) { write %log.maker.file <text> $strip($timestamp) <font color="990099"><strong>* + $+ $nick </strong> %log.maker.text </font></text><br> | halt }
+  write %log.maker.file $strip($timestamp) <font color="990099"><strong>* $nick </strong> %log.maker.text </font><br>
+}
+on *:NOTICE:*:#makati: {
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  set %log.maker.text $strip($1-)
+  if ($chr(60) isin %log.maker.text) { set %log.maker.text $replace(%log.maker.text,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.text) { set %log.maker.text $replace(%log.maker.text,$chr(62),&gt;) }
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> } 
+  if ($nick isop #makati) { write %log.maker.file $strip($timestamp) <font color="009999">[NOTICE] <strong> @ $+ $nick $+ (#Makati): </strong> %log.maker.text </font><br> | halt }
+  if ($nick isvoice #makati) { write %log.maker.file <text> $strip($timestamp) <font color="009999"><strong>[NOTICE] <strong> + $+ $nick $+ (#Makati): </strong> %log.maker.text </font></text><br> | halt }
+  write %log.maker.file $strip($timestamp) <font color="009999">[NOTICE] <strong> $nick $+ (#Makati): </strong> %log.maker.text </font><br>
+}
+on *:JOIN:#makati: {
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  if ($nick == $me) { write %log.maker.file $strip($timestamp) <font color="009900"><strong>---------- Chronus Joined #Makati Channel [Logging Continues] ----------</strong></font><br> }
+  write %log.maker.file $strip($timestamp) <font color="95AAFF"> Joins: $nick ( $+ $address $+ ) </font><br>
+}
+on *:PART:#makati: {
+  set %log.maker.part.msg $strip($1-)
+  if ($chr(60) isin %log.maker.part.msg) { set %log.maker.part.msg $replace(%log.maker.part.msg,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.part.msg) { set %log.maker.part.msg $replace(%log.maker.part.msg,$chr(62),&gt;) }
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  if ($nick == $me) { 
+    write %log.maker.file $strip($timestamp) <font color="CCCCCC"> Parts: $nick ( $+ $address $+ ) </font><br>
+    write %log.maker.file $strip($timestamp) <font color="009900"><strong>---------- Chronus Parted #Makati Channel [Logging Suspended] ----------</font><br><br>Sorry for the inconvenience. Logging will be back soon. [siLverbLade]</strong><br><br>
+    halt
+  }
+  if (%log.maker.part.msg == $null) { write %log.maker.file $strip($timestamp) <font color="CCCCCC"> Parts: $nick ( $+ $address $+ ) </font><br> }
+  else { 
+    write %log.maker.file $strip($timestamp) <font color="CCCCCC"> Parts: $nick ( $+ $address $+ ) ( $+ %log.maker.part.msg $+ )</font><br> 
+    unset %log.maker.part.msg
+  }
+}
+on *:QUIT: {
+  set %log.maker.quit.msg $strip($1-)
+  if ($chr(60) isin %log.maker.quit.msg) { set %log.maker.quit.msg $replace(%log.maker.quit.msg,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.quit.msg) { set %log.maker.quit.msg $replace(%log.maker.quit.msg,$chr(62),&gt;) }
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  if (%log.maker.printquit isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  if ($nick == $me) { halt }
+  if ($2 == $null) {
+    set %log.maker.printquit $strip($timestamp) <font color="CCCCCC"> Quits: $nick ( $+ $address $+ ) ( $+ %log.maker.quit.msg )</font><br>
+    write %log.maker.file %log.maker.printquit
+  }
+  else { 
+    set %log.maker.printquit $strip($timestamp) <font color="CCCCCC"> Quits: $nick ( $+ $address $+ ) ( $+ %log.maker.quit.msg $+ )</font><br>
+    write %log.maker.file %log.maker.printquit  
+    unset %log.maker.quit.msg
+  }
+  unset %log.maker.printquit
+}
+on *:NICK: {
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  write %log.maker.file $strip($timestamp) <font color="019E38"> * $nick is now known as $newnick </font><br>
+}
+on *:MODE:#makati: {
+  set %log.maker.modechange $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  write %log.maker.file $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.modechange </font><br>
+  unset %log.maker.modechange
+}
+on *:OP:#makati: {
+  set %log.maker.op $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.op </font><br>
+  if (%log.maker.printline isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.op
+  unset %log.maker.printline
+}
+on *:DEOP:#makati: {
+  set %log.maker.deop $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.deop </font><br>
+  if (%log.maker.printline isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.deop
+  unset %log.maker.printline
+}
+on *:VOICE:#makati: {
+  set %log.maker.voice $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.voice </font><br>
+  if (%log.maker.printline isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.voice
+  unset %log.maker.printline
+}
+on *:DEVOICE:#makati: {
+  set %log.maker.devoice $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.devoice </font><br>
+  if (%log.maker.printline isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.devoice
+  unset %log.maker.printline
+}
+on *:BAN:#makati: {
+  set %log.maker.ban $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.ban </font><br>
+  if (%log.maker.printline isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.ban
+  unset %log.maker.printline
+}
+on *:UNBAN:#makati: {
+  set %log.maker.unban $strip($1-)
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF9900"> * $nick sets mode: %log.maker.unban </font><br>
+  if (%log.maker.printline isin $read(%log.maker.file,$lines(%log.maker.file))) { halt }
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.unban
+  unset %log.maker.printline
+}
+on *:KICK:#makati: {
+  set %log.maker.kmsg $strip($1-)
+  if ($chr(60) isin %log.maker.kmsg) { set %log.maker.kmsg $replace(%log.maker.kmsg,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.kmsg) { set %log.maker.kmsg $replace(%log.maker.kmsg,$chr(62),&gt;) }
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  set %log.maker.printline $strip($timestamp) <font color="FF00FF"> * $knick was kicked by $nick ( $+ %log.maker.kmsg $+ ) </font><br>
+  write %log.maker.file %log.maker.printline
+  unset %log.maker.printline
+  unset %log.maker.kmsg
+}
+on *:TOPIC:#makati: {
+  set %log.maker.topic $strip($1-)
+  if ($chr(60) isin %log.maker.topic) { set %log.maker.topic $replace(%log.maker.topic,$chr(60),&lt;) }
+  if ($chr(62) isin %log.maker.topic) { set %log.maker.topic $replace(%log.maker.topic,$chr(62),&gt;) }
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  write %log.maker.file $strip($timestamp) <font color="FF9B06"> *<strong> $nick </strong>changes topic to ' $+ %log.maker.topic $+ ' </font><br>
+  unset %log.maker.topic
+}
+on *:DISCONNECT: {
+  set %log.maker.file $remove(logs- $+ $adate $+ .html,$chr(47))
+  if ($file(%log.maker.file) == $null) { write %log.maker.file <title> $adate #Makati Logs </title><font face="verdana" size=2><strong>#Makati Logs for $adate <br>LOG MAKER v1.01 Script by siLverbLade</strong><br><br> }
+  write %log.maker.file $strip($timestamp) <font color="CCCCCC"> Quits: $me (Disconnected From Server) Please Contact siLverblade / sneakers for assistance </font><br>
+  write %log.maker.file $strip($timestamp) <font color="009900"><strong>---------- Chronus Quitted from DALnet [Logging Suspended] ----------</font><br><br>Sorry for the inconvenience. Logging will be back soon. [siLverbLade]</strong><br><br>
+}

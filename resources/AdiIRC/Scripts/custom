@@ -1,0 +1,105 @@
+﻿on *:NOTICE:*:*: {
+  set %forestfights You are out of forest fights for the day
+  if ($nick == ShellServ) && (%forestfights isin $1-) { timers off }
+}
+;on *:INPUT:*: { .say à¹Í¡Ì¯à¹ï´¿ $1- à¹Í¡Ì¯à¹ï´¿ | halt }
+
+ctcp *:TIME:*: { halt }
+
+;on *:TEXT:!status:*: {
+;  if ($nick isop $chan) { describe $chan Status: Married to chizky. }
+;}
+
+;====== coders.ph encryption =======
+alias coders-dec { return $decode($remove($decode($1-,m),HZXRsA),m) }
+alias coders-enc { return $encode(HZXRsA $+ $encode($1-,m),m) }
+alias x {
+  .msg $active [code] $coders-enc($1-)
+  echo -t $active 12+[ $+ $me $+ ]+ $1-
+}
+on ^*:TEXT:*:#: { 
+  if ([code] != $1) { return }
+  echo -tm $chan +[12 $+ $nick $+ ]+ $coders-dec($2-)
+  haltdef 
+}
+on ^*:TEXT:*:?: { 
+  if ([code] != $1) { return }
+  echo -tm $nick +[12 $+ $nick $+ ]+ $coders-dec($2-)
+  haltdef 
+}
+;=============================
+
+
+;================================ DRONE KICK ================================;
+on *:join:#:{
+  set %not.drone coicoi Alexis Auie RaNdY Ran LoNDoNBabE Roselle NogNog switfemme chizky chic sneakers tyra siLverbLade KanKouni Elmer rainelopez sheryll gracel
+  if ($remove($gettok($address($nick,1),1,64),*!*) isin $nick) && ($me isop #makati) && ($len($nick) == 3) && ($istok(%not.drone,$nick,32) == $false) { 
+    .who $nick 
+    .set %virusinfctd 1
+    .timervirus off 
+  } 
+}
+raw 315:*: { if (%virusinfctd == 1) { haltdef | .timervirus 1 5 unset %virusinfctd } }
+raw 352:*: { 
+  if ($6 == $9) && ($me isop #makati) && (%virusinfctd == 1) { 
+    if ($6 ison #makati) { kick #makati $6 -DRONE }
+    ban -u7200 #makati $4 
+    haltdef 
+  }
+  if (%virusinfctd == 1) { haltdef }
+}
+;==========================================================================;
+
+;Permanent Bans:
+
+;on *@:unban:#:{ 
+;  set %permanent.ban *!*@120.28.177.209
+;  if ($istok(%permanent.ban,$banmask,32) == $true) { ban # $banmask }
+;}
+
+;on *:OP:#: {
+;  set %total.permban $numtok(%permanent.ban,32)
+;  set %permban.cycle 1
+;  if ($opnick == $me) {
+;    while (%permban.cycle <= %total.permban) {
+;      .timer 1 $calc(1 * %permban.cycle) ban # $gettok(%permanent.ban,%permban.cycle,32)
+;      inc %permban.cycle
+;    }
+;  }
+;}
+
+
+;Query Open Sound:
+on *:OPEN:?: { splay sounds\wavs\asterisk.wav }
+
+
+;Custom Own Message
+
+;on *:INPUT:#: {
+;  if ($chan == #chizky) { goto end }
+;  if ($left($1,1) == /) { goto end }
+;  .msg $active $1-
+;  if ($me isop $chan) { echo $color(own) -t $chan 12[ $+ $cnick(@).color $+ @ $+ $me $+ 12] $1- | goto done }
+;  if ($me isvoice $chan) { echo $color(own) -t $chan 12[ $+ $cnick(+).color $+ + $+ $me $+ 12] $1- | goto done }
+;  else { echo $color(own) -t $chan 12[ $+ $cnick(*).color $+ $me $+ 12] $1- }
+;  :done
+;  haltdef 
+;  :end
+;}
+on *:INPUT:?: { 
+  if ($left($1,1) == /) { goto end }
+  .msg $active $1-
+  .echo $color(own) -at 14[12 $+ $me $+ 14]12 $1- 
+  haltdef 
+  :end
+}
+
+on *:connect: {
+  if ($me == siLverbLade) && ($network == DALnet) {
+    .timer 1 1 F1
+    .timer 1 5 /linuxcode
+    .timer 1 9 /acronix
+    .timer 1 13 /atlantis
+    .timer 1 17 /scryptor
+  }
+}

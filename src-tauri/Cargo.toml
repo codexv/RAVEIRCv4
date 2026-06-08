@@ -1,0 +1,35 @@
+[package]
+name = "raveirc"
+version = "0.1.0"
+description = "RAVEIRC - cross-platform IRC client with native RAVE operator toolkit"
+authors = ["RAVE"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "raveirc_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tokio-rustls = { version = "0.26", default-features = false, features = ["logging", "tls12", "ring"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+webpki-roots = "0.26"
+rustls-pki-types = "1"
+futures-util = "0.3"
+parking_lot = "0.12"
+base64 = "0.22"
+# Ollama is plain HTTP on localhost, so no TLS feature is needed here.
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+
