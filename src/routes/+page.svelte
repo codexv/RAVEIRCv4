@@ -14,6 +14,9 @@
   import ScriptsWindow from "$lib/components/ScriptsWindow.svelte";
   import DialogHost from "$lib/components/DialogHost.svelte";
   import UpdateBanner from "$lib/components/UpdateBanner.svelte";
+  import HelpMenu from "$lib/components/HelpMenu.svelte";
+  import BugReport from "$lib/components/BugReport.svelte";
+  import About from "$lib/components/About.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
   import { updater } from "$lib/update.svelte";
 
@@ -184,6 +187,7 @@
         <button class="opt-btn" onclick={() => (irc.scriptEditorOpen = true)} title="Scripts editor">{"</>"}</button>
         <button class="opt-btn" onclick={() => (irc.scratchpadOpen = true)} title="Scratchpad">📝</button>
         <button class="opt-btn" onclick={() => (showSettings = true)} title="Settings">⚙ Settings</button>
+        <HelpMenu />
       </div>
     </div>
 
@@ -214,6 +218,8 @@
 <NickManager />
 <DialogHost />
 <UpdateBanner />
+<BugReport />
+<About />
 {/if}
 
 <style>

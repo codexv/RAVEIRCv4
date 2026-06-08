@@ -84,6 +84,8 @@ export class IrcStore {
   scratchpadOpen = $state(false);
   scriptEditorOpen = $state(false);
   nickManagerOpen = $state(false);
+  bugReportOpen = $state(false);
+  aboutOpen = $state(false);
   /** Open script-defined dialogs (rendered by DialogHost). */
   dialogsOpen = $state<OpenDialog[]>([]);
   private dialogDefs = new Map<string, DialogDef>();
