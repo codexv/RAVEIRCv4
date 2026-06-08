@@ -17,6 +17,7 @@
   import HelpMenu from "$lib/components/HelpMenu.svelte";
   import BugReport from "$lib/components/BugReport.svelte";
   import About from "$lib/components/About.svelte";
+  import ChannelManager from "$lib/components/ChannelManager.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
   import { updater } from "$lib/update.svelte";
 
@@ -184,6 +185,7 @@
         {/if}
         <button class="opt-btn" onclick={() => (showConnect = true)} title="Add server">＋ Connect</button>
         <button class="opt-btn" onclick={() => (irc.nickManagerOpen = true)} title="Nick manager">🪪 Nick</button>
+        <button class="opt-btn" onclick={() => (irc.channelManagerOpen = true)} title="Channel manager">＃ Channels</button>
         <button class="opt-btn" onclick={() => (irc.scriptEditorOpen = true)} title="Scripts editor">{"</>"}</button>
         <button class="opt-btn" onclick={() => (irc.scratchpadOpen = true)} title="Scratchpad">📝</button>
         <button class="opt-btn" onclick={() => (showSettings = true)} title="Settings">⚙ Settings</button>
@@ -220,6 +222,7 @@
 <UpdateBanner />
 <BugReport />
 <About />
+<ChannelManager />
 {/if}
 
 <style>

@@ -86,6 +86,7 @@ export class IrcStore {
   nickManagerOpen = $state(false);
   bugReportOpen = $state(false);
   aboutOpen = $state(false);
+  channelManagerOpen = $state(false);
   /** Open script-defined dialogs (rendered by DialogHost). */
   dialogsOpen = $state<OpenDialog[]>([]);
   private dialogDefs = new Map<string, DialogDef>();
@@ -181,6 +182,14 @@ export class IrcStore {
     this.raveConfig = config;
     this.msl.load(config.scripts.aliases, config.scripts.remote, config.scripts.variables);
     this.dialogDefs = parseDialogs(config.scripts.remote);
+  }
+
+  /** Join a channel on a specific server (Channel Manager). */
+  joinChannel(serverId: number, channel: string, key?: string) {
+    let chan = channel.trim();
+    if (!chan) return;
+    if (!/^[#&!+]/.test(chan)) chan = "#" + chan;
+    this.raw(serverId, `JOIN ${chan}${key ? ` ${key}` : ""}`);
   }
 
   /** An mSL host bound to a server (raw send + echo to a window). */
