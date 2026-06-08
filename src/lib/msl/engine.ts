@@ -46,7 +46,12 @@ export class MslEngine {
     return this.aliases.has(name.toLowerCase());
   }
 
-  private ctx(data: Partial<EventData>, params: string[]): EvalCtx {
+  private ctx(
+    data: Partial<EventData>,
+    params: string[],
+    host: MslHost,
+    depth = 0,
+  ): EvalCtx {
     return emptyCtx({
       params,
       me: data.me ?? "",
@@ -58,7 +63,29 @@ export class MslEngine {
       newnick: data.newnick,
       vars: this.vars,
       local: new Map(),
+      // Unknown $identifiers fall back to user aliases (and later host idents).
+      resolveIdent: (name, args, prop) => this.identValue(name, args, data, host, depth, prop),
     });
+  }
+
+  /**
+   * Resolve `$alias(args)` by running the user alias and returning its
+   * `return` value. Returns null if no such alias (so the caller yields "").
+   */
+  private identValue(
+    name: string,
+    args: string[],
+    data: Partial<EventData>,
+    host: MslHost,
+    depth: number,
+    _prop?: string,
+  ): string | null {
+    const body = this.aliases.get(name.toLowerCase());
+    if (body === undefined) return null;
+    if (depth > 64) return ""; // runaway-recursion guard
+    const c = this.ctx(data, args, host, depth + 1);
+    execBody(parseBody(body), c, host);
+    return c.returnValue ?? "";
   }
 
   /** Run a user alias by name with a parameter string. Returns false if none. */
@@ -66,7 +93,7 @@ export class MslEngine {
     const body = this.aliases.get(name.toLowerCase());
     if (body === undefined) return false;
     const params = paramStr.length ? paramStr.split(" ") : [];
-    execBody(parseBody(body), this.ctx(data, params), host);
+    execBody(parseBody(body), this.ctx(data, params, host), host);
     return true;
   }
 
@@ -83,7 +110,7 @@ export class MslEngine {
       if (numSpec !== "*" && numSpec !== numeric) continue;
       const match = def.fields[1] ?? "*";
       if (match !== "*" && !wildMatch(match, params.join(" "))) continue;
-      if (execBody(parseBody(def.body), this.ctx(data, params), host) === "halt") halted = true;
+      if (execBody(parseBody(def.body), this.ctx(data, params, host), host) === "halt") halted = true;
     }
     return halted;
   }
@@ -96,7 +123,7 @@ export class MslEngine {
       if (!this.eventMatches(def, data)) continue;
       // For text events, $1- is the message; otherwise params come from text.
       const params = (data.text ?? "").length ? data.text!.split(" ") : [];
-      execBody(parseBody(def.body), this.ctx(data, params), host);
+      execBody(parseBody(def.body), this.ctx(data, params, host), host);
     }
   }
 

@@ -26,6 +26,28 @@ describe("evalString", () => {
     expect(evalString("$asctime(0,yyyy)", ctx())).toBe("");
   });
 
+  it("address family: $site, $fulladdress, $mask", () => {
+    const c = ctx({ address: "bob!~ident@host.example.com" });
+    expect(evalString("$site", c)).toBe("host.example.com");
+    expect(evalString("$fulladdress", c)).toBe("bob!~ident@host.example.com");
+    expect(evalString("$mask($fulladdress,2)", c)).toBe("*!*@host.example.com");
+    expect(evalString("$mask($fulladdress,4)", c)).toBe("*!*@*.example.com");
+    expect(evalString("$mask($fulladdress,0)", c)).toBe("*!~ident@host.example.com");
+  });
+
+  it("$regex sets $regml captures", () => {
+    const c = ctx();
+    expect(evalString("$regex(hello123world,/([a-z]+)(\\d+)/)", c)).toBe("1");
+    expect(evalString("$regml(2)", c)).toBe("123");
+  });
+
+  it("token helpers: $remtok, $matchtok, $wildtok", () => {
+    const c = ctx();
+    expect(evalString("$remtok(a.b.c.b,b,1,46)", c)).toBe("a.c.b");
+    expect(evalString("$matchtok(foo bar baz,ba,2,32)", c)).toBe("3");
+    expect(evalString("$wildtok(one two three,t*,2,32)", c)).toBe("three");
+  });
+
   it("substitutes %variables", () => {
     const c = ctx();
     c.vars.set("greeting", "hi there");

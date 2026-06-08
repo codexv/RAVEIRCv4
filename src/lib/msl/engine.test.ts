@@ -27,6 +27,30 @@ describe("MslEngine aliases", () => {
     expect(sent).toContain("PRIVMSG #makati :hello bob");
   });
 
+  it("resolves a user alias used as an identifier ($alias) with its return value", () => {
+    const e = new MslEngine();
+    e.load(
+      "alias double return $calc($1 * 2)\nalias show /echo -a $double(21)",
+      "",
+      "",
+    );
+    const { echoed, host } = harness();
+    e.runAlias("show", "", data(), host);
+    expect(echoed).toContain("42");
+  });
+
+  it("alias-as-identifier passes args and composes; unknown stays empty", () => {
+    const e = new MslEngine();
+    e.load(
+      "alias greet return Hello $1 from $me\nalias g /echo -a [ $greet(bob) ] [ $nope(x) ]",
+      "",
+      "",
+    );
+    const { echoed, host } = harness();
+    e.runAlias("g", "", data(), host);
+    expect(echoed).toContain("[ Hello bob from rave ] [  ]");
+  });
+
   it("runs a block alias with if/else", () => {
     const e = new MslEngine();
     e.load(

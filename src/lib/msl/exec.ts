@@ -236,6 +236,8 @@ function dispatch(cmd: string, rest: string, ctx: EvalCtx, host: MslHost): Signa
     case "haltdef":
       return "halt";
     case "return":
+      // `return [value]` stops the alias; the value is read by alias-as-identifier.
+      ctx.returnValue = rest;
       return "return";
     case "echo": {
       // /echo [-flags] [@window|#chan] text — strip flags + an explicit window
