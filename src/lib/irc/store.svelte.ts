@@ -16,6 +16,7 @@ import { MslEngine, type EventData } from "../msl/engine";
 import type { MslHost } from "../msl/exec";
 import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
+import { FileStore } from "../msl/files";
 import {
   aiAnalyze,
   aiModerate,
@@ -78,6 +79,8 @@ export class IrcStore {
   private msl = new MslEngine();
   /** mIRC hash tables (/hadd, $hget, …), session-scoped. */
   private hash = new HashStore();
+  /** mIRC file & INI I/O ($read, /write, …). In-memory; persistence pending. */
+  private files = new FileStore();
   /** /timer scheduler — fires commands in the window they were created in. */
   private timers = new TimerManager({
     fire: (command, ctx) => this.fireTimer(command, ctx),
@@ -125,7 +128,7 @@ export class IrcStore {
         this.add(b, "echo", text);
       },
       ident: (name, args, prop) => this.mslIdent(serverId, name, args, prop),
-      command: (name, rest) => this.hash.command(name, rest),
+      command: (name, rest) => this.hash.command(name, rest) || this.files.command(name, rest),
     };
   }
 
@@ -171,8 +174,8 @@ export class IrcStore {
       case "ialchan":
         return this.ialLookup(serverId, args[0] ?? "", parseInt(args[2] ?? "1", 10) || 1, args[1] ?? null);
       default:
-        // Hash-table identifiers ($hget/$hfind) and anything else the host knows.
-        return this.hash.ident(name, args, prop);
+        // Hash tables ($hget/$hfind), then file I/O ($read/$readini/…).
+        return this.hash.ident(name, args, prop) ?? this.files.ident(name, args, prop);
     }
   }
 
