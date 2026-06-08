@@ -1,0 +1,813 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. =======
+;========= Script author - acronix on DALnet. Report errors to acronix@coders.ph ==================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================= Script Programming (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+on @*:join:#: {
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto done }
+  if (%mega.all.autokicks == OFF) { goto done }
+  if ($istok(%mega.clones.channels,$chan,32) == $true) {
+    set %jclone.add $address($nick,2)
+    set %jclone.number $ialchan($address($nick,2),$chan,0)
+    if (%jclone.number > %cloneallow. [ $+ [ $chan ] ] ) {
+      set %jclone.opchk 1
+      :opcheck
+      if ($ialchan(%jclone.add,$chan,%jclone.opchk).nick isop $chan) { 
+        set %jclone.opnick $ialchan(%jclone.add,$chan,%jclone.opchk).nick
+        goto opclone
+      }
+      if (%jclone.opchk >= %jclone.number) { goto kick }
+      inc %jclone.opchk 1
+      goto opcheck
+      :kick
+      .kick $chan $nick 5Banned:14 %excloneskmsg
+      .ban -u $+ %mega.clone.time. [ $+ [ $chan ] ] $chan $nick 3
+    }
+    if (%jclone.number >= %mega.filter.clones. [ $+ [ $chan ] ] ) {
+      set %jclone.filter 1
+      .ban -u $+ %mega.clone.time. [ $+ [ $chan ] ] $chan %jclone.add
+      :filterloop
+      .kick $chan $ialchan(%jclone.add,$chan,%jclone.filter).nick 5Banned:14 Filter of 4[ %jclone.add ]
+      if (%jclone.filter >= %jclone.number) { goto next }
+      inc %jclone.filter
+      goto filterloop
+    }
+  }
+  goto next
+  :opclone
+  echo -at 5• [4 $nick 5] •2 was not kicked from $chan for cloning because4 %jclone.opnick 2is an Operator.
+  :next
+  unset %jclone.*
+  if ($istok(%mega.jflood.channels,$chan,32) == $true) {
+    set %jfloodcheck.host $chan $+ $remove($wildsite,*,!,@)
+    mega.jflood.check $chan $nick
+  }
+  :end
+  if (%mega.aplore.check == OFF) { goto done }
+  if ($istok(%mega.vworm.channels,$chan,32) == $false) { goto done }
+  if (($asc($left($nick,1)) isnum 65-90) && ($right($nick,2) isnum) && ($chr(95) !isin $nick) && ($chr(45) !isin $nick) && (($len($remove($address,$chr(126),@,$site)) isnum 7-12) || ($remove($address,$chr(126),@,$site) == $nick))) {
+    if (($chr(96) !isin $nick) && ($chr(124) !isin $nick) && ($chr(94) !isin $nick) && ($chr(91) !isin $nick) && (infocom !isin $site) && (@210. !isin $wildsite) && (@203. !isin $wildsite) && (@202. !isin $wildsite) && (@125. !isin $wildsite) && (@124. !isin $wildsite) && (tri-isys.com !isin $site) && ($chr(93) !isin $nick)) {
+      set %aplore.nicklength $calc($len($nick) - 2)
+      set %aplore.ncycle 2
+      :aploreloop
+      if ($isupper($mid($nick,%aplore.ncycle,1)) == $true) { goto done }
+      if (%aplore.ncycle >= %aplore.nicklength) {
+        kick $chan $nick 5Banned:14 %aplorekmsg
+        ban -u $+ %mega.vworm.time. [ $+ [ $chan ] ] $chan $wildsite
+      }
+      inc %aplore.ncycle
+      goto aploreloop
+    }
+  }
+  :done
+}
+
+on @*:notice:*:#: {
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto end }
+  if (%mega.all.autokicks == OFF) { goto end }
+  if (($nick isvoice $chan) && (%mega.voice.exempt == ON)) { goto end }
+  if (($me isop $chan) && ($istok(%mega.botnet.channels,$chan,32) == $true)) { mega.msgflood.check $chan $strip($1-) }
+  if (($nick !isop $chan) && ($me isop $chan)) {
+    if ($istok(%mega.badswear.channels,$chan,32) == $true) { mega.badswear.check $chan $nick $strip($1-) }
+    if ($istok(%mega.swear.channels,$chan,32) == $true) { mega.swear.check $chan $nick $strip($1-) }
+    if ($istok(%mega.tricks.channels,$chan,32) == $true) { mega.tricks.check $chan $nick $strip($1-) }
+    if ($istok(%mega.length.channels,$chan,32) == $true) { mega.length.check $chan $nick $strip($1-) }
+    if ($istok(%mega.repeat.channels,$chan,32) == $true) { set %rpt.host $chan $+ $remove($wildsite,*,!,@) | mega.repeat.check $chan $nick $strip($1-) }
+    if ($istok(%mega.tflood.channels,$chan,32) == $true) { set %tflood.host $chan $+ $remove($wildsite,*,!,@) | mega.tflood.check $chan $nick }
+    if (($istok(%mega.chanads.channels,$chan,32) == $true) && ($chr(35) isin $strip($1-))) { mega.ch.ads.check $chan $nick $strip($1-) }
+    if ($istok(%mega.caps.channels,$chan,32) == $true) { mega.caps.check $chan $nick $strip($1-) }
+    if ($istok(%mega.webads.channels,$chan,32) == $true) { mega.web.ads.check $chan $nick $strip($1-) }
+  }
+  :END
+}
+
+menu menubar,status {
+  -
+  Kick Control
+  .Channel Setup:rave.autokick.control
+  .-
+  .Add Violator IP:set %violator.add *!*@ $+ $$?="Enter Violator's IP address (ex. 202.23.456.78):" | set %mega.blacklisted.host %mega.blacklisted.host %violator.add | echo 4 -at %violator.add Successfully added to Violator's List
+  .Clear Violators:/unset %mega.blacklisted.host | echo -at 10* Violators List has been Cleared -[ RAVE 4 ]-
+  .-
+  .Update IAL: { 
+    if ($chan(#).ial != $true) {
+      set %scanip.who # | who #
+      echo -at 5 • Updating  $+ # $+  IAL...
+    }
+    elseif ($chan(#).ial == $true) {
+      echo -at 5 • IAL for  $+ # $+  is Already Updated • 
+    }
+  }
+  .Clone Scan:F8
+  .-
+  .Kick Msg Color
+  ..Color $+ $chr(58) [[ %mega.kickmsg.color ] $+ :echo 10 -at * RAVE v4.01 Kick Msg Color is currently %mega.kickmsg.color *
+  ..-
+  ..Turn ON:.set %mega.kickmsg.color ON | echo 10 -at * RAVE v4.01 Kick Msg Color is now %mega.kickmsg.color *
+  ..Turn OFF:.set %mega.kickmsg.color OFF | echo 10 -at * RAVE v4.01 Kick Msg Color is now %mega.kickmsg.color *
+  ..Custom:.set %mega.kickmsg.color $$?="Enter Color Number (0 to 15)" | if ($$! !isnum 0-15) { set %mega.kickmsg.color ON | .echo -q $input(Please enter a Color Number from 0 to 15,68,Color Error) | halt } | else { echo %mega.kickmsg.color -at * Custom Kick Msg Color is now [[ %mega.kickmsg.color ] * }
+  .Kick Counter
+  ..Reset Counter: /set %rave.kick.count 1 | echo 10 -at * RAVE v4.01 Kick counter has been RESET.
+  .-
+  .Nonsense ( %oz.nOZsenseSW )
+  ..Setup: .oznOzsense
+  ..-
+  ..ON: {
+    if (%mega.all.autokicks == OFF) { .echo -q $input(AutoKicks are currently disabled. Autokicks must be enabled before changing this setting.,68,AutoKick Notification) | halt }
+    if (%oz.nOZsenseSW == ON) { .echo -q $input(Nonsense Nick Protection is already %oz.nOZsenseSW $+ !,68,NOTE) | halt }
+    set %oz.nOZsenseSW ON
+    echo 14 -at * Nonsense Nick Protection is now [ %oz.nOZsenseSW ] %kicklogo
+    halt 
+  }
+  ..OFF: {
+    if (%mega.all.autokicks == OFF) { .echo -q $input(AutoKicks are currently disabled. Autokicks must be enabled before changing this setting.,68,AutoKick Notification) | halt }
+    if (%oz.nOZsenseSW == OFF) { .echo -q $input(Nonsense Nick Protection is already %oz.nOZsenseSW $+ !,68,NOTE) | halt }
+    set %oz.nOZsenseSW OFF 
+    echo 14 -at * Nonsense Nick Protection is now [ %oz.nOZsenseSW ] %kicklogo
+    halt
+  }
+    
+  .AutoKicks ( %mega.all.autokicks )
+  ..ON:F6
+  ..OFF:F7
+  .-
+  Exemptions
+  .View Friends List:show.friends
+  .-
+  .Friends ( %friend.auto.kick )
+  ..ON: {
+    if (%friend.auto.kick == ON) { .echo -q $input(Friends exemption is already %friend.auto.kick $+ !,68,NOTE) | halt }
+    set %friend.auto.kick ON
+    echo 14 -at * Friends Exemption from AutoKicks is [ %friend.auto.kick ] %kicklogo
+  }
+  ..OFF: {
+    if (%friend.auto.kick == OFF) { .echo -q $input(Friends exemption is already %friend.auto.kick $+ !,68,NOTE) | halt }
+    set %friend.auto.kick OFF
+    echo 14 -at * Friends Exemption from AutoKicks is [ %friend.auto.kick ] %kicklogo
+  }
+  ..-
+  ..Add {
+    set %frend-nick $$?="Nick to be added to Friends list:"
+    if ($istok(%rave.friends,%frend-nick,32) == $true) { .echo -q $input(%frend-nick is already your friend.,68,NOTE) | halt }
+    set %rave.friends %rave.friends %frend-nick
+    if ($dialog(show.friends) != $null) { f.refresh }
+    .echo 10 -at * Successfully ADDED4 %frend-nick to friends list %kicklogo
+  }
+  ..Remove {
+    set %frend-nick $$?="Nick to be removed:"
+    if ($istok(%rave.friends,%frend-nick,32) == $false) { .echo -q $input(%frend-nick is not in your friend's list.,68,NOTE) | halt }
+    set %rave.friends $deltok(%rave.friends,$findtok(%rave.friends,%frend-nick,1,32),32)
+    if ($dialog(show.friends) != $null) { f.refresh }
+    .echo 10 -at * Successfully REMOVED4 %frend-nick from friends list %kicklogo
+    if ($chr(32) $+ %frend-nick $+ $chr(46) isin %rave.temp.friends) { set %rave.temp.friends $chr(32) $+ $deltok(%rave.temp.friends,$findtok(%rave.temp.friends,$matchtok(%rave.temp.friends,%frend-nick $+ $chr(46),1,32),1,32),32) }
+  }
+  .Voiced ( %mega.voice.exempt )
+  ..ON: {
+    if (%mega.voice.exempt == ON) { .echo -q $input(Voice exemption is already %mega.voice.exempt $+ !,68,NOTE) | halt }
+    set %mega.voice.exempt ON
+    echo 14 -at * Voice Exemption from AutoKicks is [ %mega.voice.exempt ] %kicklogo
+  }
+  ..OFF: {
+    if (%mega.voice.exempt == OFF) { .echo -q $input(Voice exemption is already %mega.voice.exempt $+ !,68,NOTE) | halt }
+    set %mega.voice.exempt OFF
+    echo 14 -at * Voice Exemption from AutoKicks is [ %mega.voice.exempt ] %kicklogo  
+  }
+}
+menu menubar {
+  -
+  Log Viewer v3.5: { set %rave.days Mon Tue Wed Thu Fri Sat Sun | log-v }
+  -
+}
+
+alias rv.frnd.chck { if ($istok(%rave.friends,$1,32) == $true) { return Friend: YES } else { return Friend: NO } }
+
+menu nicklist {
+  Notice Nick: /notice $$1 $$?="Enter Your Notice for $$1:"
+  Query Nick:query $$1
+  -
+  Friends
+  . $rv.frnd.chck($1) : {
+    if ($istok(%rave.friends,$1,32) == $true) { echo 2 -at 3* $1 is your FRIEND * }
+    elseif ($istok(%rave.temp.friends,$1,46) == $true) { echo 2 -at 3* $1 is your FRIEND ( $deltok($matchtok(%rave.temp.friends,$1,1,32),2,46) ) * }
+    else echo 2 -at 3* $1 is 4NOT 3in your friends list *
+  }
+  .-
+  . $iif($istok(%rave.friends,$1,32) == $true,$style(2)) Add $1 {
+    if ($istok(%rave.friends,$1,32) == $true) { .echo -q $input($1 is already your friend.,68,NOTE) | halt }
+    set %rave.friends %rave.friends $1
+    if ($dialog(show.friends) != $null) { f.refresh }
+    .echo 10 -at * Successfully ADDED4 $1 to friends list %kicklogo
+  }
+  . $iif($istok(%rave.friends,$1,32) == $false,$style(2)) Remove $1 {
+    if ($istok(%rave.friends,$1,32) == $false) { .echo -q $input($1 is not in your friend's list.,68,NOTE) | halt }
+    set %rave.friends $deltok(%rave.friends,$findtok(%rave.friends,$1,1,32),32)
+    if ($dialog(show.friends) != $null) { f.refresh }
+    .echo 10 -at * Successfully REMOVED4 $1 from friends list %kicklogo
+  }
+  .-
+  .View List:show.friends
+  Ignore
+  .Ignore with msg: { 
+    .notice $$1 AutoMsg: You have been Ignored! /!\ RAVE v4 /!\
+    ignore $$1 1 
+    closemsg $$1
+  }
+  .Ignore silently: { ignore $$1 1 | closemsg $$1 }
+  .-
+  .Remove Ignore:ignore -r
+  .-
+  -
+  Say to Nick: { say $$1 $+ : $$?="Enter Message to be addressed to $$1 $+ :" }
+  -
+  Clone Scan:mega.clone.check
+}
+
+menu menubar {
+  -
+  Spam Ignorer ( %bspam )
+  .ON: {
+    if (%bspam == ON) { .echo -q $input(Spam Ignorer is already %bspam $+ !,68,NOTE) | halt }
+    .set %bspam ON 
+    .echo -at 14* Spam Ignorer is now [ %bspam ] %kicklogo 
+    .title
+  }
+  .OFF: {
+    if (%bspam == OFF) { .echo -q $input(Spam Ignorer is already %bspam $+ !,68,NOTE) | halt }
+    .set %bspam OFF
+    .echo -at 14* Spam Ignorer is now [ %bspam ] %kicklogo 
+    .title
+  }
+  .-
+  .Remove Ignore:ignore -r
+}
+
+on ^*:OPEN:?: {
+  if (($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) { goto end }
+  if (%wormmsg isin $strip($1-)) { mega.pvt.decode $nick $wildsite }
+  if ($chr(35) isin $strip($1-)) { set %pvt.type open | mega.pvt.chads $nick $wildsite $strip($1-) }
+  if ((%webinvmsg1 isin $strip($1-)) || ((www. isin $strip($1-)) && ((.net isin $strip($1-)) || (.com isin $strip($1-)) || (.org isin $strip($1-)) || (.cc isin $strip($1-)) || (.tv isin $strip($1-)) || (.info isin $strip($1-)) || (.us isin $strip($1-)))) || (\/\/ . \/\/ . \/\/. isin $strip($1-)) || (w/w/w. isin $strip($1-))) { mega.pvt.webads $nick $wildsite $strip($1-) }
+  if ((($gettok($strip($1-),1,32) == slm) || ($gettok($strip($1-),1,32) == a)) && ($numtok($strip($1-),32) == 1)) { mega.pvt.msgspam $nick $wildsite $strip($1-) }
+  if (%rave.pvt.block == Ignored) { mega.pvt.ignore $nick $wildsite }
+  if (%rave.pvt.block == Blocked) { mega.pvt.block $nick $wildsite $1- }
+  :end
+}
+
+alias mega.pvt.ignore {
+  echo -tn @intel  $+ $color(notice) $+ * $1 is trying to message you. ( $+ $remove($2,*,!,@) $+ )
+  .ignore -pu10 $1 2
+  editbox -p @intel /query $1
+  if ($istok(%rave.pvt.block.nicks,$1,32) == $false) {
+    .notice $1 Sorry, All Queries are Ignored as of the Moment. %kicklogo
+    set %rave.pvt.block.nicks %rave.pvt.block.nicks $1
+  }
+  halt
+}
+
+alias mega.pvt.block {
+  if ($window(@Messages) == $null) { window -enk @Messages }
+  echo -tm @Messages  $+ $color(normal) $+ 14[ $+ $cnick(*).color $+ $1  $+ 14] $3-  $+ $colour(notice) $+ ( $+ $remove($2,*,!,@) $+ ) to $me 
+  editbox -p @Messages /query $1
+  halt
+}
+
+alias mega.pvt.decode {
+  if (%mega.all.autokicks == OFF) { goto block }
+  if ($comchan($1,1) != $null) {
+    set %pvt.comcyc 1
+    :loopchan
+    if (($me isop $chan(%pvt.comcyc)) && ($1 !isop $chan(%pvt.comcyc))) {
+      if ($istok(%mega.decode.channels,$chan(%pvt.comcyc),32) == $true) {
+        if (($nick isvoice $chan(%pvt.comcyc)) && (%mega.voice.exempt == ON)) { goto nextloop }
+        kick $chan(%pvt.comcyc) $1 5Banned:14 %wormkickmsg
+        ban -u $+ %mega.decode.time. [ $+ [ $chan(%pvt.comcyc) ] ] $chan(%pvt.comcyc) $1 3
+      }
+    }
+    :nextloop
+    if (%pvt.comcyc >= $chan(0)) { goto block }
+    inc %pvt.comcyc 1
+    goto loopchan
+  }
+  :block
+  if (%bspam == OFF) { goto done }
+  .echo -mt @intel 4(×) 2Infected Client Detected From:4 $1 14("$decode") 4(×)
+  close -m $1
+  .set -u1 %sq.switch 1
+  halt
+  :done
+}
+
+alias mega.pvt.chads {
+  if ($comchan($1,1) != $null) {
+    set %mega.co.op.count 1
+    :loopcoop
+    if (($me isop $comchan($1,%mega.co.op.count)) && ($1 isop $comchan($1,%mega.co.op.count))) { goto done }
+    if (%mega.co.op.count >= $comchan($1,0)) { goto continuecheck }
+    inc %mega.co.op.count 1
+    goto loopcoop
+  }
+  :continuecheck
+  set %pvt.chadstrig.total $matchtok($3-,$chr(35),0,32)
+  set %pvt.chads.count 1
+  :loopcheck
+  if (($len($matchtok($3-,$chr(35),%pvt.chads.count,32)) != 1) && ($left($matchtok($3-,$chr(35),%pvt.chads.count,32),1) == $chr(35))) {
+    set %pvt.chads.chant $chan(0)
+    set %pvt.ccl 1
+    :pvtloopchan
+    if ($matchtok($3-,$chr(35),%pvt.chads.count,32) == $chan(%pvt.ccl)) { goto nexttrig }
+    if (%pvt.ccl >= %pvt.chads.chant) { goto kick }
+    inc %pvt.ccl 1
+    goto pvtloopchan
+    :kick
+    if ($2 !isin %mega.blacklisted.host) { set %mega.blacklisted.host %mega.blacklisted.host $2 }
+    if (%mega.all.autokicks == OFF) { goto block }
+    if ($comchan($1,1) != $null) {
+      set %pvt.comcyc 1
+      :loopchancheck
+      if (($1 ison $chan(%pvt.comcyc)) && ($me isop $chan(%pvt.comcyc)) && ($1 !isop $chan(%pvt.comcyc))) {
+        if ($istok(%mega.pvtcads.channels,$chan(%pvt.comcyc),32) == $true) {
+          if (($nick isvoice $chan(%pvt.comcyc)) && (%mega.voice.exempt == ON)) { goto nextloopch }
+          kick $chan(%pvt.comcyc) $1 5Banned:14 %privadskickmsg
+          ban -u $+ %mega.pvtcads.time. [ $+ [ $chan(%pvt.comcyc) ] ] $chan(%pvt.comcyc) $1 2
+        }
+      }
+      :nextloopch
+      if (%pvt.comcyc >= %pvt.chads.chant) { goto relaycheck }
+      inc %pvt.comcyc 1
+      goto loopchancheck
+    }
+    :relaycheck
+    mega.relay.check $1 $2
+    :block
+    if (%bspam == OFF) { goto done }
+    echo -mt @intel 4(×)2 PVT Chan Ads detected from4 $1 2( $+ $matchtok($3-,$chr(35),%pvt.chads.count,32) $+ ) 4(×)
+    .notice $nick %version Invite/Web Spam Detected! Query BLOCKED! ( Automated Message )
+    .ignore -pu10 $1 2
+    .set -u1 %sq.switch 1
+    halt
+  }
+  :nexttrig
+  if (%pvt.chads.count >= %pvt.chadstrig.total) { goto done }
+  inc %pvt.chads.count 1
+  goto loopcheck
+  :done
+}
+
+alias mega.relay.check {
+  set %pvt.rcyc 1
+  :loopchan
+  if (($me isop $chan(%pvt.rcyc)) && ($istok(%mega.pvtcads.channels,$chan(%pvt.rcyc),32) == $true)) {
+    set %relay.cyctot $nick($chan(%pvt.rcyc),0)
+    set %relay.cyc 1
+    :looprelay
+    if (($address($nick($chan(%pvt.rcyc),%relay.cyc),2) == $2) && ($nick($chan(%pvt.rcyc),%relay.cyc) !isop $chan(%pvt.rcyc))) {
+      kick $chan(%pvt.rcyc) $nick($chan(%pvt.rcyc),%relay.cyc) 5Banned:14 Relay Client of4 $1
+      ban -u $+ %mega.pvtcads.time. [ $+ [ $chan(%pvt.rcyc) ] ] $chan(%pvt.rcyc) $2
+    }
+    if (%relay.cyc >= %relay.cyctot) { goto nextchan }
+    inc %relay.cyc 1
+    goto looprelay
+  }
+  :nextchan
+  if (%pvt.rcyc >= $chan(0)) { goto done }
+  inc %pvt.rcyc 1
+  goto loopchan
+  :done
+}
+
+alias mega.pvt.webads {
+  if ($comchan($1,1) != $null) {
+    set %mega.co.op.count 1
+    :loopcoop
+    if (($me isop $comchan($1,%mega.co.op.count)) && ($1 isop $comchan($1,%mega.co.op.count))) { goto done }
+    if (%mega.co.op.count >= $comchan($1,0)) { goto continuecheck }
+    inc %mega.co.op.count 1
+    goto loopcoop
+  }
+  :continuecheck
+  if ($2 !isin %mega.blacklisted.host) { set %mega.blacklisted.host %mega.blacklisted.host $2 }
+  if (%webinvmsg1 isin $3-) { set %pvt.webmsg $matchtok($3-,%webinvmsg1,1,32) }
+  if (www. isin $3-) { set %pvt.webmsg %pvt.webmsg $matchtok($3-,www.,1,32) }
+  if (\/\/ . \/\/ . \/\/. isin $3-) { set %pvt.webmsg %pvt.webmsg $3- }
+  if (w/w/w. isin $3-) { set %pvt.webmsg %pvt.webmsg $matchtok($3-,w/w/w.,1,32) }
+  if (%mega.all.autokicks == OFF) { goto block }
+  if ($comchan($1,1) != $null) {
+    set %pvt.comcyc 1
+    :loopchan
+    if (($me isop $chan(%pvt.comcyc)) && ($1 !isop $chan(%pvt.comcyc)) && ($1 isin $chan(%pvt.comcyc))) {
+      if ($istok(%mega.pvtwads.channels,$chan(%pvt.comcyc),32) == $true) {
+        if (($nick isvoice $chan(%pvt.comcyc)) && (%mega.voice.exempt == ON)) { goto nextloop }
+        kick $chan(%pvt.comcyc) $1 5Banned:14 %webkickmsg
+        ban -u $+ %mega.pvtwads.time. [ $+ [ $chan(%pvt.comcyc) ] ] $chan(%pvt.comcyc) $1 2
+      }
+    }
+    :nextloop
+    if (%pvt.comcyc >= $chan(0)) { goto block }
+    inc %pvt.comcyc 1
+    goto loopchan
+  }
+  :block
+  if (%bspam == OFF) { goto done }
+  .echo -mt @intel 4(×) 2Website Spam Detected From:4 $1 14(" $+ %pvt.webmsg $+ ") 4(×)
+  .notice $nick %version Invite spam detected! Query BLOCKED! ( Automated Message )
+  .ignore -pu10 $1 2
+  .set -u1 %sq.switch 1
+  unset %pvt.webmsg
+  halt
+  :done
+  unset %pvt.webmsg
+}
+
+alias mega.pvt.msgspam {
+  if ($comchan($1,1) != $null) {
+    set %mega.co.op.count 1
+    :loopcoop
+    if (($me isop $comchan($1,%mega.co.op.count)) && ($1 isop $comchan($1,%mega.co.op.count))) { goto done }
+    if (%mega.co.op.count >= $comchan($1,0)) { goto continuecheck }
+    inc %mega.co.op.count 1
+    goto loopcoop
+  }
+  :continuecheck
+  if ($2 !isin %mega.blacklisted.host) { set %mega.blacklisted.host %mega.blacklisted.host $2 }
+  if (slm isin $3-) { set %pvt.msgspam slm }
+  if (a isin $3-) { set %pvt.msgspam %pvt.msgspam a }
+  if (%mega.all.autokicks == OFF) { goto block }
+  if ($comchan($1,1) != $null) {
+    set %pvt.comcyc 1
+    :loopchan
+    if (($me isop $chan(%pvt.comcyc)) && ($1 !isop $chan(%pvt.comcyc))) {
+      if ($istok(%mega.pvtmsp.channels,$chan(%pvt.comcyc),32) == $true) {
+        if (($nick isvoice $chan(%pvt.comcyc)) && (%mega.voice.exempt == ON)) { goto nextloop }
+        kick $chan(%pvt.comcyc) $1 5Banned:14 %msgspamkick
+        ban -u $+ %mega.pvtmsp.time. [ $+ [ $chan(%pvt.comcyc) ] ] $chan(%pvt.comcyc) $1 2
+      }
+    }
+    :nextloop
+    if (%pvt.comcyc >= $chan(0)) { goto block }
+    inc %pvt.comcyc 1
+    goto loopchan
+  }
+  :block
+  if (%bspam == OFF) { goto done }
+  .echo -mt @intel 4(×) 2MSG Spam Detected From:4 $1 14(" $+ %pvt.msgspam $+ ") 4(×)2 Query Blocked 4(×)
+  .notice $nick %version Msg spam detected! Your Query has been BLOCKED! ( Automated Message )
+  .ignore -pu10 $1 2
+  .set -u1 %sq.switch 1
+  unset %pvt.msgspam
+  halt
+  :done
+  unset %pvt.msgspam
+}
+
+menu menubar {
+  Virus Kick ( %mega.aplore.check )
+  .ON: {
+    if (%mega.all.autokicks == OFF) { .echo -q $input(AutoKicks are currently disabled. Autokicks must be enabled before changing this setting.,68,AutoKick Notification) | halt }
+    if (%mega.aplore.check == ON) { .echo -q $input(Virus / Worm protection is already %mega.aplore.check $+ !,68,NOTE) | halt }
+    set %mega.aplore.check ON | echo -at 14* Virus / Worm Kick is now [ %mega.aplore.check ] %kicklogo
+  }
+  .OFF: {
+    if (%mega.all.autokicks == OFF) { .echo -q $input(AutoKicks are currently disabled. Autokicks must be enabled before changing this setting.,68,AutoKick Notification) | halt }
+    if (%mega.aplore.check == OFF) { .echo -q $input(Virus / Worm protection is already %mega.aplore.check $+ !,68,NOTE) | halt }
+    set %mega.aplore.check OFF | echo -at 14* Virus / Worm Kick is now [ %mega.aplore.check ] %kicklogo
+  }
+}
+
+;alias nickcolor {
+;  if ( $dialog(nickcolor) == $null ) { .dialog -m nickcolor nickcolor | return }
+;  .dialog -v nickcolor
+;}
+
+dialog nickcolor {
+  title "Nicklist Colors"
+  size -1 -1 72 92
+  option dbu
+  button "Save && Exit", 1, 15 78 40 10, cancel
+  text "@ Operator Color", 2, 3 6 50 10, center
+  edit $cnick(@).color, 3, 58 5 10 10, limit 2 center
+  text "+ Voiced User Color", 4, 3 20 50 10, center
+  edit $cnick(+).color, 5, 58 19 10 10, limit 2 center
+  text "% Half Op Color", 6, 3 34 42 10, center
+  edit $cnick(%).color, 7, 58 33 10 10, limit 2 center
+  text "Regular User Color", 8, 3 48 50 10, center
+  edit $cnick(*).color, 9, 58 47 10 10, limit 2 center
+  text "Your Color", 10, 3 62 30 10, center
+  edit %nickcolor.me, 11, 58 61 10 10, limit 2 center
+}
+
+on 1:dialog:nickcolor:edit:3: {
+  if ( $cnick(@) != 0 ) { .cnick -r $cnick(@) }
+  .cnick * $did(3).text @
+}
+on 1:dialog:nickcolor:edit:5: {
+  if ( $cnick(+) != 0 ) { .cnick -r $cnick(+) }
+  .cnick * $did(5).text +
+}
+on 1:dialog:nickcolor:edit:7: {
+  if ( $cnick(%) != 0 ) { .cnick -r $cnick(%) }
+  .cnick * $did(7).text %
+}
+on 1:dialog:nickcolor:edit:9: {
+  if ( $cnick(*) != 0 ) { .cnick -r $cnick(*) }
+  .cnick -n * $did(9).text *
+}
+on 1:dialog:nickcolor:edit:11:{
+  set %nickcolor.me $did(11).text
+}
+on 1:start:{
+  if ( %nickcolor.me == $Null ) { set %nickcolor.me 14 }
+}
+;on 1:join:#:{
+;  if ( $nick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+;on 1:op:#:{
+;  if ( $opnick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+;on 1:deop:#:{
+;  if ( $opnick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+;on 1:voice:#:{
+;  if ( $vnick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+;on 1:devoice:#:{
+;  if ( $vnick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+;on 1:help:#:{
+;  if ( $hnick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+;on 1:dehelp:#:{
+;  if ( $hnick != $me ) { return }
+;  .cline %nickcolor.me $chan $nick($chan,$me)
+;}
+
+alias mega.away.reset {
+  if (%mega.away.status == Away) {
+    set %mega.away.status Back
+    set %mega.away.display Away
+  }
+}
+
+menu @intel {
+  -
+  Queries ( %rave.pvt.block )
+  .Enable: {
+    if (%rave.pvt.block != Enabled) {
+      set %rave.pvt.block Enabled
+      unset %rave.pvt.block.nicks
+      echo 14 -at * Queries are now [ %rave.pvt.block ]. -[ RAVE v4.01 ]-
+    }
+    else { .echo -q $input(Queries are already %rave.pvt.block $+ !,68,NOTE) }
+  }
+  .Block: {
+    if (%rave.pvt.block != Blocked) {
+      set %rave.pvt.block Blocked
+      echo 14 -at * Query Blocker has been [ Activated ]. All incoming queries will NOT Open. -[ RAVE v4.01 ]-
+    }
+    else { .echo -q $input(Queries are already being %rave.pvt.block $+ !,68,NOTE) }
+  }
+  .Ignore: {
+    if (%rave.pvt.block != Ignored) {
+      set %rave.pvt.block Ignored
+      unset %rave.pvt.block.nicks
+      echo 14 -at * Query Ignorer has been [ Activated ]. All incoming queries will be Ignored. -[ RAVE v4.01 ]-
+    }
+    else { .echo -q $input(Queries are already being %rave.pvt.block $+ !,68,NOTE) }
+  }
+  -
+  Notify Manager:notify.list
+  -
+  Auto Voice ( $iif(($avoice == $true),ON,OFF) )
+  .View List:rave.avoice.list
+  .-
+  .ON:{ if ($avoice == $false) { avoice ON } | else { .echo -q $input(Auto-Voice is already ON,68,NOTE) } }
+  .OFF:{ if ($avoice == $true) { avoice OFF } | else { .echo -q $input(Auto-Voice is already OFF,68,NOTE) } }
+  .-
+  .Add User:{ rave.add.auto.voice }
+  .Remove:{ avoice -r $$?="Enter Nick/Address to be removed:" }
+  .-
+  .Clear List:{ 
+    set %rave.avoice.conclear $input(Are you sure you want to Clear the Auto-Voice List?,y,Confirm Clear List)
+    if (%rave.avoice.conclear == $true) { avoice -r | rave.avoice.refresh }
+    unset %rave.avoice.conclear
+  }
+  Auto Op ( $iif(($aop == $true),ON,OFF) )
+  .View List:rave.aop.list
+  .-
+  .ON:{ if ($aop == $false) { aop ON } | else { .echo -q $input(Auto-Op is already ON,68,NOTE) } }
+  .OFF:{ if ($aop == $true) { aop OFF } | else { .echo -q $input(Auto-Op is already OFF,68,NOTE) } }
+  .-
+  .Add User:{ rave.add.auto.op }
+  .Remove:{ aop -r $$?="Enter Nick/Address to be removed:" }
+  .-
+  .Clear List:{ 
+    set %rave.aop.conclear $input(Are you sure you want to Clear the Auto-Op List?,y,Confirm Clear List)
+    if (%rave.aop.conclear == $true) { aop -r | rave.aop.refresh }
+    unset %rave.aop.conclear
+  }
+  .-
+  Ignore List ( $iif(($ignore == $true),ON,OFF) )
+  .View List:.abook | .echo -at  $+ $color(notice) $+ * Click the Control TAB then Choose IGNORE on the List type to open the IGNORE List.
+  .-
+  .ON:{ if ($ignore == $false) { ignore ON } | else { .echo -q $input(Ignore Service is already ON,68,NOTE) } }
+  .OFF:{ if ($ignore == $true) { ignore OFF } | else { .echo -q $input(Ignore Service is already OFF,68,NOTE) } }
+  .-
+  .Clear All:ignore -r
+  -
+  Log Viewer v3.5: { set %rave.days Mon Tue Wed Thu Fri Sat Sun | log-v }
+  -
+  Ping Reply ( %rave.pingswitch )
+  .ON: set %rave.pingswitch ON | echo -at  $+ $color(notice) $+ * Auto Ping Reply is Now [ %rave.pingswitch ] 5-[4 RAVE 4.01 5]-
+  .OFF: set %rave.pingswitch OFF | echo -at  $+ $color(notice) $+ * Auto Ping Reply is Now [ %rave.pingswitch ] 5-[4 RAVE 4.01 5]- 
+  -
+  Nick Manager:rave.nick.organizer
+  -
+}
+
+dialog rave.nick.org {
+  title "RAVE v4.01 Nick Manager"
+  size -1 -1 141 128
+  option dbu
+  icon img/conv.ico, 0
+  button "Add Nick", 2, 99 12 37 12
+  list 1, 5 12 90 98, sort size
+  button "Remove", 3, 99 27 37 12
+  button "Settings", 4, 99 52 37 12
+  text "Add your frequently used nicks here:", 5, 5 2 91 8
+  button "Identify", 6, 52 113 44 12
+  button "Use Nick", 7, 4 113 44 12
+  button "Close", 8, 99 113 37 12, cancel
+}
+
+dialog rave.nick.org.set {
+  title Settings for %my.rave.nick
+  size -1 -1 157 82
+  option dbu
+  check "Auto Identify on Connect", 1, 8 14 73 10
+  text "Password:", 2, 8 47 29 8
+  edit "", 3, 7 55 143 10, pass autohs
+  text • %my.rave.nick •, 4, 8 5 142 8
+  button "OK", 5, 39 69 37 10, ok
+  check "Auto Ghost when being Used", 6, 8 24 81 10
+  check "Auto Release when Held", 7, 8 34 71 10
+  text "", 8, 37 47 111 8
+  button "Cancel", 9, 79 69 37 10, cancel
+}
+
+alias rave.nick.organizer {
+  if ($dialog(rave.nick.org) == $null) { dialog -m rave.nick.org rave.nick.org }
+  set %rno.track.nick $me
+  .timerupdatenicks 0 1 rno.update.me
+  did -b rave.nick.org 6,7
+  rave.nick.org.ref
+  if ($1 != $null) { 
+    set %my.rave.nick %rno.pls.change
+    rave.nick.settings %my.rave.nick
+    did -o rave.nick.org.set 8 1 (Please Enter Correct PW for %my.rave.nick $+ )
+  }
+}
+
+alias rno.update.me { if ($me != %rno.track.nick) { set %rno.track.nick $me | rave.nick.org.ref } }
+alias rno.auto.i.check {
+  if ($network != DALnet) { halt }
+  if (%rno.auto.i == $null) { halt }
+  set %rno.loop 1
+  while (%rno.loop <= $numtok(%rno.auto.i,32)) {
+    var %rno.cmd.time = $calc( %rno.loop * 2 )
+    .timer 1 %rno.cmd.time .echo $color(notice) -at -NickServ- Auto Identify: $gettok(%rno.auto.i,%rno.loop,32) 
+    .timer 1 %rno.cmd.time identify $gettok(%rno.auto.i,%rno.loop,32) $rv.proc.pass($decrypt(%rno.password. [ $+ [ $gettok(%rno.auto.i,%rno.loop,32) ] ] ,rvnckmgr))
+    inc %rno.loop 1
+  }
+  unset %pass.asc
+  unset %pass.output
+}
+alias rave.nick.org.ref {
+  did -r rave.nick.org 1
+  set %rave.no.cyc 1
+  while ($gettok(%rave.nicks.list,%rave.no.cyc,32) != $null) {
+    set %rno.show.nick $gettok(%rave.nicks.list,%rave.no.cyc,32)
+    if ($gettok(%rave.nicks.list,%rave.no.cyc,32) == $me) { set %rno.show.nick -» %rno.show.nick }
+    else { set %rno.show.nick • %rno.show.nick }
+    if (%rno.password. [ $+ [ $gettok(%rave.nicks.list,%rave.no.cyc,32) ] ] != $null) { set %rno.show.nick %rno.show.nick ( w/ PW ) }
+    did -a rave.nick.org 1 %rno.show.nick
+    inc %rave.no.cyc 1
+  }
+  did -b rave.nick.org 6,7
+  unset %rno.show.nick
+}
+alias rv.proc.pass {
+  unset %pass.asc
+  unset %pass.output
+  set %rv.pass.count 1
+  while (%rv.pass.count <= $len($1)) {
+    set %pass.asc %pass.asc $+ $asc($mid($1,%rv.pass.count,1)) $+ .
+    inc %rv.pass.count 1
+  }
+  set %rv.asc.count 1
+  while (%rv.asc.count <= $len($1)) {
+    set %pass.output %pass.output $+ $chr(32) $+ $ $+ chr $+ ( $+ $gettok(%pass.asc,%rv.asc.count,46) $+ ) $ $+ +
+    inc %rv.asc.count 1
+  }
+  return %pass.output
+}
+
+on *:dialog:rave.nick.org:init:*: { .did -b rave.nick.org 3,4 }
+on *:dialog:rave.nick.org:sclick:8: { .timerupdatenicks off }
+on *:dialog:rave.nick.org:sclick:7: { nick $gettok($did(rave.nick.org,1,$did(1).sel).text,2,32) | rave.nick.org.ref }
+on *:dialog:rave.nick.org:sclick:1: {
+  if (($did(1).sel != $null) && ($gettok($did(rave.nick.org,1,$did(1).sel).text,1,32) == •)) { did -e rave.nick.org 3,4,7 }
+  else { did -b rave.nick.org 3,4,7 }
+  if ($gettok($did(rave.nick.org,1,$did(1).sel).text,5,32) == PW) { did -e rave.nick.org 6 }
+  else { did -b rave.nick.org 6 }
+}
+on *:dialog:rave.nick.org:sclick:6: {
+  if ($server != $null) {
+    .echo $color(notice) -at * Process: Identifying $gettok($did(rave.nick.org,1,$did(1).sel).text,2,32) to NickServ -[ RAVE v4.01 ]-
+    identify $gettok($did(rave.nick.org,1,$did(1).sel).text,2,32) $decrypt(%rno.password. [ $+ [ $gettok($did(rave.nick.org,1,$did(1).sel).text,2,32) ] ] ,rvnckmgr)
+  }
+  else { .echo $color(notice) -at * You are Not Connected (Cannot Perform Identify) -[ RAVE v4.01 ]- }
+}
+on *:dialog:rave.nick.org:sclick:2: {
+  set %rno.add.this $$?="Enter Nick:"
+  if ($istok(%rave.nicks.list,%rno.add.this,32) == $false) {
+    set %rave.nicks.list %rave.nicks.list %rno.add.this
+  }
+  else { .echo -q $input( $+ %rno.add.this is already in the list.,o,Error) | halt }
+  rave.nick.org.ref
+  set %my.rave.nick %rno.add.this
+  .timer 1 .5 rave.nick.settings %my.rave.nick
+}
+
+on *:dialog:rave.nick.org:sclick:3: {
+  if ($did(1).sel != $null) {
+    set %rave.nicks.list $deltok(%rave.nicks.list,$findtok(%rave.nicks.list,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),1,32),32)
+    if ($istok(%rno.auto.i,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),32) == $true) { set %rno.auto.i $deltok(%rno.auto.i,$findtok(%rno.auto.i,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),1,32),32) }
+    if ($istok(%rno.auto.g,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),32) == $true) { set %rno.auto.g $deltok(%rno.auto.g,$findtok(%rno.auto.g,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),1,32),32) }
+    if ($istok(%rno.auto.r,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),32) == $true) { set %rno.auto.r $deltok(%rno.auto.r,$findtok(%rno.auto.r,$gettok($did(rave.nick.org,1,$did(1).sel).text,2,32),1,32),32) }
+    unset %rno.password. [ $+ [ $gettok($did(rave.nick.org,1,$did(1).sel).text,2,32) ] ]
+    rave.nick.org.ref
+  }
+  else { .echo -q $input(Please Select a Nick from the List.,68,No Nick Selected) }
+}
+
+on *:dialog:rave.nick.org:sclick:4: {
+  if ($did(1).sel != $null) {
+    set %my.rave.nick $gettok($did(rave.nick.org,1,$did(1).sel).text,2,32)
+    rave.nick.settings %my.rave.nick
+  }
+  else { .echo -q $input(Please Select a Nick from the List.,68,No Nick Selected) }
+}
+
+alias rave.nick.settings {
+  dialog -m rave.nick.org.set rave.nick.org.set
+  if ($istok(%rno.auto.i,$1,32) == $true) { did -c rave.nick.org.set 1 }
+  if ($istok(%rno.auto.g,$1,32) == $true) { did -c rave.nick.org.set 6 }
+  if ($istok(%rno.auto.r,$1,32) == $true) { did -c rave.nick.org.set 7 }
+  if (%rno.password. [ $+ [ $1 ] ] != $null) { did -o rave.nick.org.set 3 1 $decrypt(%rno.password. [ $+ [ $1 ] ] ,rvnckmgr) }
+}
+
+on *:dialog:rave.nick.org.set:sclick:*: { 
+  if ($did == 5) {
+    if ((($did(1).state == 1) || ($did(6).state == 1) || ($did(7).state == 1)) && ($did(3) == $null)) {
+      .echo -q $input(Please enter Password for %my.rave.nick $+ ,68,Password Required)
+      halt
+    }
+    rave.nick.org.update %my.rave.nick 
+  }
+  if (($did == 1) || ($did == 6) || ($did == 7)) { 
+    if ((($did(1).state == 1) || ($did(6).state == 1) || ($did(7).state == 1)) && ($did(3) == $null)) { 
+      did -o rave.nick.org.set 8 1 (Please Enter Password for %my.rave.nick $+ ) 
+    }
+    else { did -r rave.nick.org.set 8 1 }
+  }
+}
+
+on *:dialog:rave.nick.org.set:edit:3: {
+  if ((($did(1).state == 1) || ($did(6).state == 1) || ($did(7).state == 1)) && ($did(3) != $null)) { 
+    did -r rave.nick.org.set 8 1 
+  }
+
+}
+
+alias rave.nick.org.update {
+  if ($did(1).state == 1) { if ($istok(%rno.auto.i,$1,32) == $false) { set %rno.auto.i %rno.auto.i $1 } }
+  else { if ($istok(%rno.auto.i,$1,32) == $true) { set %rno.auto.i $deltok(%rno.auto.i,$findtok(%rno.auto.i,$1,1,32),32) } }
+  if ($did(6).state == 1) { if ($istok(%rno.auto.g,$1,32) == $false) { set %rno.auto.g %rno.auto.g $1 } }
+  else { if ($istok(%rno.auto.g,$1,32) == $true) { set %rno.auto.g $deltok(%rno.auto.g,$findtok(%rno.auto.g,$1,1,32),32) } }
+  if ($did(7).state == 1) { if ($istok(%rno.auto.r,$1,32) == $false) { set %rno.auto.r %rno.auto.r $1 } }
+  else { if ($istok(%rno.auto.r,$1,32) == $true) { set %rno.auto.r $deltok(%rno.auto.r,$findtok(%rno.auto.r,$1,1,32),32) } }
+  if ($did(3,1) != $null) { set %rno.password. [ $+ [ $1 ] ] $encrypt($did(3,1),rvnckmgr) }
+  else { unset %rno.password. [ $+ [ $1 ] ] }
+  unset %my.rave.nick
+  if ($dialog(rave.nick.org) != $null) { rave.nick.org.ref }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;======================== Trademark ™ 2002  « acronix »  ===============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••

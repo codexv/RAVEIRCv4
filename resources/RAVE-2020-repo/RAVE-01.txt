@@ -1,0 +1,1357 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved =====================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. ==============
+;============= Script author: acronix on DALnet. Report errors to acronix@coders.ph ====================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=============== Version, Finger, and Userinfo Replies (Don't touch the Version!) ======================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+ctcp 1:VERSION:*: { .ctcpreply $nick VERSION RAVE IRC v4.01 Linux 2.6.17 [i903/4.20GHz] | halt }
+ctcp 1:FINGER:*: { .ctcpreply $nick FINGER I could tell you, but then I'll have to kill you! | halt }
+ctcp 1:USERINFO:*: { .ctcpreply $nick USERINFO System Warfare And Tactics Inc. | halt }
+on *:CTCPREPLY:VERSION*: { .echo -sant 14*4 $nick 14is using IRC client:4 $2- | halt }
+on *:CTCPREPLY:PING*: {
+  if ((%rave.ping. [ $+ [ $nick ] ] == 1) && ($comchan($nick,1) != $null)) {
+    .notice $nick  $+ $nick $+ : Your PING Reply is ( $duration($calc(($ticks - $2)/1000)) ) 5-[ 4RAVE v4.01 5]-
+    .echo -tn @intel  $+ $color(notice) $+ *** $nick $+ 's PING Reply is $duration($calc(($ticks - $2)/1000)) (Reply sent to $nick $+ )
+    .unset %rave.ping. [ $+ [ $nick ] ]
+  }
+  else { echo -st 14*4 $nick 14Ping $calc($ticks - $2) Reply:4 $duration($calc(($ticks - $2)/1000)) | inc %activecount }
+  haltdef
+}
+on *:TEXT:*:#: {
+  if ((%rave.pingswitch == OFF) || (%rave.ping.pause == ON)) { goto end }
+  if (!ping isin $strip($1-)) {
+    set -u5 %rave.ping.pause ON
+    set %rave.ping. [ $+ [ $nick ] ] 1
+    .ctcp $nick ping 
+  } 
+  :end
+}
+on *:ACTION:*:#: {
+  if ((%rave.pingswitch == OFF) || (%rave.ping.pause == ON)) { goto end }
+
+
+  if (!ping isin $strip($1-)) {
+    set -u5 %rave.ping.pause ON
+    set %rave.ping. [ $+ [ $nick ] ] 1
+    .ctcp $nick ping 
+  } 
+  :end
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================== AutoKick Control (Do Not Edit!) =================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;----- Channel Settings -----
+alias ak.settings {
+  set %rave.set.channel $1
+  if ($dialog(rave.channel.settings) == $null) { dialog -m rave.channel.settings rave.channel.settings }
+  if ($istok(%mega.autojoin.channels,$1,32) == $true) { did -c rave.channel.settings 5 }
+  if ($istok(%mega.autounban.channels,$1,32) == $true) { did -c rave.channel.settings 6 }
+  if ($istok(%mega.blacklist.channels,$1,32) == $true) { did -c rave.channel.settings 8 }
+  if ($istok(%mega.nonsense.channels,$1,32) == $true) { did -c rave.channel.settings 9 }
+  if ($istok(%mega.badswear.channels,$1,32) == $true) { did -c rave.channel.settings 14 }
+  if ($istok(%mega.swear.channels,$1,32) == $true) { did -c rave.channel.settings 17 }
+  if ($istok(%mega.Offnick.channels,$1,32) == $true) { did -c rave.channel.settings 22 }
+
+  if ($istok(%mega.caps.channels,$1,32) == $true) { did -c rave.channel.settings 24 }
+  if ($istok(%mega.repeat.channels,$1,32) == $true) { did -c rave.channel.settings 29 }
+  if ($istok(%mega.tflood.channels,$1,32) == $true) { did -c rave.channel.settings 45 }
+  if ($istok(%mega.length.channels,$1,32) == $true) { did -c rave.channel.settings 36 }
+  if ($istok(%mega.chanads.channels,$1,32) == $true) { did -c rave.channel.settings 69 }
+  if ($istok(%mega.webads.channels,$1,32) == $true) { did -c rave.channel.settings 74 }
+  if ($istok(%mega.trojan.channels,$1,32) == $true) { did -c rave.channel.settings 81 }
+  if ($istok(%mega.lagg.channels,$1,32) == $true) { did -c rave.channel.settings 86 }
+  if ($istok(%mega.invite.channels,$1,32) == $true) { did -c rave.channel.settings 143 }
+  if ($istok(%mega.tricks.channels,$1,32) == $true) { did -c rave.channel.settings 91 }
+  if ($istok(%mega.jflood.channels,$1,32) == $true) { did -c rave.channel.settings 42 }
+  if ($istok(%mega.pvtcads.channels,$1,32) == $true) { did -c rave.channel.settings 98 }
+  if ($istok(%mega.pvtwads.channels,$1,32) == $true) { did -c rave.channel.settings 103 }
+  if ($istok(%mega.pvtmsp.channels,$1,32) == $true) { did -c rave.channel.settings 108 }
+  if ($istok(%mega.decode.channels,$1,32) == $true) { did -c rave.channel.settings 113 }
+  if ($istok(%mega.vworm.channels,$1,32) == $true) { did -c rave.channel.settings 118 }
+  if ($istok(%mega.exflood.channels,$1,32) == $true) { did -c rave.channel.settings 123 }
+  if ($istok(%mega.bforce.channels,$1,32) == $true) { did -c rave.channel.settings 130 }
+  if ($istok(%mega.botnet.channels,$1,32) == $true) { did -c rave.channel.settings 138 }
+  if ($istok(%mega.violators.channels,$1,32) == $true) { did -c rave.channel.settings 133 }
+  if ($istok(%mega.nflood.channels,$1,32) == $true) { did -c rave.channel.settings 148 }
+  if ($istok(%mega.clones.channels,$1,32) == $true) { did -c rave.channel.settings 52 }
+  did -o rave.channel.settings 16 1 %display.mega.badswear.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 20 1 %display.mega.swear.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 26 1 %display.mega.caps.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 31 1 %mega.repeat.trigger. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 34 1 %display.mega.repeat.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 47 1 %mega.tflood.trigger. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 50 1 %display.mega.tflood.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 38 1 %mega.length.trigger. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 40 1 %display.mega.length.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 54 1 %cloneallow. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 56 1 %mega.filter.clones. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 58 1 %display.mega.clones.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 72 1 %display.mega.chanads.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 77 1 %display.mega.webads.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 44 1 %display.mega.jflood.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 84 1 %display.mega.trojan.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 89 1 %display.mega.lagg.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 94 1 %display.mega.tricks.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 101 1 %display.mega.pvtcads.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 106 1 %display.mega.pvtwads.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 111 1 %display.mega.pvtmsp.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 116 1 %display.mega.decode.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 126 1 %display.mega.exflood.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 121 1 %display.mega.vworm.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 146 1 %display.mega.invite.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 136 1 %display.mega.violators.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 141 1 %mega.lockdown.time. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 151 1 %mega.nflood.trigger. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 153 1 %mega.nflood.seconds. [ $+ [ $1 ] ]
+  did -o rave.channel.settings 156 1 %display.mega.nflood.time. [ $+ [ $1 ] ]
+  did -b rave.channel.settings 160
+}
+
+alias ak.delchan {
+  set %mega.mch $deltok(%mega.mch,$findtok(%mega.mch,$1,1,32),32)
+  if ($istok(%mega.autojoin.channels,$1,32) == $true) { set %mega.autojoin.channels $deltok(%mega.autojoin.channels,$findtok(%mega.autojoin.channels,$1,1,32),32) }
+  if ($istok(%mega.autounban.channels,$1,32) == $true) { set %mega.autounban.channels $deltok(%mega.autounban.channels,$findtok(%mega.autounban.channels,$1,1,32),32) }
+  if ($istok(%mega.blacklist.channels,$1,32) == $true) { set %mega.blacklist.channels $deltok(%mega.blacklist.channels,$findtok(%mega.blacklist.channels,$1,1,32),32) }
+  if ($istok(%mega.nonsense.channels,$1,32) == $true) { set %mega.nonsense.channels $deltok(%mega.nonsense.channels,$findtok(%mega.nonsense.channels,$1,1,32),32) }
+  if ($istok(%mega.badswear.channels,$1,32) == $true) { set %mega.badswear.channels $deltok(%mega.badswear.channels,$findtok(%mega.badswear.channels,$1,1,32),32) }
+  if ($istok(%mega.swear.channels,$1,32) == $true) { set %mega.swear.channels $deltok(%mega.swear.channels,$findtok(%mega.swear.channels,$1,1,32),32) }
+  if ($istok(%mega.Offnick.channels,$1,32) == $true) { set %mega.Offnick.channels $deltok(%mega.Offnick.channels,$findtok(%mega.Offnick.channels,$1,1,32),32) }
+  if ($istok(%mega.caps.channels,$1,32) == $true) { set %mega.caps.channels $deltok(%mega.caps.channels,$findtok(%mega.caps.channels,$1,1,32),32) }
+  if ($istok(%mega.repeat.channels,$1,32) == $true) { set %mega.repeat.channels $deltok(%mega.repeat.channels,$findtok(%mega.repeat.channels,$1,1,32),32) }
+  if ($istok(%mega.tflood.channels,$1,32) == $true) { set %mega.tflood.channels $deltok(%mega.tflood.channels,$findtok(%mega.tflood.channels,$1,1,32),32) }
+  if ($istok(%mega.length.channels,$1,32) == $true) { set %mega.length.channels $deltok(%mega.length.channels,$findtok(%mega.length.channels,$1,1,32),32) }
+  if ($istok(%mega.chanads.channels,$1,32) == $true) { set %mega.chanads.channels $deltok(%mega.chanads.channels,$findtok(%mega.chanads.channels,$1,1,32),32) }
+  if ($istok(%mega.webads.channels,$1,32) == $true) { set %mega.webads.channels $deltok(%mega.webads.channels,$findtok(%mega.webads.channels,$1,1,32),32) }
+  if ($istok(%mega.trojan.channels,$1,32) == $true) { set %mega.trojan.channels $deltok(%mega.trojan.channels,$findtok(%mega.trojan.channels,$1,1,32),32) }
+  if ($istok(%mega.lagg.channels,$1,32) == $true) { set %mega.lagg.channels $deltok(%mega.lagg.channels,$findtok(%mega.lagg.channels,$1,1,32),32) }
+  if ($istok(%mega.invite.channels,$1,32) == $true) { set %mega.invite.channels $deltok(%mega.invite.channels,$findtok(%mega.invite.channels,$1,1,32),32) }
+  if ($istok(%mega.tricks.channels,$1,32) == $true) { set %mega.tricks.channels $deltok(%mega.tricks.channels,$findtok(%mega.tricks.channels,$1,1,32),32) }
+  if ($istok(%mega.jflood.channels,$1,32) == $true) { set %mega.jflood.channels $deltok(%mega.jflood.channels,$findtok(%mega.jflood.channels,$1,1,32),32) }
+  if ($istok(%mega.pvtcads.channels,$1,32) == $true) { set %mega.pvtcads.channels $deltok(%mega.pvtcads.channels,$findtok(%mega.pvtcads.channels,$1,1,32),32) }
+  if ($istok(%mega.pvtwads.channels,$1,32) == $true) { set %mega.pvtwads.channels $deltok(%mega.pvtwads.channels,$findtok(%mega.pvtwads.channels,$1,1,32),32) }
+  if ($istok(%mega.pvtmsp.channels,$1,32) == $true) { set %mega.pvtmsp.channels $deltok(%mega.pvtmsp.channels,$findtok(%mega.pvtmsp.channels,$1,1,32),32) }
+  if ($istok(%mega.decode.channels,$1,32) == $true) { set %mega.decode.channels $deltok(%mega.decode.channels,$findtok(%mega.decode.channels,$1,1,32),32) }
+  if ($istok(%mega.vworm.channels,$1,32) == $true) { set %mega.vworm.channels $deltok(%mega.vworm.channels,$findtok(%mega.vworm.channels,$1,1,32),32) }
+  if ($istok(%mega.exflood.channels,$1,32) == $true) { set %mega.exflood.channels $deltok(%mega.exflood.channels,$findtok(%mega.exflood.channels,$1,1,32),32) }
+  if ($istok(%mega.bforce.channels,$1,32) == $true) { set %mega.bforce.channels $deltok(%mega.bforce.channels,$findtok(%mega.bforce.channels,$1,1,32),32) }
+  if ($istok(%mega.botnet.channels,$1,32) == $true) { set %mega.botnet.channels $deltok(%mega.botnet.channels,$findtok(%mega.botnet.channels,$1,1,32),32) }
+  if ($istok(%mega.violators.channels,$1,32) == $true) { set %mega.violators.channels $deltok(%mega.violators.channels,$findtok(%mega.violators.channels,$1,1,32),32) }
+  if ($istok(%mega.nflood.channels,$1,32) == $true) { set %mega.nflood.channels $deltok(%mega.nflood.channels,$findtok(%mega.nflood.channels,$1,1,32),32) }
+  if ($istok(%mega.clones.channels,$1,32) == $true) { set %mega.clones.channels $deltok(%mega.clones.channels,$findtok(%mega.clones.channels,$1,1,32),32) }
+  unset %* [ $+ [ $1 ] ]
+}
+
+dialog rave.autokicks {
+  title "RAVE v4.01 Autokicks Setup"
+  size -1 -1 144 179
+  option dbu
+  icon icon\skull.ico, 0
+  tab " 1 ", 2, 2 0 140 163
+  list 1, 9 45 80 111, tab 2 sort size
+  text "Add the Channels you want monitored.", 3, 30 26 103 14, tab 2
+  box "Channels", 4, 5 15 135 146, tab 2
+  button "Add..", 5, 96 49 37 12, tab 2
+  button "Remove", 6, 96 64 37 12, tab 2
+  box "", 7, 92 43 45 36, tab 2
+  button "Settings..", 8, 96 87 37 12, tab 2
+  box "", 9, 92 81 45 21, tab 2
+  icon 10, 9 24 17 16, icon\PNP.ico, 0, tab 2
+  box "AutoKicks", 29, 92 114 45 42, tab 2
+  button "ON", 30, 96 132 37 10, tab 2
+  button "OFF", 31, 96 143 37 10, tab 2
+  text "Status:", 32, 99 122 18 8, tab 2
+  text "OFF", 33, 118 122 12 8, tab 2
+  tab " 2 ", 14
+  box "Triggers", 16, 5 15 135 146, tab 14
+  box "Bad Swear", 17, 8 23 129 44, tab 14
+  box "Unallowed Word(s)", 18, 8 68 129 44, tab 14
+  edit "", 19, 12 31 90 32, tab 14 multi return vsbar
+  button "Save", 20, 104 51 30 12, tab 14
+  button "Clear", 21, 104 38 30 12, tab 14
+  edit "", 22, 12 76 90 32, tab 14 multi return vsbar
+  button "Save", 23, 104 96 30 12, tab 14
+  button "Clear", 24, 104 83 30 12, tab 14
+  box "Offensive Nick / Ident", 25, 8 113 129 44, tab 14
+  edit "", 26, 12 121 90 32, tab 14 multi vsbar
+  button "Save", 27, 104 141 30 12, tab 14
+  button "Clear", 28, 104 128 30 12, tab 14
+  tab " 3 ", 15
+  box "Kick Messages", 34, 5 15 135 146, tab 15
+  text "Bad Swear:", 35, 8 24 29 8, tab 15
+  edit "", 36, 10 31 124 10, tab 15 autohs
+  text "Unallowed Word(s):", 37, 8 43 48 8, tab 15
+  edit "", 38, 10 50 124 10, tab 15 autohs
+  text "Offensive Nick / Ident:", 39, 8 62 57 8, tab 15
+  edit "", 40, 10 69 124 10, tab 15 autohs
+  text "Text Repeats:", 41, 8 81 38 8, tab 15
+  edit "", 42, 10 88 124 10, tab 15 autohs
+  text "Text Length:", 43, 8 100 35 8, tab 15
+  edit "", 44, 10 107 124 10, tab 15 autohs
+  text "Text Flood:", 45, 8 119 31 8, tab 15
+  edit "", 46, 10 126 124 10, tab 15 autohs
+  text "Excessive Caps:", 47, 8 138 41 8, tab 15
+  edit "", 48, 10 145 124 10, tab 15 autohs
+  tab " 4 ", 49
+  box "Kick Messages", 50, 5 15 135 146, tab 49
+  text "Public Channel Ads:", 51, 8 24 48 8, tab 49
+  edit "", 52, 10 31 124 10, tab 49 autohs
+  text "Public Website Ads:", 53, 8 43 53 8, tab 49
+  edit "", 54, 10 50 124 10, tab 49 autohs
+  text "Blocked Filesends:", 55, 8 62 45 8, tab 49
+  edit "", 56, 10 69 124 10, tab 49 autohs
+  text "CTCP Exploits:", 57, 8 81 37 8, tab 49
+  edit "", 58, 10 88 124 10, tab 49 autohs
+  text "Join-Part Flood:", 59, 8 100 42 8, tab 49
+  edit "", 60, 10 107 124 10, tab 49 autohs
+  text "Lame Tricks:", 61, 8 119 31 8, tab 49
+  edit "", 62, 10 126 124 10, tab 49 autohs
+  text "Excessive Clones:", 63, 8 138 46 8, tab 49
+  edit "", 64, 10 145 124 10, tab 49 autohs
+  tab " 5 ", 65
+  box "Kick Messages", 66, 5 15 135 146, tab 65
+  text "Private Channel Ads:", 67, 8 24 53 8, tab 65
+  edit "", 68, 10 31 124 10, tab 65 autohs
+  text "Private Website Ads:", 69, 8 43 53 8, tab 65
+  edit "", 70, 10 50 124 10, tab 65 autohs
+  text "Private Message Spam:", 71, 8 62 58 8, tab 65
+  edit "", 72, 10 69 124 10, tab 65 autohs
+  text "$decode Virus Infected:", 73, 8 81 59 8, tab 65
+  edit "", 74, 10 88 124 10, tab 65 autohs
+  text "CS Invite Kick:", 75, 8 100 37 8, tab 65
+  edit "", 76, 10 107 124 10, tab 65 autohs
+  text "Nick Flood:", 77, 8 119 30 8, tab 65
+  edit "", 78, 10 126 124 10, tab 65 autohs
+  text "Trojan / Virus / Worm Infected:", 79, 8 138 77 8, tab 65
+  edit "", 80, 10 145 124 10, tab 65 autohs
+  button "OK", 11, 66 166 37 12, ok
+  button "Cancel", 12, 105 166 37 12, cancel
+
+  text "acronix ® 2015", 13, 3 170 51 8
+}
+
+alias rave.autokick.control {
+  if ($dialog(rave.autokicks) == $null) { dialog -m rave.autokicks rave.autokicks }
+  if ($gettok(%mega.badswear.trigger,1,32) == $null) { did -b rave.autokicks 21 }
+  if ($gettok(%mega.swear.trigger,1,32) == $null) { did -b rave.autokicks 24 }
+  if ($gettok(%badnick,1,32) == $null) { did -b rave.autokicks 28 }
+  did -o rave.autokicks 33 1 %mega.all.autokicks
+  did -o rave.autokicks 19 1 %mega.badswear.trigger
+  did -o rave.autokicks 22 1 %mega.swear.trigger
+  did -o rave.autokicks 26 1 %badnick
+  did -o rave.autokicks 36 1 %bswearkmsg
+  did -o rave.autokicks 38 1 %swearkmsg
+  did -o rave.autokicks 40 1 %offnickmsg
+  did -o rave.autokicks 42 1 %repeatkmsg
+  did -o rave.autokicks 44 1 %lengthkmsg
+  did -o rave.autokicks 46 1 %floodkmsg
+  did -o rave.autokicks 48 1 %capskmsg
+  did -o rave.autokicks 52 1 %massadskmsg
+  did -o rave.autokicks 54 1 %webadskmsg
+  did -o rave.autokicks 56 1 %trojanvskmsg
+  did -o rave.autokicks 58 1 %ctcpexkmsg
+  did -o rave.autokicks 60 1 %jpfloodkmsg
+  did -o rave.autokicks 62 1 %trickskmsg
+  did -o rave.autokicks 64 1 %excloneskmsg
+  did -o rave.autokicks 68 1 %privadskickmsg
+  did -o rave.autokicks 70 1 %webkickmsg
+  did -o rave.autokicks 72 1 %msgspamkick
+  did -o rave.autokicks 74 1 %wormkickmsg
+  did -o rave.autokicks 76 1 %csinvitekmsg
+  did -o rave.autokicks 78 1 %nickfloodkmsg
+  did -o rave.autokicks 80 1 %aplorekmsg
+  did -b rave.autokicks 20,23,27
+  ak.refreshlist
+}
+
+on *:dialog:rave.autokicks:sclick:11:{
+  set %bswearkmsg $did(36,1)
+  set %swearkmsg $did(38,1)
+  set %offnickmsg $did(40,1)
+  set %repeatkmsg $did(42,1)
+  set %lengthkmsg $did(44,1)
+  set %floodkmsg $did(46,1)
+  set %capskmsg $did(48,1)
+  set %massadskmsg $did(52,1)
+  set %webadskmsg $did(54,1)
+  set %trojanvskmsg $did(56,1)
+  set %ctcpexkmsg $did(58,1)
+  set %jpfloodkmsg $did(60,1)
+  set %trickskmsg $did(62,1)
+  set %excloneskmsg $did(64,1)
+  set %privadskickmsg $did(68,1)
+  set %webkickmsg $did(70,1)
+  set %msgspamkick $did(72,1)
+  set %wormkickmsg $did(74,1)
+  set %csinvitekmsg $did(76,1)
+  set %nickfloodkmsg $did(78,1)
+  set %aplorekmsg $did(80,1)
+  mega.kmsg.check
+  check.bold bswearkmsg %bswearkmsg
+  check.bold swearkmsg %swearkmsg
+  check.bold offnickmsg %offnickmsg 
+  check.bold repeatkmsg %repeatkmsg 
+  check.bold lengthkmsg %lengthkmsg 
+  check.bold floodkmsg %floodkmsg 
+  check.bold capskmsg %capskmsg 
+  check.bold massadskmsg %massadskmsg 
+  check.bold webadskmsg %webadskmsg 
+  check.bold trojanvskmsg %trojanvskmsg 
+  check.bold ctcpexkmsg %ctcpexkmsg
+  check.bold jpfloodkmsg %jpfloodkmsg 
+  check.bold trickskmsg %trickskmsg 
+  check.bold excloneskmsg %excloneskmsg 
+  check.bold privadskickmsg %privadskickmsg 
+  check.bold webkickmsg %webkickmsg 
+  check.bold msgspamkick %msgspamkick 
+  check.bold wormkickmsg %wormkickmsg 
+  check.bold csinvitekmsg %csinvitekmsg 
+  check.bold nickfloodkmsg %nickfloodkmsg 
+  check.bold aplorekmsg %aplorekmsg 
+  check.undr bswearkmsg %bswearkmsg
+  check.undr swearkmsg %swearkmsg
+  check.undr offnickmsg %offnickmsg 
+  check.undr repeatkmsg %repeatkmsg 
+  check.undr lengthkmsg %lengthkmsg 
+  check.undr floodkmsg %floodkmsg 
+  check.undr capskmsg %capskmsg 
+  check.undr massadskmsg %massadskmsg 
+  check.undr webadskmsg %webadskmsg 
+  check.undr trojanvskmsg %trojanvskmsg 
+  check.undr ctcpexkmsg %ctcpexkmsg
+  check.undr jpfloodkmsg %jpfloodkmsg 
+  check.undr trickskmsg %trickskmsg 
+  check.undr excloneskmsg %excloneskmsg 
+  check.undr privadskickmsg %privadskickmsg 
+  check.undr webkickmsg %webkickmsg 
+  check.undr msgspamkick %msgspamkick 
+  check.undr wormkickmsg %wormkickmsg 
+  check.undr csinvitekmsg %csinvitekmsg 
+  check.undr nickfloodkmsg %nickfloodkmsg 
+  check.undr aplorekmsg %aplorekmsg
+  ak.autojoin.check
+}
+
+alias check.bold {
+  if ($chr(2) isin $2-) {
+    set %loop.bold 1
+    :loop
+    if ($count($2-,$chr(2)) == %loop.bold) {
+      set % [ $+ [ $1 ] ] % [ $+ [ $1 ] ] $+ $chr(2)
+      goto done
+    }
+    if (%loop.bold >= 100) { goto done }
+    inc %loop.bold 2
+    goto loop
+  }
+  :done
+}
+
+alias check.undr {
+  if ($chr(31) isin $2-) {
+    set %loop.undr 1
+    :loop
+    if ($count($2-,$chr(31)) == %loop.undr) {
+      set % [ $+ [ $1 ] ] % [ $+ [ $1 ] ] $+ $chr(31)
+      goto done
+    }
+    if (%loop.undr >= 100) { goto done }
+    inc %loop.undr 2
+    goto loop
+  }
+  :done
+}
+
+alias check.color {
+  if ($chr(3) isin $2-) {
+    set % [ $+ [ $1 ] ] % [ $+ [ $1 ] ] $+ $chr(3)
+  }
+}
+
+alias remove.non.alpha {
+  set %alpha.c 33
+  :loop
+  set % [ $+ [ $1 ] ] $remove(% [ $+ [ $1 ] ],$chr(%alpha.c))
+  if (%alpha.c == 64) { set %alpha.c 91 | goto loop }
+
+  if (%alpha.c == 96) { set %alpha.c 123 | goto loop }
+  if (%alpha.c >= 126) { goto done }
+
+  inc %alpha.c 1
+  goto loop
+  :done
+}
+
+alias ak.autojoin.check {
+  set %mega.acheck.count 0
+  while (%mega.acheck.count < $numtok(%mega.mch,32)) {
+    inc %mega.acheck.count
+    if (($istok(%mega.autojoin.channels,$gettok(%mega.mch,%mega.acheck.count,32),32) == $true) && ($server != $null) && ($me !ison $gettok(%mega.mch,%mega.acheck.count,32))) { .join $gettok(%mega.mch,%mega.acheck.count,32) }
+  }
+}
+
+on *:dialog:rave.autokicks:edit:19:{ did -e rave.autokicks 20,21 }
+on *:dialog:rave.autokicks:edit:22:{ did -e rave.autokicks 23,24 }
+on *:dialog:rave.autokicks:edit:26:{ did -e rave.autokicks 27,28 }
+
+on *:dialog:rave.autokicks:sclick:1:{
+  if ($did(rave.autokicks,1,$did(rave.autokicks,1).sel).text != $null) {
+    did -e rave.autokicks 6,8
+
+
+  }
+}
+
+on *:dialog:rave.autokicks:sclick:5:{
+
+  ak.addchan $$?="Enter Channel Name:"
+  ak.refreshlist
+}
+
+on *:dialog:rave.autokicks:sclick:6:{
+  if ($did(rave.autokicks,1,$did(rave.autokicks,1).sel).text == $null) {
+    .echo -q $input(Please select a channel from the list.,68,No Channel Selected)
+    return
+  }
+  ak.delchan $did(rave.autokicks,1,$did(rave.autokicks,1).sel).text
+  ak.refreshlist
+}
+
+on *:dialog:rave.autokicks:sclick:8:{
+  if ($did(rave.autokicks,1,$did(rave.autokicks,1).sel).text == $null) {
+    .echo -q $input(Please select a channel from the list.,68,No Channel Selected)
+    return
+  }
+  ak.settings $did(rave.autokicks,1,$did(rave.autokicks,1).sel).text
+}
+
+on *:dialog:rave.autokicks:sclick:30:{ .F6 }
+on *:dialog:rave.autokicks:sclick:31:{ .F7 }
+
+;----- Tab 2 (Triggers) -----
+on *:dialog:rave.autokicks:sclick:20:{
+  unset %mega.badswear.trigger
+  set %ak.tc 0
+  while (%ak.tc < 50) {
+    inc %ak.tc 1
+    set %mega.badswear.trigger %mega.badswear.trigger $did(19,%ak.tc)
+  }
+  echo -at 14* [[ Bad Swear ] Trigger Words: %mega.badswear.trigger
+  if ($gettok(%mega.badswear.trigger,1,32) == $null) { did -b rave.autokicks 21 }
+  did -b rave.autokicks 20
+}
+
+on *:dialog:rave.autokicks:sclick:21:{
+  set %mega.clear $input(Are you sure you want to clear the list?,y,Bad Swear Trigger(s))
+  if (%mega.clear == $true) {
+    unset %mega.badswear.trigger
+    did -r rave.autokicks 19
+    did -o rave.autokicks 19 1 %mega.badswear.trigger
+    did -b rave.autokicks 21
+    did -b rave.autokicks 20
+  }
+  unset %mega.clear
+}
+
+on *:dialog:rave.autokicks:sclick:23:{
+  unset %mega.swear.trigger
+  set %ak.tc 0
+  while (%ak.tc < 50) {
+    inc %ak.tc 1
+    set %mega.swear.trigger %mega.swear.trigger $did(22,%ak.tc)
+  }
+  echo -at 14* [[ Unallowed Word(s) ] Trigger(s): %mega.swear.trigger
+  if ($gettok(%mega.swear.trigger,1,32) == $null) { did -b rave.autokicks 24 }
+  did -b rave.autokicks 23
+}
+
+on *:dialog:rave.autokicks:sclick:24:{
+  set %mega.clear $input(Are you sure you want to clear the list?,y,Unallowed Word(s) Trigger)
+  if (%mega.clear == $true) {
+    unset %mega.swear.trigger
+    did -r rave.autokicks 22
+    did -o rave.autokicks 22 1 %mega.swear.trigger
+    did -b rave.autokicks 24
+    did -b rave.autokicks 23
+  }
+  unset %mega.clear
+}
+
+on *:dialog:rave.autokicks:sclick:27:{
+  unset %badnick
+  set %ak.tc 0
+  while (%ak.tc < 50) {
+    inc %ak.tc 1
+    set %badnick %badnick $did(26,%ak.tc)
+  }
+  echo -at 14* [[ Offensive Nick / Ident ] Trigger(s): %badnick
+  if ($gettok(%badnick,1,32) == $null) { did -b rave.autokicks 28 }
+  did -b rave.autokicks 27
+}
+
+on *:dialog:rave.autokicks:sclick:28:{
+  set %mega.clear $input(Are you sure you want to clear the list?,y,Offensive Nick / Ident Trigger(s))
+  if (%mega.clear == $true) {
+    unset %badnick
+    did -r rave.autokicks 26
+    did -o rave.autokicks 26 1 %badnick
+    did -b rave.autokicks 28
+    did -b rave.autokicks 27
+  }
+  unset %mega.clear
+}
+
+alias ak.addchan {
+  if ($left($1,1) == $null) {
+    .echo -q $input(Please enter a channel name.,68,Error)
+    halt
+  }
+  if ($left($1,1) != $chr(35)) {
+    if ($chr(44) !isin $1) {
+      if ($istok(%mega.mch,$chr(35) $+ $1,32) == $true) { .echo -q $input(Channel already exists!,68,Error) | halt }
+      set %mega.mch %mega.mch $chr(35) $+ $1
+      set %chan.set.def $chr(35) $+ $1
+    }
+    goto done
+  }
+  if ($left($1,1) == $chr(35)) {
+    if ($chr(44) !isin $1) {
+      if ($istok(%mega.mch,$1,32) == $true) { .echo -q $input(Channel already exists!,68,Error) | halt }
+      set %mega.mch %mega.mch $1
+      set %chan.set.def $1
+    }
+    goto done
+  }
+  .echo -q $input(Please enter a valid channel name.,68,Error)
+  halt
+  :done
+  set %set.default.pars $input(Would you like to use the default $crlf $+ protection settings for %chan.set.def $+ ?,y, %chan.set.def)
+  ak.set.defaults %chan.set.def
+  unset %chan.set.def
+  :end
+}
+
+alias ak.refreshlist {
+  did -r rave.autokicks 1
+  set %mega.mch.count 0
+  while (%mega.mch.count < $numtok(%mega.mch,32)) {
+
+    inc %mega.mch.count
+    did -a rave.autokicks 1 $gettok(%mega.mch,%mega.mch.count,32))
+  }
+}
+
+alias ak.set.defaults {
+  if (%mega.badswear.time. [ $+ [ $1 ] ] == $null) { set %mega.badswear.time. [ $+ [ $1 ] ] 1800 | set %display.mega.badswear.time. [ $+ [ $1 ] ] 30 }
+  if (%mega.swear.time. [ $+ [ $1 ] ] == $null) { set %mega.swear.time. [ $+ [ $1 ] ] 600 | set %display.mega.swear.time. [ $+ [ $1 ] ] 10 }
+  if (%mega.repeat.trigger. [ $+ [ $1 ] ] == $null) { set %mega.repeat.trigger. [ $+ [ $1 ] ] 4 }
+  if (%mega.repeat.time. [ $+ [ $1 ] ] == $null) { set %mega.repeat.time. [ $+ [ $1 ] ] 300 | set %display.mega.repeat.time. [ $+ [ $1 ] ] 5 }
+  if (%mega.caps.time. [ $+ [ $1 ] ] == $null) { set %mega.caps.time. [ $+ [ $1 ] ] 180 | set %display.mega.caps.time. [ $+ [ $1 ] ] 3 }
+  if (%mega.invite.time. [ $+ [ $1 ] ] == $null) { set %mega.invite.time. [ $+ [ $1 ] ] 900 | set %display.mega.invite.time. [ $+ [ $1 ] ] 15 }
+  if (%mega.length.trigger. [ $+ [ $1 ] ] == $null) { set %mega.length.trigger. [ $+ [ $1 ] ] 300 }
+  if (%mega.length.time. [ $+ [ $1 ] ] == $null) { set %mega.length.time. [ $+ [ $1 ] ] 600 | set %display.mega.length.time. [ $+ [ $1 ] ] 10 }
+  if (%mega.tflood.trigger. [ $+ [ $1 ] ] == $null) { set %mega.tflood.trigger. [ $+ [ $1 ] ] 7 }
+  if (%mega.tflood.time. [ $+ [ $1 ] ] == $null) { set %mega.tflood.time. [ $+ [ $1 ] ] 300 | set %display.mega.tflood.time. [ $+ [ $1 ] ] 5 }
+  if (%mega.nflood.trigger. [ $+ [ $1 ] ] == $null) { set %mega.nflood.trigger. [ $+ [ $1 ] ] 5 }
+  if (%mega.nflood.seconds. [ $+ [ $1 ] ] == $null) { set %mega.nflood.seconds. [ $+ [ $1 ] ] 20 }
+  if (%mega.nflood.time. [ $+ [ $1 ] ] == $null) { set %mega.nflood.time. [ $+ [ $1 ] ] 300 | set %display.mega.nflood.time. [ $+ [ $1 ] ] 5 }
+  if (%mega.chanads.time. [ $+ [ $1 ] ] == $null) { set %mega.chanads.time. [ $+ [ $1 ] ] 900 | set %display.mega.chanads.time. [ $+ [ $1 ] ] 15 }
+  if (%mega.webads.time. [ $+ [ $1 ] ] == $null) { set %mega.webads.time. [ $+ [ $1 ] ] 900 | set %display.mega.webads.time. [ $+ [ $1 ] ] 15 }
+  if (%mega.jflood.time. [ $+ [ $1 ] ] == $null) { set %mega.jflood.time. [ $+ [ $1 ] ] 600 | set %display.mega.jflood.time. [ $+ [ $1 ] ] 10 }
+  if (%mega.clones.time. [ $+ [ $1 ] ] == $null) { set %mega.clones.time. [ $+ [ $1 ] ] 300 | set %display.mega.clones.time. [ $+ [ $1 ] ] 5 }
+  if (%cloneallow. [ $+ [ $1 ] ] == $null) { set %cloneallow. [ $+ [ $1 ] ] 4 }
+  if (%mega.filter.clones. [ $+ [ $1 ] ] == $null) { set %mega.filter.clones. [ $+ [ $1 ] ] 7 }
+  if (%mega.trojan.time. [ $+ [ $1 ] ] == $null) { set %mega.trojan.time. [ $+ [ $1 ] ] 59940 | set %display.mega.trojan.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.lagg.time. [ $+ [ $1 ] ] == $null) { set %mega.lagg.time. [ $+ [ $1 ] ] 59940 | set %display.mega.lagg.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.tricks.time. [ $+ [ $1 ] ] == $null) { set %mega.tricks.time. [ $+ [ $1 ] ] 1800 | set %display.mega.tricks.time. [ $+ [ $1 ] ] 30 }
+  if (%mega.pvtcads.time. [ $+ [ $1 ] ] == $null) { set %mega.pvtcads.time. [ $+ [ $1 ] ] 59940 | set %display.mega.pvtcads.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.pvtmsp.time. [ $+ [ $1 ] ] == $null) { set %mega.pvtmsp.time. [ $+ [ $1 ] ] 59940 | set %display.mega.pvtmsp.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.pvtwads.time. [ $+ [ $1 ] ] == $null) { set %mega.pvtwads.time. [ $+ [ $1 ] ] 59940 | set %display.mega.pvtwads.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.decode.time. [ $+ [ $1 ] ] == $null) { set %mega.decode.time. [ $+ [ $1 ] ] 900 | set %display.mega.decode.time. [ $+ [ $1 ] ] 15 }
+  if (%mega.exflood.time. [ $+ [ $1 ] ] == $null) { set %mega.exflood.time. [ $+ [ $1 ] ] 59940 | set %display.mega.exflood.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.violators.time. [ $+ [ $1 ] ] == $null) { set %mega.violators.time. [ $+ [ $1 ] ] 59940 | set %display.mega.violators.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.vworm.time. [ $+ [ $1 ] ] == $null) { set %mega.vworm.time. [ $+ [ $1 ] ] 59940 | set %display.mega.vworm.time. [ $+ [ $1 ] ] 999 }
+  if (%mega.lockdown.time. [ $+ [ $1 ] ] == $null) { set %mega.lockdown.time. [ $+ [ $1 ] ] 30 }
+  if (%set.default.pars == $false) { goto done }
+  if ($istok(%mega.autounban.channels,$1,32) == $false) { set %mega.autounban.channels %mega.autounban.channels $1 }
+  if ($istok(%mega.blacklist.channels,$1,32) == $false) { set %mega.blacklist.channels %mega.blacklist.channels $1 }
+  if ($istok(%mega.nonsense.channels,$1,32) == $false) { set %mega.nonsense.channels %mega.nonsense.channels $1 }
+  if ($istok(%mega.badswear.channels,$1,32) == $false) { set %mega.badswear.channels %mega.badswear.channels $1 }
+  if ($istok(%mega.swear.channels,$1,32) == $false) { set %mega.swear.channels %mega.swear.channels $1 }
+  if ($istok(%mega.Offnick.channels,$1,32) == $false) { set %mega.Offnick.channels %mega.Offnick.channels $1 }
+  if ($istok(%mega.caps.channels,$1,32) == $false) { set %mega.caps.channels %mega.caps.channels $1 }
+  if ($istok(%mega.repeat.channels,$1,32) == $false) { set %mega.repeat.channels %mega.repeat.channels $1 }
+  if ($istok(%mega.tflood.channels,$1,32) == $false) { set %mega.tflood.channels %mega.tflood.channels $1 }
+  if ($istok(%mega.length.channels,$1,32) == $false) { set %mega.length.channels %mega.length.channels $1 }
+  if ($istok(%mega.chanads.channels,$1,32) == $false) { set %mega.chanads.channels %mega.chanads.channels $1 }
+  if ($istok(%mega.webads.channels,$1,32) == $false) { set %mega.webads.channels %mega.webads.channels $1 }
+  if ($istok(%mega.trojan.channels,$1,32) == $false) { set %mega.trojan.channels %mega.trojan.channels $1 }
+  if ($istok(%mega.lagg.channels,$1,32) == $false) { set %mega.lagg.channels %mega.lagg.channels $1 }
+  if ($istok(%mega.invite.channels,$1,32) == $false) { set %mega.invite.channels %mega.invite.channels $1 }
+  if ($istok(%mega.tricks.channels,$1,32) == $false) { set %mega.tricks.channels %mega.tricks.channels $1 }
+  if ($istok(%mega.jflood.channels,$1,32) == $false) { set %mega.jflood.channels %mega.jflood.channels $1 }
+  if ($istok(%mega.pvtcads.channels,$1,32) == $false) { set %mega.pvtcads.channels %mega.pvtcads.channels $1 }
+  if ($istok(%mega.pvtwads.channels,$1,32) == $false) { set %mega.pvtwads.channels %mega.pvtwads.channels $1 }
+  if ($istok(%mega.pvtmsp.channels,$1,32) == $false) { set %mega.pvtmsp.channels %mega.pvtmsp.channels $1 }
+  if ($istok(%mega.decode.channels,$1,32) == $false) { set %mega.decode.channels %mega.decode.channels $1 }
+  if ($istok(%mega.vworm.channels,$1,32) == $false) { set %mega.vworm.channels %mega.vworm.channels $1 }
+  if ($istok(%mega.exflood.channels,$1,32) == $false) { set %mega.exflood.channels %mega.exflood.channels $1 }
+  if ($istok(%mega.bforce.channels,$1,32) == $false) { set %mega.bforce.channels %mega.bforce.channels $1 }
+  if ($istok(%mega.botnet.channels,$1,32) == $false) { set %mega.botnet.channels %mega.botnet.channels $1 }
+  if ($istok(%mega.nflood.channels,$1,32) == $false) { set %mega.nflood.channels %mega.nflood.channels $1 }
+  if ($istok(%mega.violators.channels,$1,32) == $false) { set %mega.violators.channels %mega.violators.channels $1 }
+  :done
+  unset %set.default.pars
+  .timer 1 0.5 ak.settings $1
+}
+
+alias ak.update.settings {
+  if ($did(5).state == 1) { if ($istok(%mega.autojoin.channels,$1,32) == $false) { set %mega.autojoin.channels %mega.autojoin.channels $1 } }
+  else { if ($istok(%mega.autojoin.channels,$1,32) == $true) { set %mega.autojoin.channels $deltok(%mega.autojoin.channels,$findtok(%mega.autojoin.channels,$1,1,32),32) } }
+  if ($did(6).state == 1) { if ($istok(%mega.autounban.channels,$1,32) == $false) { set %mega.autounban.channels %mega.autounban.channels $1 } }
+  else { if ($istok(%mega.autounban.channels,$1,32) == $true) { set %mega.autounban.channels $deltok(%mega.autounban.channels,$findtok(%mega.autounban.channels,$1,1,32),32) } }
+  if ($did(8).state == 1) { if ($istok(%mega.blacklist.channels,$1,32) == $false) { set %mega.blacklist.channels %mega.blacklist.channels $1 } }
+  else { if ($istok(%mega.blacklist.channels,$1,32) == $true) { set %mega.blacklist.channels $deltok(%mega.blacklist.channels,$findtok(%mega.blacklist.channels,$1,1,32),32) } }
+  if ($did(9).state == 1) { if ($istok(%mega.nonsense.channels,$1,32) == $false) { set %mega.nonsense.channels %mega.nonsense.channels $1 } }
+  else { if ($istok(%mega.nonsense.channels,$1,32) == $true) { set %mega.nonsense.channels $deltok(%mega.nonsense.channels,$findtok(%mega.nonsense.channels,$1,1,32),32) } }
+  if ($did(14).state == 1) { if ($istok(%mega.badswear.channels,$1,32) == $false) { set %mega.badswear.channels %mega.badswear.channels $1 } }
+  else { if ($istok(%mega.badswear.channels,$1,32) == $true) { set %mega.badswear.channels $deltok(%mega.badswear.channels,$findtok(%mega.badswear.channels,$1,1,32),32) } }
+  if ($did(17).state == 1) { if ($istok(%mega.swear.channels,$1,32) == $false) { set %mega.swear.channels %mega.swear.channels $1 } }
+  else { if ($istok(%mega.swear.channels,$1,32) == $true) { set %mega.swear.channels $deltok(%mega.swear.channels,$findtok(%mega.swear.channels,$1,1,32),32) } }
+  if ($did(22).state == 1) { if ($istok(%mega.Offnick.channels,$1,32) == $false) { set %mega.Offnick.channels %mega.Offnick.channels $1 } }
+  else { if ($istok(%mega.Offnick.channels,$1,32) == $true) { set %mega.Offnick.channels $deltok(%mega.Offnick.channels,$findtok(%mega.Offnick.channels,$1,1,32),32) } }
+  if ($did(24).state == 1) { if ($istok(%mega.caps.channels,$1,32) == $false) { set %mega.caps.channels %mega.caps.channels $1 } }
+  else { if ($istok(%mega.caps.channels,$1,32) == $true) { set %mega.caps.channels $deltok(%mega.caps.channels,$findtok(%mega.caps.channels,$1,1,32),32) } }
+  if ($did(29).state == 1) { if ($istok(%mega.repeat.channels,$1,32) == $false) { set %mega.repeat.channels %mega.repeat.channels $1 } }
+  else { if ($istok(%mega.repeat.channels,$1,32) == $true) { set %mega.repeat.channels $deltok(%mega.repeat.channels,$findtok(%mega.repeat.channels,$1,1,32),32) } }
+  if ($did(45).state == 1) { if ($istok(%mega.tflood.channels,$1,32) == $false) { set %mega.tflood.channels %mega.tflood.channels $1 } }
+  else { if ($istok(%mega.tflood.channels,$1,32) == $true) { set %mega.tflood.channels $deltok(%mega.tflood.channels,$findtok(%mega.tflood.channels,$1,1,32),32) } }
+  if ($did(36).state == 1) { if ($istok(%mega.length.channels,$1,32) == $false) { set %mega.length.channels %mega.length.channels $1 } }
+  else { if ($istok(%mega.length.channels,$1,32) == $true) { set %mega.length.channels $deltok(%mega.length.channels,$findtok(%mega.length.channels,$1,1,32),32) } }
+  if ($did(52).state == 1) { if ($istok(%mega.clones.channels,$1,32) == $false) { set %mega.clones.channels %mega.clones.channels $1 } }
+  else { if ($istok(%mega.clones.channels,$1,32) == $true) { set %mega.clones.channels $deltok(%mega.clones.channels,$findtok(%mega.clones.channels,$1,1,32),32) } }
+  if ($did(69).state == 1) { if ($istok(%mega.chanads.channels,$1,32) == $false) { set %mega.chanads.channels %mega.chanads.channels $1 } }
+  else { if ($istok(%mega.chanads.channels,$1,32) == $true) { set %mega.chanads.channels $deltok(%mega.chanads.channels,$findtok(%mega.chanads.channels,$1,1,32),32) } }
+  if ($did(74).state == 1) { if ($istok(%mega.webads.channels,$1,32) == $false) { set %mega.webads.channels %mega.webads.channels $1 } }
+  else { if ($istok(%mega.webads.channels,$1,32) == $true) { set %mega.webads.channels $deltok(%mega.webads.channels,$findtok(%mega.webads.channels,$1,1,32),32) } }
+  if ($did(81).state == 1) { if ($istok(%mega.trojan.channels,$1,32) == $false) { set %mega.trojan.channels %mega.trojan.channels $1 } }
+  else { if ($istok(%mega.trojan.channels,$1,32) == $true) { set %mega.trojan.channels $deltok(%mega.trojan.channels,$findtok(%mega.trojan.channels,$1,1,32),32) } }
+  if ($did(86).state == 1) { if ($istok(%mega.lagg.channels,$1,32) == $false) { set %mega.lagg.channels %mega.lagg.channels $1 } }
+  else { if ($istok(%mega.lagg.channels,$1,32) == $true) { set %mega.lagg.channels $deltok(%mega.lagg.channels,$findtok(%mega.lagg.channels,$1,1,32),32) } }
+  if ($did(91).state == 1) { if ($istok(%mega.tricks.channels,$1,32) == $false) { set %mega.tricks.channels %mega.tricks.channels $1 } }
+  else { if ($istok(%mega.tricks.channels,$1,32) == $true) { set %mega.tricks.channels $deltok(%mega.tricks.channels,$findtok(%mega.tricks.channels,$1,1,32),32) } }
+  if ($did(42).state == 1) { if ($istok(%mega.jflood.channels,$1,32) == $false) { set %mega.jflood.channels %mega.jflood.channels $1 } }
+  else { if ($istok(%mega.jflood.channels,$1,32) == $true) { set %mega.jflood.channels $deltok(%mega.jflood.channels,$findtok(%mega.jflood.channels,$1,1,32),32) } }
+  if ($did(98).state == 1) { if ($istok(%mega.pvtcads.channels,$1,32) == $false) { set %mega.pvtcads.channels %mega.pvtcads.channels $1 } }
+  else { if ($istok(%mega.pvtcads.channels,$1,32) == $true) { set %mega.pvtcads.channels $deltok(%mega.pvtcads.channels,$findtok(%mega.pvtcads.channels,$1,1,32),32) } }
+  if ($did(103).state == 1) { if ($istok(%mega.pvtwads.channels,$1,32) == $false) { set %mega.pvtwads.channels %mega.pvtwads.channels $1 } }
+  else { if ($istok(%mega.pvtwads.channels,$1,32) == $true) { set %mega.pvtwads.channels $deltok(%mega.pvtwads.channels,$findtok(%mega.pvtwads.channels,$1,1,32),32) } }
+  if ($did(108).state == 1) { if ($istok(%mega.pvtmsp.channels,$1,32) == $false) { set %mega.pvtmsp.channels %mega.pvtmsp.channels $1 } }
+  else { if ($istok(%mega.pvtmsp.channels,$1,32) == $true) { set %mega.pvtmsp.channels $deltok(%mega.pvtmsp.channels,$findtok(%mega.pvtmsp.channels,$1,1,32),32) } }
+  if ($did(113).state == 1) { if ($istok(%mega.decode.channels,$1,32) == $false) { set %mega.decode.channels %mega.decode.channels $1 } }
+  else { if ($istok(%mega.decode.channels,$1,32) == $true) { set %mega.decode.channels $deltok(%mega.decode.channels,$findtok(%mega.decode.channels,$1,1,32),32) } }
+  if ($did(118).state == 1) { if ($istok(%mega.vworm.channels,$1,32) == $false) { set %mega.vworm.channels %mega.vworm.channels $1 } }
+  else { if ($istok(%mega.vworm.channels,$1,32) == $true) { set %mega.vworm.channels $deltok(%mega.vworm.channels,$findtok(%mega.vworm.channels,$1,1,32),32) } }
+  if ($did(123).state == 1) { if ($istok(%mega.exflood.channels,$1,32) == $false) { set %mega.exflood.channels %mega.exflood.channels $1 } }
+  else { if ($istok(%mega.exflood.channels,$1,32) == $true) { set %mega.exflood.channels $deltok(%mega.exflood.channels,$findtok(%mega.exflood.channels,$1,1,32),32) } }
+  if ($did(130).state == 1) { if ($istok(%mega.bforce.channels,$1,32) == $false) { set %mega.bforce.channels %mega.bforce.channels $1 } }
+  else { if ($istok(%mega.bforce.channels,$1,32) == $true) { set %mega.bforce.channels $deltok(%mega.bforce.channels,$findtok(%mega.bforce.channels,$1,1,32),32) } }
+  if ($did(138).state == 1) { if ($istok(%mega.botnet.channels,$1,32) == $false) { set %mega.botnet.channels %mega.botnet.channels $1 } }
+  else { if ($istok(%mega.botnet.channels,$1,32) == $true) { set %mega.botnet.channels $deltok(%mega.botnet.channels,$findtok(%mega.botnet.channels,$1,1,32),32) } }
+  if ($did(148).state == 1) { if ($istok(%mega.nflood.channels,$1,32) == $false) { set %mega.nflood.channels %mega.nflood.channels $1 } }
+  else { if ($istok(%mega.nflood.channels,$1,32) == $true) { set %mega.nflood.channels $deltok(%mega.nflood.channels,$findtok(%mega.nflood.channels,$1,1,32),32) } }
+  if ($did(143).state == 1) { if ($istok(%mega.invite.channels,$1,32) == $false) { set %mega.invite.channels %mega.invite.channels $1 } }
+  else { if ($istok(%mega.invite.channels,$1,32) == $true) { set %mega.invite.channels $deltok(%mega.invite.channels,$findtok(%mega.invite.channels,$1,1,32),32) } }
+  if ($did(133).state == 1) { if ($istok(%mega.violators.channels,$1,32) == $false) { set %mega.violators.channels %mega.violators.channels $1 } }
+  else { if ($istok(%mega.violators.channels,$1,32) == $true) { set %mega.violators.channels $deltok(%mega.violators.channels,$findtok(%mega.violators.channels,$1,1,32),32) } }
+  if ($did(16) != $null) {
+    set %mega.badswear.time. [ $+ [ $1 ] ] $did(16) * 60
+    set %display.mega.badswear.time. [ $+ [ $1 ] ] $did(16)
+    did -o rave.channel.settings 16 1 %display.mega.badswear.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.badswear.time. [ $+ [ $1 ] ] 1800
+    set %display.mega.badswear.time. [ $+ [ $1 ] ] 30
+    did -o rave.channel.settings 16 1 %display.mega.badswear.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(20) != $null) {
+    set %mega.swear.time. [ $+ [ $1 ] ] $did(20) * 60
+    set %display.mega.swear.time. [ $+ [ $1 ] ] $did(20)
+    did -o rave.channel.settings 20 1 %display.mega.swear.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.swear.time. [ $+ [ $1 ] ] 600
+    set %display.mega.swear.time. [ $+ [ $1 ] ] 10
+    did -o rave.channel.settings 20 1 %display.mega.swear.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(26) != $null) {
+    set %mega.caps.time. [ $+ [ $1 ] ] $did(26) * 60
+    set %display.mega.caps.time. [ $+ [ $1 ] ] $did(26)
+    did -o rave.channel.settings 26 1 %display.mega.caps.time. [ $+ [ $1 ] ]
+  }
+
+  else { 
+    set %mega.caps.time. [ $+ [ $1 ] ] 180
+    set %display.mega.caps.time. [ $+ [ $1 ] ] 3
+    did -o rave.channel.settings 26 1 %display.mega.caps.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(31) != $null) {
+    set %mega.repeat.trigger. [ $+ [ $1 ] ] $did(31)
+    did -o rave.channel.settings 31 1 %mega.repeat.trigger. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.repeat.trigger. [ $+ [ $1 ] ] 4
+    did -o rave.channel.settings 31 1 %mega.repeat.trigger. [ $+ [ $1 ] ] 
+  }
+  if ($did(34) != $null) {
+    set %mega.repeat.time. [ $+ [ $1 ] ] $did(34) * 60
+    set %display.mega.repeat.time. [ $+ [ $1 ] ] $did(34)
+    did -o rave.channel.settings 34 1 %display.mega.repeat.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.repeat.time. [ $+ [ $1 ] ] 300
+    set %display.mega.repeat.time. [ $+ [ $1 ] ] 5
+    did -o rave.channel.settings 34 1 %display.mega.repeat.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(38) != $null) {
+    set %mega.length.trigger. [ $+ [ $1 ] ] $did(38)
+    did -o rave.channel.settings 38 1 %mega.length.trigger. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.length.trigger. [ $+ [ $1 ] ] 300
+    did -o rave.channel.settings 38 1 %mega.length.trigger. [ $+ [ $1 ] ] 
+  }
+  if ($did(40) != $null) {
+    set %mega.length.time. [ $+ [ $1 ] ] $did(40) * 60
+    set %display.mega.length.time. [ $+ [ $1 ] ] $did(40)
+    did -o rave.channel.settings 40 1 %display.mega.length.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.length.time. [ $+ [ $1 ] ] 600
+    set %display.mega.length.time. [ $+ [ $1 ] ] 10
+    did -o rave.channel.settings 40 1 %display.mega.length.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(47) != $null) {
+    set %mega.tflood.trigger. [ $+ [ $1 ] ] $did(47)
+    did -o rave.channel.settings 47 1 %mega.tflood.trigger. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.tflood.trigger. [ $+ [ $1 ] ] 7
+    did -o rave.channel.settings 47 1 %mega.tflood.trigger. [ $+ [ $1 ] ] 
+  }
+  if ($did(50) != $null) {
+    set %mega.tflood.time. [ $+ [ $1 ] ] $did(50) * 60
+    set %display.mega.tflood.time. [ $+ [ $1 ] ] $did(50)
+    did -o rave.channel.settings 50 1 %display.mega.tflood.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.tflood.time. [ $+ [ $1 ] ]  300
+    set %display.mega.tflood.time. [ $+ [ $1 ] ] 5
+    did -o rave.channel.settings 50 1 %display.mega.tflood.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(54) != $null) {
+    set %cloneallow. [ $+ [ $1 ] ] $did(54)
+    did -o rave.channel.settings 54 1 %cloneallow. [ $+ [ $1 ] ]
+
+  }
+  else { 
+    set %cloneallow. [ $+ [ $1 ] ] 4
+    did -o rave.channel.settings 54 1 %cloneallow. [ $+ [ $1 ] ] 
+  }
+  if ($did(56) != $null) {
+    set %mega.filter.clones. [ $+ [ $1 ] ] $did(56)
+    did -o rave.channel.settings 56 1 %mega.filter.clones. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.filter.clones. [ $+ [ $1 ] ] 7
+    did -o rave.channel.settings 56 1 %mega.filter.clones. [ $+ [ $1 ] ] 
+  }
+  if ($did(58) != $null) {
+    set %mega.clones.time. [ $+ [ $1 ] ] $did(58) * 60
+    set %display.mega.clones.time. [ $+ [ $1 ] ] $did(58)
+    did -o rave.channel.settings 58 1 %display.mega.clones.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.clones.time. [ $+ [ $1 ] ] 300
+    set %display.mega.clones.time. [ $+ [ $1 ] ] 5
+    did -o rave.channel.settings 58 1 %display.mega.clones.time. [ $+ [ $1 ] ]
+  }
+  if ($did(72) != $null) {
+    set %mega.chanads.time. [ $+ [ $1 ] ] $did(72) * 60
+    set %display.mega.chanads.time. [ $+ [ $1 ] ] $did(72)
+    did -o rave.channel.settings 72 1 %display.mega.chanads.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.chanads.time. [ $+ [ $1 ] ]  900
+    set %display.mega.chanads.time. [ $+ [ $1 ] ] 15
+    did -o rave.channel.settings 72 1 %display.mega.chanads.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(77) != $null) {
+    set %mega.webads.time. [ $+ [ $1 ] ] $did(77) * 60
+    set %display.mega.webads.time. [ $+ [ $1 ] ] $did(77)
+    did -o rave.channel.settings 77 1 %display.mega.webads.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.webads.time. [ $+ [ $1 ] ] 900
+    set %display.mega.webads.time. [ $+ [ $1 ] ] 15
+    did -o rave.channel.settings 77 1 %display.mega.webads.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(44) != $null) {
+    set %mega.jflood.time. [ $+ [ $1 ] ] $did(44) * 60
+    set %display.mega.jflood.time. [ $+ [ $1 ] ] $did(44)
+    did -o rave.channel.settings 44 1 %display.mega.jflood.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.jflood.time. [ $+ [ $1 ] ] 600
+    set %display.mega.jflood.time. [ $+ [ $1 ] ] 10
+    did -o rave.channel.settings 44 1 %display.mega.jflood.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(84) != $null) {
+    set %mega.trojan.time. [ $+ [ $1 ] ] $did(84) * 60
+    set %display.mega.trojan.time. [ $+ [ $1 ] ] $did(84)
+    did -o rave.channel.settings 84 1 %display.mega.trojan.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.trojan.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.trojan.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 84 1 %display.mega.trojan.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(89) != $null) {
+    set %mega.lagg.time. [ $+ [ $1 ] ] $did(89) * 60
+    set %display.mega.lagg.time. [ $+ [ $1 ] ] $did(89)
+    did -o rave.channel.settings 89 1 %display.mega.lagg.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.lagg.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.lagg.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 89 1 %display.mega.lagg.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(94) != $null) {
+    set %mega.tricks.time. [ $+ [ $1 ] ] $did(94) * 60
+    set %display.mega.tricks.time. [ $+ [ $1 ] ] $did(94)
+    did -o rave.channel.settings 94 1 %display.mega.tricks.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.tricks.time. [ $+ [ $1 ] ] 1800
+    set %display.mega.tricks.time. [ $+ [ $1 ] ] 30
+    did -o rave.channel.settings 94 1 %display.mega.tricks.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(101) != $null) {
+    set %mega.pvtcads.time. [ $+ [ $1 ] ] $did(101) * 60
+    set %display.mega.pvtcads.time. [ $+ [ $1 ] ] $did(101)
+    did -o rave.channel.settings 101 1 %display.mega.pvtcads.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.pvtcads.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.pvtcads.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 101 1 %display.mega.pvtcads.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(106) != $null) {
+    set %mega.pvtwads.time. [ $+ [ $1 ] ] $did(106) * 60
+    set %display.mega.pvtwads.time. [ $+ [ $1 ] ] $did(106)
+    did -o rave.channel.settings 106 1 %display.mega.pvtwads.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.pvtwads.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.pvtwads.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 106 1 %display.mega.pvtwads.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(111) != $null) {
+    set %mega.pvtmsp.time. [ $+ [ $1 ] ] $did(111) * 60
+    set %display.mega.pvtmsp.time. [ $+ [ $1 ] ] $did(111)
+    did -o rave.channel.settings 111 1 %display.mega.pvtmsp.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.pvtmsp.time. [ $+ [ $1 ] ] 59940 
+    set %display.mega.pvtmsp.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 111 1 %display.mega.pvtmsp.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(116) != $null) {
+    set %mega.decode.time. [ $+ [ $1 ] ] $did(116) * 60
+    set %display.mega.decode.time. [ $+ [ $1 ] ] $did(116)
+    did -o rave.channel.settings 116 1 %display.mega.decode.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.decode.time. [ $+ [ $1 ] ] 900
+    set %display.mega.decode.time. [ $+ [ $1 ] ] 15
+    did -o rave.channel.settings 116 1 %display.mega.decode.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(121) != $null) {
+    set %mega.vworm.time. [ $+ [ $1 ] ] $did(121) * 60
+    set %display.mega.vworm.time. [ $+ [ $1 ] ] $did(121)
+    did -o rave.channel.settings 121 1 %display.mega.vworm.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.vworm.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.vworm.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 121 1 %display.mega.vworm.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(126) != $null) {
+    set %mega.exflood.time. [ $+ [ $1 ] ] $did(126) * 60
+    set %display.mega.exflood.time. [ $+ [ $1 ] ] $did(126)
+    did -o rave.channel.settings 126 1 %display.mega.exflood.time. [ $+ [ $1 ] ]
+  }
+  else { 
+
+    set %mega.exflood.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.exflood.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 126 1 %display.mega.exflood.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(136) != $null) {
+    set %mega.violators.time. [ $+ [ $1 ] ] $did(136) * 60
+    set %display.mega.violators.time. [ $+ [ $1 ] ] $did(136)
+    did -o rave.channel.settings 136 1 %display.mega.violators.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.violators.time. [ $+ [ $1 ] ] 59940
+    set %display.mega.violators.time. [ $+ [ $1 ] ] 999
+    did -o rave.channel.settings 136 1 %display.mega.violators.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(141) != $null) {
+    set %mega.lockdown.time. [ $+ [ $1 ] ] $did(141)
+    did -o rave.channel.settings 141 1 %mega.lockdown.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.lockdown.time. [ $+ [ $1 ] ] 30
+    did -o rave.channel.settings 141 1 %mega.lockdown.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(146) != $null) {
+    set %mega.invite.time. [ $+ [ $1 ] ] $did(146) * 60
+    set %display.mega.invite.time. [ $+ [ $1 ] ] $did(146)
+    did -o rave.channel.settings 146 1 %display.mega.invite.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.invite.time. [ $+ [ $1 ] ] 900
+    set %display.mega.invite.time. [ $+ [ $1 ] ] 15
+    did -o rave.channel.settings 146 1 %display.mega.invite.time. [ $+ [ $1 ] ] 
+  }
+  if ($did(151) != $null) {
+    set %mega.nflood.trigger. [ $+ [ $1 ] ] $did(151)
+    did -o rave.channel.settings 151 1 %mega.nflood.trigger. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.nflood.trigger. [ $+ [ $1 ] ] 5
+    did -o rave.channel.settings 151 1 %mega.nflood.trigger. [ $+ [ $1 ] ] 
+  }
+  if ($did(153) != $null) {
+    set %mega.nflood.seconds. [ $+ [ $1 ] ] $did(153)
+    did -o rave.channel.settings 153 1 %mega.nflood.seconds. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.nflood.seconds. [ $+ [ $1 ] ] 20
+    did -o rave.channel.settings 153 1 %mega.nflood.seconds. [ $+ [ $1 ] ] 
+  }
+  if ($did(156) != $null) {
+    set %mega.nflood.time. [ $+ [ $1 ] ] $did(156) * 60
+    set %display.mega.nflood.time. [ $+ [ $1 ] ] $did(156)
+    did -o rave.channel.settings 156 1 %display.mega.nflood.time. [ $+ [ $1 ] ]
+  }
+  else { 
+    set %mega.nflood.time. [ $+ [ $1 ] ] 300
+    set %display.mega.nflood.time. [ $+ [ $1 ] ] 5
+    did -o rave.channel.settings 156 1 %display.mega.nflood.time. [ $+ [ $1 ] ] 
+  }
+}
+
+on *:dialog:rave.channel.settings:sclick:11:{
+  ak.update.settings %rave.set.channel
+  unset %rave.set.channel
+}
+
+on *:dialog:rave.channel.settings:sclick:12:{ unset %rave.set.channel }
+on *:dialog:rave.channel.settings:sclick:160: {
+  ak.update.settings %rave.set.channel 
+  did -b rave.channel.settings 160
+}
+
+on *:dialog:rave.channel.settings:edit:*:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:5:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:6:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:8:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:9:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:14:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:17:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:22:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:24:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:29:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:36:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:45:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:52:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:69:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:74:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:42:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:81:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:86:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:91:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:98:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:103:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:108:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:113:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:118:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:123:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:130:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:133:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:138:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:143:{ did -e rave.channel.settings 160 }
+on *:dialog:rave.channel.settings:sclick:148:{ did -e rave.channel.settings 160 }
+
+dialog rave.channel.settings {
+  title Settings for [[ %rave.set.channel ]
+  size -1 -1 193 137
+  option dbu
+  icon icon\02.ico, 0
+  tab " 1 ", 1, 2 -1 188 121
+  check "Auto Join Channel", 5, 10 24 56 10, tab 1
+  check "Enable Auto Self Unban", 6, 10 35 70 10, tab 1
+  box "Channel Settings", 4, 5 14 90 37, tab 1
+  box "Add-On Settings", 7, 98 14 90 37, tab 1
+  check "Kick Blacklisted Users", 8, 103 24 65 10, tab 1
+  check "Kick Nonsense Nicks", 9, 103 35 63 10, tab 1
+  box "Protection Settings", 10, 5 52 183 65, tab 1
+  check "Bad Swear", 14, 11 62 48 10, tab 1
+  text "Bantime:", 15, 19 76 22 8, tab 1
+  edit "", 16, 41 75 30 10, tab 1 limit 5
+  check "Unallowed Word(s)", 17, 11 91 67 8, tab 1
+  text "min(s)", 18, 73 76 16 8, tab 1
+  text "Bantime:", 19, 19 104 22 8, tab 1
+  edit "", 20, 41 103 30 10, tab 1 limit 5
+  text "min(s)", 21, 73 104 16 8, tab 1
+  check "Offensive Nick / Ident", 22, 102 62 75 10, tab 1
+  text "Bantime is Permanent", 23, 111 76 53 8, tab 1
+  check "Excessive Caps", 24, 102 91 67 8, tab 1
+  text "Bantime:", 25, 111 104 22 8, tab 1
+  edit "", 26, 133 103 30 10, tab 1 limit 5
+  text "min(s)", 27, 165 104 16 8, tab 1
+  box "", 64, 8 58 86 15, tab 1
+  box "", 65, 8 86 86 15, tab 1
+  box "", 66, 99 58 86 15, tab 1
+
+  box "", 67, 99 86 86 15, tab 1
+  tab " 2 ", 2
+  box "Protection Settings", 28, 5 14 183 103, tab 2
+  check "Text Repeats", 29, 11 27 56 10, tab 2
+  text "Trigger Lines:", 30, 19 41 33 8, tab 2
+  edit "", 31, 52 40 12 10, tab 2 limit 2
+  text "in 10 sec", 32, 66 41 22 8, tab 2
+  text "Bantime:", 33, 19 53 22 8, tab 2
+  edit "", 34, 41 52 30 10, tab 2 limit 5
+  text "min(s)", 35, 73 53 16 8, tab 2
+  check "Text Length", 36, 11 75 54 10, tab 2
+  text "Characters:", 37, 19 89 29 8, tab 2
+  edit "", 38, 48 88 20 10, tab 2 limit 3
+  text "Bantime:", 39, 19 101 22 8, tab 2
+  edit "", 40, 41 100 30 10, tab 2 limit 5
+  text "min(s)", 41, 73 101 16 8, tab 2
+  check "Text Flood", 45, 102 27 50 10, tab 2
+  text "Trigger Lines:", 46, 109 41 33 8, tab 2
+  edit "", 47, 142 40 12 10, tab 2 limit 2
+  text "in 5 sec", 48, 156 41 23 8, tab 2
+  text "Bantime:", 49, 109 53 22 8, tab 2
+  edit "", 50, 131 52 30 10, tab 2 limit 5
+  text "min(s)", 51, 163 53 16 8, tab 2
+  check "Excessive Clones", 52, 102 75 67 10, tab 2
+  text "Allow:", 53, 109 89 15 8, tab 2
+  edit "", 54, 124 88 12 10, tab 2 limit 2
+  text "Filter Kick on:", 55, 138 89 33 8, tab 2
+  edit "", 56, 171 88 12 10, tab 2 limit 2
+  text "Bantime:", 57, 109 101 22 8, tab 2
+  edit "", 58, 131 100 30 10, tab 2 limit 5
+  text "min(s)", 59, 163 101 16 8, tab 2
+  box "", 60, 8 23 86 15, tab 2
+  box "", 61, 99 23 86 15, tab 2
+  box "", 62, 8 71 86 15, tab 2
+  box "", 63, 99 71 86 15, tab 2
+  tab " 3 ", 3
+  check "Join-Part Flood", 42, 11 90 59 10, tab 3
+  edit "", 44, 41 103 30 10, tab 3 limit 5
+  text "Bantime:", 43, 19 104 22 8, tab 3
+  box "Protection Settings", 68, 5 14 183 103, tab 3
+  check "Public Channel Ads", 69, 11 26 68 10, tab 3
+  box "", 70, 8 22 86 15, tab 3
+  text "Bantime:", 71, 19 40 22 8, tab 3
+  edit "", 72, 41 39 30 10, tab 3 limit 5
+  text "min(s)", 73, 73 40 16 8, tab 3
+  check "Public Website Ads", 74, 11 58 70 10, tab 3
+  box "", 75, 8 54 86 15, tab 3
+  text "Bantime:", 76, 19 72 22 8, tab 3
+  edit "", 77, 41 71 30 10, tab 3 limit 5
+  text "min(s)", 78, 73 72 16 8, tab 3
+  box "", 79, 8 86 86 15, tab 3
+  text "min(s)", 80, 73 104 16 8, tab 3
+  check "Blocked Filesends", 81, 102 26 67 10, tab 3
+  box "", 82, 99 22 86 15, tab 3
+  text "Bantime:", 83, 110 40 22 8, tab 3
+  edit "", 84, 132 39 30 10, tab 3 limit 5
+  text "min(s)", 85, 164 40 16 8, tab 3
+
+
+  check "CTCP Exploits", 86, 102 58 50 10, tab 3
+  box "", 87, 99 54 86 15, tab 3
+  text "Bantime:", 88, 110 72 22 8, tab 3
+  edit "", 89, 132 71 30 10, tab 3 limit 5
+  text "min(s)", 90, 164 72 16 8, tab 3
+  check "Lame Tricks", 91, 102 90 44 10, tab 3
+  box "", 92, 99 86 86 15, tab 3
+  text "Bantime:", 93, 110 104 22 8, tab 3
+  edit "", 94, 132 103 30 10, tab 3 limit 5
+  text "min(s)", 95, 164 104 16 8, tab 3
+  tab " 4 ", 96
+  box "Protection Settings", 97, 5 14 183 103, tab 96
+  check "Private Channel Ads", 98, 11 26 63 10, tab 96
+  box "", 99, 8 22 86 15, tab 96
+  text "Bantime:", 100, 19 40 22 8, tab 96
+  edit "", 101, 41 39 30 10, tab 96 limit 5
+  text "min(s)", 102, 73 40 16 8, tab 96
+  check "Private Website Ads", 103, 11 58 63 10, tab 96
+  box "", 104, 8 54 86 15, tab 96
+  text "Bantime:", 105, 19 72 22 8, tab 96
+  edit "", 106, 41 71 30 10, tab 96 limit 5
+  text "min(s)", 107, 73 72 16 8, tab 96
+  check "Private Message Spam", 108, 11 90 66 10, tab 96
+  box "", 109, 8 86 86 15, tab 96
+  text "Bantime:", 110, 19 104 22 8, tab 96
+  edit "", 111, 41 103 30 10, tab 96 limit 5
+  text "min(s)", 112, 73 104 16 8, tab 96
+  check "$decode Virus Infected", 113, 102 26 69 10, tab 96
+  box "", 114, 99 22 86 15, tab 96
+  text "Bantime:", 115, 110 40 22 8, tab 96
+  edit "", 116, 132 39 30 10, tab 96 limit 5
+  text "min(s)", 117, 164 40 16 8, tab 96
+  check "Virus / Worm Infected", 118, 102 58 68 10, tab 96
+  box "", 119, 99 54 86 15, tab 96
+  text "Bantime:", 120, 110 72 22 8, tab 96
+  edit "", 121, 132 71 30 10, tab 96 limit 5
+  text "min(s)", 122, 164 72 16 8, tab 96
+  check "Excess Flood Bans", 123, 102 90 62 10, tab 96
+  box "", 124, 99 86 86 15, tab 96
+  text "Bantime:", 125, 110 104 22 8, tab 96
+  edit "", 126, 132 103 30 10, tab 96 limit 5
+  text "min(s)", 127, 164 104 16 8, tab 96
+  tab " 5 ", 128
+  box "Protection Settings", 129, 5 14 183 103, tab 128
+  check "Enforce Bans", 130, 11 26 50 10, tab 128
+  text "Kicks Banned Users", 131, 19 40 49 8, tab 128
+  box "", 132, 8 22 86 15, tab 128
+  check "Kick Violators from Outside", 133, 11 58 75 10, tab 128
+  box "", 134, 8 54 86 15, tab 128
+  text "Bantime:", 135, 19 72 22 8, tab 128
+  edit "", 136, 41 71 30 10, tab 128 limit 5
+  text "min(s)", 137, 73 72 16 8, tab 128
+  check "Botnet Flood Protection", 138, 11 90 70 10, tab 128
+  box "", 139, 8 86 86 15, tab 128
+  text "Lockdown:", 140, 19 104 27 8, tab 128
+
+  edit "", 141, 46 103 24 10, tab 128 limit 3
+  text "sec", 142, 72 104 10 8, tab 128
+  check "CS Invite Protection", 143, 102 26 62 10, tab 128
+  box "", 144, 99 22 86 15, tab 128
+  text "Bantime:", 145, 110 40 22 8, tab 128
+  edit "", 146, 132 39 30 10, tab 128 limit 5
+  text "min(s)", 147, 164 40 17 8, tab 128
+  check "Nick Flood Protection", 148, 102 58 68 10, tab 128
+  box "", 149, 99 54 86 15, tab 128
+  text "Changes:", 150, 110 72 24 8, tab 128
+  edit "", 151, 134 71 12 10, tab 128 limit 2
+  text "in", 152, 148 72 6 8, tab 128
+  edit "", 153, 156 71 12 10, tab 128 limit 2
+  text "sec", 154, 170 72 10 8, tab 128
+  text "Bantime:", 155, 110 84 22 8, tab 128
+  edit "", 156, 132 83 30 10, tab 128 limit 5
+  icon 157, 168 98 17 17, icon\skull.ico, tab 128
+  text "- END of SETTINGS -", 158, 112 107 51 8, tab 128
+  text "min(s)", 159, 164 84 16 8, tab 128
+  button "OK", 11, 76 123 37 12, ok
+  button "Cancel", 12, 115 123 37 12, cancel
+  text "acronix ® 2015", 13, 4 128 50 8
+  button "Apply", 160, 154 123 37 12
+}
+
+dialog mega.nc.help {
+  title "[ RAVE ] Nick Completer Pro"
+  size -1 -1 159 158
+  option dbu
+  icon icon\logo.ico, 0
+  button "Close", 1, 108 142 45 12, cancel
+  text "Nick Completer responds with ' ; ' when it is found on the last character of your first word. For example:", 2, 6 3 148 14
+  text "If you want to address something to siLverbLade and he is on the channel, just type:", 3, 15 24 122 15
+  text "sil; hello there", 4, 55 45 36 8
+  text "or", 5, 69 53 7 8
+  text "blade; hello there", 6, 51 61 44 8
+  text "or", 7, 69 69 7 8
+  text "verbl; hello there", 8, 53 76 43 8
+  text "Which all yields the same result: <yournick> siLverbLade: hello there", 9, 31 91 90 15
+  text "NOTE: This Nick Completer Pro is just a starting feature for RAVE v4.01 It is not yet complete. If the script detects multiple matches, it will return the first match on the Nick List.", 10, 5 114 148 21
+  text "acronix ® 2015", 11, 5 147 51 8
+  box "", 12, 4 17 151 94
+}
+
+dialog mega.script.manual {
+  title "[ RAVE ] Script Features"
+  size -1 -1 243 253
+  option dbu
+  icon icon\logo.ico, 0
+  button "Close", 1, 193 240 45 10, cancel
+  text "RAVE v4.01 by acronix ® 2015", 11, 6 243 98 8
+  tab "Basic Protection", 25, 4 1 234 235
+  text "• Nick Flood Protection", 20, 131 128 59 8, tab 25
+  text "• Invite Protection", 19, 131 118 51 8, tab 25
+  text "• Exploits Protection", 17, 131 108 53 8, tab 25
+  text "• Virus Sender Protection", 16, 131 98 64 8, tab 25
+  text "• Offensive Nick/Ident Kick", 15, 131 88 70 8, tab 25
+  text "• Excessive Clones Kick", 14, 131 78 49 8, tab 25
+  text "• Join-Part Flood Protection", 13, 131 68 68 8, tab 25
+  text "• Excessive Caps Kick", 12, 131 58 54 8, tab 25
+  text "• Long Text Protection", 6, 131 48 57 8, tab 25
+  text "• Bad Swear Kicks", 3, 27 48 46 8, tab 25
+  text "• Unallowed Words Protection", 4, 27 58 76 8, tab 25
+  text "• Tricks/Lamers Kick", 5, 27 68 50 8, tab 25
+  text "• Repeat Protection", 7, 27 78 51 8, tab 25
+  text "• Text Flood Protection", 8, 27 88 59 8, tab 25
+  text "• Channel Ads Kick", 9, 27 98 48 8, tab 25
+  text "• Web Ads Kick", 10, 27 108 42 8, tab 25
+  text "RAVE v4.01 includes common protections that can be set on specific channels you choose. Below are the list of these features:", 2, 21 22 198 15, tab 25
+  text "• Excess Flood Bans", 18, 131 138 51 8, tab 25
+  text "• Private Channel Ads Kick", 21, 27 118 65 8, tab 25
+  text "• Private Web Ads Kick", 22, 27 128 57 8, tab 25
+  text "• Private Message Spam Kick", 23, 27 138 72 8, tab 25
+  text "• Private '$decode' Kick", 24, 27 148 67 8, tab 25
+  text "• Bot Net Join/Msg Flood Protection", 28, 131 148 89 8, tab 25
+  box "Other Add-Ons", 34, 14 167 215 45, tab 25
+  text "• BlackList Editor", 35, 24 177 42 8, tab 25
+  text "• Ban Enforcer", 36, 24 187 58 8, tab 25
+  text "• Nonsense Nick Remover", 37, 24 197 64 8, tab 25
+  text "• Secure Query", 40, 100 197 43 8, tab 25
+  text "• Auto Self Unban", 39, 100 187 48 8, tab 25
+  text "• Clone Detector", 38, 100 177 43 8, tab 25
+  text "• Memo Express", 41, 165 177 42 8, tab 25
+  text "• Friends Exemption", 42, 165 187 51 8, tab 25
+  text "• Voice Exemption", 43, 165 197 48 8, tab 25
+  text "NOTE: Basically, all protections and script events can now be enabled/disabled on the channels you specify.", 65, 38 217 140 14, tab 25
+  tab "Add-Ons", 26
+  text "---» Special Thanks to Add-On Contributors:", 60, 14 107 121 8, tab 26
+  text "• redraven (Some Dialogs, PopUps, and Topic Designs)", 61, 43 120 137 8, tab 26
+  text "• lite (Blacklist Editor and Nonsense Nick Remover)", 62, 43 129 125 8, tab 26
+  text "• |Legend| (MemoExpress)", 63, 43 138 72 8, tab 26
+  text "• toucan (AntiSpam Bot Version 3.4.1)", 66, 43 147 98 8, tab 26
+  text "• ScoopScript (MP3 System)", 29, 43 156 76 8, tab 26
+  text "• KnightFal (Secure Query)", 30, 43 165 87 8, tab 26
+  text "• Sabby (Log Viewer)", 31, 43 174 56 8, tab 26
+  text "All the add-on mentioned above were re-coded in order to interact with RAVE properly. Please do not try to separate them or use them in other scripts unless you know what you are doing. It will have conflicts if used for other purposes since the codes were specially generated for RAVE's smooth operation. If you find any bugs or errors, please do report it to us at acronix@coders.ph. Do not try to edit or fix the problem yourself to avoid script damages and further errors. Thank you.", 32, 19 188 202 41, tab 26
+  box "Extra Features (Add-Ons)", 33, 8 18 227 84, tab 26
+  text "• IP Scanner (Wildcard Support)", 44, 17 29 81 8, tab 26
+  text "• AntiSpam Bot", 45, 17 39 42 8, tab 26
+  text "• Lag Bar (Lag Monitor)", 47, 17 49 59 8, tab 26
+  text "• MP3 System v1.01 --» NEW!", 46, 17 59 74 8, tab 26
+  text "• mIRC Media Player --» NEW!", 48, 17 69 81 8, tab 26
+  text "• Alias Manager ™ --» NEW!", 49, 131 29 81 8, tab 26
+  text "• Log Viewer v3.5 --» NEW!", 50, 17 79 74 8, tab 26
+  text "• Query Blocker / Ignorer --» NEW!", 51, 17 89 87 8, tab 26
+  text "• Auto-Voice List --» NEW!", 52, 131 39 64 8, tab 26
+  text "• Auto-Op List --» NEW!", 53, 131 49 66 8, tab 26
+  text "• PING Reply --» NEW!", 54, 131 59 75 8, tab 26
+  text "• Notify Manager --» NEW!", 55, 131 69 71 8, tab 26
+  text "• Nick Manager PRO --» NEW!", 68, 131 79 77 8, tab 26
+  text "• DNS / Country Locator", 69, 131 89 64 8, tab 26
+  tab "Author", 27
+  text "acronix / sneakers @ #makati DALnet", 56, 91 48 96 8, tab 27
+  text "RAVE v4.01 was scripted by:", 57, 11 21 69 8, tab 27
+  text "Email: acronix@coders.ph", 58, 91 56 87 8, tab 27
+  text "This AdiIRC version is customized for RAVE v4. It is now optimized for all operators on any channel. The version reply was altered for security purposes. Please do not try to edit the script on your own. If you have any suggestions, email it to me. Thanks to all the people who have given their support in the coding of this script specially to those who have shared their brilliant ideas. You guys are of great help. Best of all, I salute Khaled for a very cool IRC client!", 59, 33 78 173 48, tab 27
+  text "If you find any bugs/errors or you just want to comment on the script, please feel free to memo me or message me when I'm online. It would be of great help when you report any bugs on the script so that I can improve the coding on the next release. Thank you guys for your support. Also check out the Credits on the RAVE settings Pop-Up.", 64, 33 133 173 35, tab 27
+  icon 67, 32 36 44 35,  system\siLverbLade.jpg, 0, tab 27
+  text "A very Special Thanks to my beloved chizky. I thank God everyday for giving me a very precious treasure whom I'll cherish for the rest of my life. Thanks for always being there when I needed a shoulder to lean on. Most of all, thank you for all the love and support. Know that I'll always be here for you too. I love you.", 70, 74 185 139 41, tab 27
+  icon 71, 33 188 34 33,  system\cn.jpg, 0, tab 27
+}
+
+dialog mega.credits {
+  title "[ RAVE v4.01 ] Credits"
+  size -1 -1 129 166
+  option dbu
+  icon icon\logo.ico, 0
+  button "Close", 1, 87 151 37 12, ok
+  text "I would like to thank all the people who have contributed for the success of this script.", 2, 8 5 112 15
+  text "First and foremost to God who has given me the knowledge to program this script, and to Khaled for his excellent mIRC!", 3, 34 26 80 27
+  text "And to all those who have given me their support, thank you:", 4, 13 60 100 15
+  text "• NiC0L3", 5, 20 86 25 8
+  text "• chikoy", 6, 20 94 25 8
+  text "• LoNDoNBaBe", 7, 20 101 41 8
+  text "• Guardian_X", 8, 20 109 36 8
+  text "• redraven", 9, 20 117 32 8
+  text "• Rikku", 10, 71 94 25 8
+  text "• kisses07", 11, 71 86 25 8
+  text "• |evi", 12, 71 101 25 8
+  text "• Almighty", 13, 71 109 25 8
+  text "• vamp_003", 14, 71 117 33 8
+  icon 15, 12 26 15 15,  icon\01.ico, 0
+  text "RAVE v4.01 by siLverbLade", 16, 4 155 72 8
+  box "", 17, 6 76 117 72
+  box "", 18, 6 19 117 38
+  text "• staticX", 19, 20 125 26 8
+  text "• |nTeL^", 20, 20 133 28 8
+  text "• saNkofA", 21, 71 125 32 8
+  text "• tw|st3r", 22, 71 133 28 8
+}
+
+alias mega.nc.help.open { if ($dialog(mega.nc.help) == $null) { dialog -m mega.nc.help mega.nc.help } }
+alias mega.manual { if ($dialog(mega.script.manual) == $null) { dialog -m mega.script.manual mega.script.manual } }
+alias mega.display.credits { if ($dialog(mega.credits) == $null) { dialog -m mega.credits mega.credits } }
+
+alias F2 { .rave.autokick.control }
+alias F3 { .rave.nick.organizer }
+alias SF3 { .show.friends }
+alias F4 { .cs op $chan $me | echo -at  4*** Attempting to 5Op4 on $chan %version }
+alias F5 { .dop $me | echo -at  5*** Self 4Deop5 on $chan %version }
+alias F9 { .cs unban $chan | echo -at  4*** 5Self UNBAN 4on $chan %version }
+alias SF9 { join $chan }
+alias F10 { mode $me +R }
+alias SF10 { mode $me -R }
+alias F11 { mode # +c }
+alias SF11 { mode # -c }
+alias F12  { mode # +MmR }
+alias SF12 { mode # -MmR }
+alias kick {
+  if (%rave.kick.count < 10) { set %kick.count.display 00 $+ %rave.kick.count }
+  if ((%rave.kick.count >= 10) && (%rave.kick.count < 100)) { set %kick.count.display 0 $+ %rave.kick.count }
+  if (%rave.kick.count >= 100) { set %kick.count.display %rave.kick.count }
+  if (%mega.kickmsg.color == OFF) {
+    kick $1 $2 $strip($3-,c) $kmsg(xShe3/uJmoJ.dmwNq//lzN4Y) (· $+ %kick.count.display $+ ·))
+    goto done
+  }
+  if (%mega.kickmsg.color == ON) {
+    kick $1 $2 $3- %logo 5(· $+ %kick.count.display $+ ·)
+    goto done
+  }
+  kick $1 $2  $+ %mega.kickmsg.color $+ $strip($3-,c) $kmsg(xShe3/uJmoJ.dmwNq//lzN4Y) (· $+ %kick.count.display $+ ·)
+  :done
+}
+alias -l kmsg { return $decrypt($1-,32) }
+alias dns { 
+  .dns $1 
+  if ($address($1,2) != $null) { echo -at 14[•] Resolving:4 $remove($address($1,2),$chr(42),$chr(33),$chr(64)) 14-[ RAVE v4.01 ]- }
+  else if ($address($1,2) == $null) { echo -at 14[•] Resolving:4 $1 14-[ RAVE v4.01 ]- }
+}
+alias quit {
+  set %quit.msg $1-
+  check.color quit.msg %quit.msg
+  check.bold quit.msg %quit.msg
+  check.undr quit.msg %quit.msg
+  if ($1 == $null) { quit %rave.quit.message | halt }
+  quit %quit.msg
+  unset %quit.msg
+}
+alias notes { .run notes.txt }
+alias rave.global.kb {
+  set %global.cyc 1
+  set %global.kmsg $$?="Enter Kick message here:"
+  while ($comchan($2,%global.cyc) != $null) {
+    kick $comchan($2,%global.cyc) $2 %global.kmsg
+    if ($3 == FullBan) { ban $comchan($2,%global.cyc) $2 2 }
+    else { ban -u $+ $3 $comchan($2,%global.cyc) $2 2 }
+    inc %global.cyc 1
+  }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;======================== Trademark ™ 2002  « siLverbLade »  ===============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••

@@ -1,0 +1,674 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. =======
+;========= Script author - acronix on DALnet. Report errors to acronix@coders.ph ==================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================= Script Programming (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+alias mega.badswear.check {
+  if (%rave.just.logged.in == 1) { goto done }
+  if (.MP3 isin $3-) { goto done }
+  if ((fuck isin %mega.badswear.trigger) && (fuck isin $3-)) {
+    kick $1 $2 5Banned:14 %bswearkmsg
+    ban -u $+ %mega.badswear.time. [ $+ [ $1 ] ] $1 $2 1 
+    halt
+  }
+  set %bscheck.msg $3-
+  remove.non.alpha bscheck.msg
+  set %bstrigg.total $numtok(%bscheck.msg,32)
+  set %bstrigg 1
+  :loopcheck
+  if (($istok(%mega.badswear.trigger,$gettok(%bscheck.msg,%bstrigg,32),32) == $true) && (%bstrigg.total >= %bstrigg)) {
+    kick $1 $2 5Banned:14 %bswearkmsg
+    ban -u $+ %mega.badswear.time. [ $+ [ $1 ] ] $1 $2 1 
+    halt
+  }
+  if (%bstrigg >= %bstrigg.total) { goto done }
+  inc %bstrigg 1
+  goto loopcheck
+  :done
+}
+
+alias mega.swear.check {
+  if (%rave.just.logged.in == 1) { goto done }
+  if (.MP3 isin $3-) { goto done }
+  set %scheck.msg $3-
+  remove.non.alpha scheck.msg
+  set %strigg.total $numtok(%scheck.msg,32)
+  set %strigg 1
+  :loopcheck
+  if (($istok(%mega.swear.trigger,$gettok(%scheck.msg,%strigg,32),32) == $true) && (%strigg.total >= %strigg)) {
+    kick $1 $2 5Banned:14 %swearkmsg
+    ban -u $+ %mega.swear.time. [ $+ [ $1 ] ] $1 $2 1
+    halt 
+  }
+  if (%strigg >= %strigg.total) { goto done }
+  inc %strigg 1
+  goto loopcheck
+  :done
+}
+
+alias mega.tricks.check {
+  if (%rave.just.logged.in == 1) { goto end }
+  if ((Ctrl isin $3-) && (ALT isin $3-) && (DEL isin $3-)) { 
+    kick $1 $2 5Banned:14 %trickskmsg
+    ban -u $+ %mega.tricks.time. [ $+ [ $1 ] ] $1 $2 1 
+    halt
+  }
+  if ((Alt isin $3-) && (F4 isin $3-)) { 
+    kick $1 $2 5Banned:14 %trickskmsg
+    ban -u $+ %mega.tricks.time. [ $+ [ $1 ] ] $1 $2 1 
+    halt
+  }
+  if (con/con isin $3-) {
+    kick $1 $2 5Banned:14 %trickskmsg
+    ban -u $+ %mega.tricks.time. [ $+ [ $1 ] ] $1 $2 1
+    halt
+  }
+  :end
+}
+
+alias mega.length.check {
+  if (%rave.just.logged.in == 1) { goto end }
+  set %mega.length $len($3-)
+  if (%mega.length > $eval($+(%,mega.length.trigger.,$1),2)) {
+    kick $1 $2 5Banned:14 %lengthkmsg
+    ban -u $+ %mega.length.time. [ $+ [ $1 ] ] $1 $2 2 
+    halt
+  }
+  :end
+}
+
+alias mega.repeat.check {
+  if (%rave.just.logged.in == 1) { goto end }
+  if ($eval($+(%,rpt.,%rpt.host),2) == $null) {
+    set -u10 $eval($+(%,rpt.msg.,%rpt.host),1) $3-
+    set -u10 $eval($+(%,rpt.,%rpt.host),1) 0
+  }
+  if ($eval($+(%,rpt.msg.,%rpt.host),2) == $3-) { inc $eval($+(%,rpt.,%rpt.host),1) 1 }
+  if ($eval($+(%,rpt.,%rpt.host),2) >= $eval($+(%,mega.repeat.trigger.,$1),2)) {
+    kick $1 $2 5Banned:14 %repeatkmsg
+    ban -u $+ %mega.repeat.time. [ $+ [ $1 ] ] $1 $2 3
+    halt
+  }
+  if ($eval($+(%,rpt.msg.,%rpt.host),2) != $3-) {
+    set -u10 $eval($+(%,rpt.msg.,%rpt.host),1) $3-
+    unset $eval($+(%,rpt.,%rpt.host),1)
+    set -u10 $eval($+(%,rpt.,%rpt.host),1) 1
+  }
+  :end
+}
+
+alias mega.tflood.check {
+  if (%rave.just.logged.in == 1) { goto end }  
+  if ($eval($+(%,tflood.,%tflood.host),2) == $null) {
+    set -u5 $eval($+(%,tflood.,%tflood.host),1) 0
+  }
+  inc $eval($+(%,tflood.,%tflood.host),1) 1
+  if ($eval($+(%,tflood.,%tflood.host),2) >= $eval($+(%,mega.tflood.trigger.,$1),2)) {
+    kick $1 $2 5Banned:14 %floodkmsg
+    ban -u $+ %mega.tflood.time. [ $+ [ $1 ] ] $1 $2 3
+    halt 
+  }
+  :end
+
+
+
+
+
+
+
+
+}
+
+alias mega.ch.ads.check {
+  if (%rave.just.logged.in == 1) { goto done }
+  set %cads.chk.msg $3-
+  set %cads.chk.chan $1
+  set %cads.chk.msg $remove(%cads.chk.msg,$chr(33),$chr(63),$chr(46),$chr(44),$chr(59),$chr(58),$chr(40),$chr(41),$chr(39),$chr(34),$chr(91),$chr(93))
+  set %cads.chk.chan $remove(%cads.chk.chan,$chr(33),$chr(63),$chr(46),$chr(44),$chr(59),$chr(58),$chr(40),$chr(41),$chr(39),$chr(34),$chr(91),$chr(93))
+  set %cads.trig.total $matchtok(%cads.chk.msg,$chr(35),0,32)
+  set %cads.chk.count 1
+  :loopcheck
+  if (($len($matchtok(%cads.chk.msg,$chr(35),%cads.chk.count,32)) != 1) && ($matchtok(%cads.chk.msg,$chr(35),%cads.chk.count,32) != %cads.chk.chan) && ($left($matchtok(%cads.chk.msg,$chr(35),%cads.chk.count,32),1) == $chr(35))) {
+    kick $1 $2 5Banned:14 %massadskmsg
+    ban -u $+ %mega.chanads.time. [ $+ [ $1 ] ] $1 $2 1
+    halt
+  }
+  if (%cads.chk.count >= %cads.trig.total) { goto done }
+  inc %cads.chk.count 1
+  goto loopcheck
+  :done
+}
+
+alias mega.caps.check {
+  if (%rave.just.logged.in == 1) { goto done }
+  set %caps.len $len($remove($3-,$chr(32)))
+  set %caps.loop 1
+  set %totalcaps 0
+  :loopcheck
+  if ($asc($mid($remove($3-,$chr(32)),%caps.loop,1)) isnum 65-90) { inc %totalcaps 1 }
+  set %percent.caps $calc((%totalcaps / %caps.len)*100)
+  set %percent.caps $round(%percent.caps,2)
+  if (%caps.loop >= %caps.len) { goto checkpercent }
+  inc %caps.loop 1
+  goto loopcheck
+  :checkpercent
+  if (((%percent.caps > 70) && (%caps.len >= 10)) || ((%percent.caps > 40) && (%caps.len >= 20))) {
+    if (%caps.nick. [ $+ [ $2 ] ] != $null) {
+      .ignore -u1 $2
+      kick $1 $2 5Banned:14 %capskmsg 5-14 %percent.caps $+ % CAPS
+      ban -u $+ %mega.caps.time. [ $+ [ $1 ] ] $1 $2 1
+      unset %caps.nick. [ $+ [ $2 ] ]
+      halt
+    }
+    .notice $nick %mega.capswarn.msg $1 %version 
+    echo -t @intel 8*Caps Warning sent to4 $2 8on4 $1
+    ;msg $1 $2 $+ : Please drop the CAPS ( Automated Warning )
+    set -u900 %caps.nick. [ $+ [ $2 ] ] $2
+  }
+  :done
+}
+
+alias mega.web.ads.check {
+  if (%rave.just.logged.in == 1) { goto done }
+  if (usercontent.irccloud-cdn.com/ isin $3-) { goto done }
+  if (http://rave.coders.ph isin $3-) { goto done }
+  if ((http:// isin $3-) || (ftp:// isin $3-)) { goto kick }
+  if ((www. isin $3-) && ((.net isin $3-) || (.co isin $3-) || (.org isin $3-) || (.cc isin $3-) || (.tv isin $3-) || (.info isin $3-) || (.us isin $3-))) { goto kick }
+  goto done
+  :kick
+  kick $1 $2 5Banned:14 %webadskmsg
+  ban -u $+ %mega.webads.time. [ $+ [ $1 ] ] $1 $2 1 
+  halt
+  :done
+}
+
+alias mega.msgflood.check {
+  if (%rave.just.logged.in == 1) { goto end }
+  set %bnfloodchan $1
+  if (%msgflood.amount. [ $+ [ %bnfloodchan ] ] == $null) {
+    set -u5 %msgflood.amount. [ $+ [ %bnfloodchan ] ] 0
+  }
+  inc %msgflood.amount. [ $+ [ %bnfloodchan ] ] $len($2-)
+  if (%msgflood.amount. [ $+ [ %bnfloodchan ] ] >= 1000) {
+    .ignore -cntidu10 *!*@* 
+    .mode $1 +MmR
+    .timer 1 %mega.lockdown.time. [ $+ [ $1 ] ] mode $1 -MmR
+    .notice $1 Message Flood Detected. Channel is locked for %mega.lockdown.time. [ $+ [ $1 ] ] seconds. 5• 5[4 RAVE ® 5] 5•
+    .echo -at 5* Message Flood Detected on4 $1 5- 5[4 RAVE ® 5] 5-
+    .unset %msgflood.amount. [ $+ [ %bnfloodchan ] ]
+  }
+  :end
+}
+
+alias mega.jflood.check {
+  if (%rave.just.logged.in == 1) { goto end }
+  if (%jfloodcheck. [ $+ [ %jfloodcheck.host ] ] == $null) {
+    set -u20 %jfloodcheck. [ $+ [ %jfloodcheck.host ] ] 0
+  }
+  inc %jfloodcheck. [ $+ [ %jfloodcheck.host ] ] 1
+  if (%jfloodcheck. [ $+ [ %jfloodcheck.host ] ] >= 5) {
+    kick $1 $2 5Banned:14 %jpfloodkmsg
+    ban -u $+ %mega.jflood.time. [ $+ [ $1 ] ] $1 $2 2
+  }
+  :end
+}
+
+alias F6 {
+  if (%mega.all.autokicks == ON) { .echo -q $input(Autokicks are already %mega.all.autokicks $+ !,68,NOTE) | halt }
+  set %mega.all.autokicks ON
+  if ($dialog(rave.autokicks) != $null) {
+    did -o rave.autokicks 33 1 %mega.all.autokicks
+  }
+  mega.turn.on
+  echo -at 14*** AutoKicks are turned [ %mega.all.autokicks ] %kicklogo
+  .title
+}
+
+alias F7 {
+  if (%mega.all.autokicks == OFF) { .echo -q $input(Autokicks are already %mega.all.autokicks $+ !,68,NOTE) | halt }
+  set %mega.all.autokicks OFF
+  if ($dialog(rave.autokicks) != $null) {
+    did -o rave.autokicks 33 1 %mega.all.autokicks
+  }
+  mega.turn.off
+  echo -at 14*** AutoKicks are turned [ %mega.all.autokicks ] %kicklogo
+  .title
+}
+
+alias mega.turn.off {
+  set %bforce.prev %bforce
+  set %bforce OFF
+  set %mega.aplore.check.prev %mega.aplore.check
+  set %mega.aplore.check OFF
+
+  set %oz.nOZsenseSW.prev %oz.nOZsenseSW
+  set %oz.nOZsenseSW OFF
+}
+
+alias mega.turn.on {
+
+  if (%bforce.prev == $null) { set %bforce.prev %bforce }
+  if (%mega.aplore.check.prev == $null) { set %mega.aplore.check.prev %mega.aplore.check }
+  if (%oz.nOZsenseSW.prev == $null) { set %oz.nOZsenseSW.prev %oz.nOZsenseSW }
+  set %bforce %bforce.prev
+  set %mega.aplore.check %mega.aplore.check.prev
+  set %oz.nOZsenseSW %oz.nOZsenseSW.prev
+}
+
+on @*:TEXT:*:#: {
+  if (%rave.just.logged.in == 1) { goto end }
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto end }
+  if (%mega.all.autokicks == OFF) { goto end }
+  if (($nick isvoice $chan) && (%mega.voice.exempt == ON)) { goto end }
+  if (($me isop $chan) && ($istok(%mega.botnet.channels,$chan,32) == $true)) { mega.msgflood.check $chan $strip($1-) }
+  if (($nick !isop $chan) && ($me isop $chan)) {
+    if ($istok(%mega.badswear.channels,$chan,32) == $true) { mega.badswear.check $chan $nick $strip($1-) }
+    if ($istok(%mega.swear.channels,$chan,32) == $true) { mega.swear.check $chan $nick $strip($1-) }
+    if ($istok(%mega.tricks.channels,$chan,32) == $true) { mega.tricks.check $chan $nick $strip($1-) }
+    if ($istok(%mega.length.channels,$chan,32) == $true) { mega.length.check $chan $nick $strip($1-) }
+    if ($istok(%mega.repeat.channels,$chan,32) == $true) { set %rpt.host $chan $+ $remove($wildsite,*,!,@) | mega.repeat.check $chan $nick $strip($1-) }
+    if ($istok(%mega.tflood.channels,$chan,32) == $true) { set %tflood.host $chan $+ $remove($wildsite,*,!,@) | mega.tflood.check $chan $nick }
+    if (($istok(%mega.chanads.channels,$chan,32) == $true) && ($chr(35) isin $strip($1-))) { mega.ch.ads.check $chan $nick $strip($1-) }
+    if ($istok(%mega.caps.channels,$chan,32) == $true) { mega.caps.check $chan $nick $strip($1-) }
+    if ($istok(%mega.webads.channels,$chan,32) == $true) { mega.web.ads.check $chan $nick $strip($1-) }
+  }
+  :end
+}
+on @*:ACTION:*:#: {
+  if (%rave.just.logged.in == 1) { goto end }
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto end }  if (%mega.all.autokicks == OFF) { goto end }
+  if (($nick isvoice $chan) && (%mega.voice.exempt == ON)) { goto end }
+  if (($me isop $chan) && ($istok(%mega.botnet.channels,$chan,32) == $true)) { mega.msgflood.check $chan $strip($1-) }
+  if (($nick !isop $chan) && ($me isop $chan)) {
+    if ($istok(%mega.badswear.channels,$chan,32) == $true) { mega.badswear.check $chan $nick $strip($1-) }
+    if ($istok(%mega.swear.channels,$chan,32) == $true) { mega.swear.check $chan $nick $strip($1-) }
+    if ($istok(%mega.tricks.channels,$chan,32) == $true) { mega.tricks.check $chan $nick $strip($1-) }
+    if ($istok(%mega.length.channels,$chan,32) == $true) { mega.length.check $chan $nick $strip($1-) }
+    if ($istok(%mega.repeat.channels,$chan,32) == $true) { set %rpt.host $chan $+ $remove($wildsite,*,!,@) | mega.repeat.check $chan $nick $strip($1-) }
+    if ($istok(%mega.tflood.channels,$chan,32) == $true) { set %tflood.host $chan $+ $remove($wildsite,*,!,@) | mega.tflood.check $chan $nick }
+    if (($istok(%mega.chanads.channels,$chan,32) == $true) && ($chr(35) isin $strip($1-))) { mega.ch.ads.check $chan $nick $strip($1-) }
+    if ($istok(%mega.caps.channels,$chan,32) == $true) { mega.caps.check $chan $nick $strip($1-) }
+    if ($istok(%mega.webads.channels,$chan,32) == $true) { mega.web.ads.check $chan $nick $strip($1-) }
+  }
+  :end
+}
+
+on ^*:SNOTICE:*has attempted to send you a file*: { 
+  set %filename $remove($11,$chr(44))
+  echo -t @intel 4*Blocked Filesend 2of4 %filename 2from4 $1
+  if ((($istok(%rave.friends,$1,32) == $true) || ($istok(%rave.temp.friends,$1,46) == $true)) && (%friend.auto.kick == ON)) { goto end }
+  if (%mega.all.autokicks == OFF) { goto end }
+  set %nick $1
+
+  set %ptvnick $1
+  set %address $address($1,2)
+  set -u10 %ptvswitch 2
+  if (%address != $null) { 
+    .ignore -tu10 %address
+    if (%address !isin %mega.blacklisted.host) { set %mega.blacklisted.host %mega.blacklisted.host %address } 
+  }
+  if ($comchan($1,1) != $null) { 
+    set %loopchan 0
+    :iniloop
+
+    inc %loopchan 1
+    if (($me isop $chan(%loopchan)) && ($1 !isop $chan(%loopchan)) && ($1 ison $chan(%loopchan))) {  
+      if ($istok(%mega.trojan.channels,$chan(%loopchan),32) == $true) {
+        if (($1 isvoice $chan(%loopchan)) && (%mega.voice.exempt == ON)) { goto end }
+        kick $chan(%loopchan) $1 5Banned:14 %trojanvskmsg 
+        ban -u $+ %mega.trojan.time. [ $+ [ $chan(%loopchan) ] ] $chan(%loopchan) $1 3 
+        goto iniloop 
+      }
+    }
+    if ($chan(%loopchan) == $null) { goto END }
+    goto iniloop
+  }
+  :END 
+  unset %loopchan
+  haltdef
+}
+
+ctcp *:*:*: {
+  if (($1 == LAGG) || ($1 == DO)) {
+    if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto nend }
+    echo -t @intel 4*Exploit Detected 2from4 $nick 2( $+ $1 $+ )
+    if (%mega.all.autokicks == OFF) { goto nend }
+    if ($comchan($nick,1) != $null) { 
+      set %loopchan 0
+      :iniloop
+      inc %loopchan 1
+      if (($me isop $chan(%loopchan)) && ($nick ison $chan(%loopchan)) && ($nick !isop $chan(%loopchan))) {  
+        if ($istok(%mega.lagg.channels,$chan(%loopchan),32) == $true) {
+          if (($nick isvoice $chan(%loopchan)) && (%mega.voice.exempt == ON)) { goto nend }
+          kick $chan(%loopchan) $nick 5Banned:14 %ctcpexkmsg
+          ban -u $+ %mega.lagg.time. [ $+ [ $chan(%loopchan) ] ] $chan(%loopchan) $nick 3 
+          goto iniloop
+        }
+      }
+      if ($chan(%loopchan) == $null) { goto end }
+      goto iniloop
+    }
+    :end
+    if ($wildsite !isin %mega.blacklisted.host) { set %mega.blacklisted.host %mega.blacklisted.host $wildsite } 
+  }
+  if (($1 == DCC) && ($2 == SEND) && ((LOVE-LETTER isin $1-) || (Life_Stages isin $1-) || (.rar isin $1-))) {
+    if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto nend }
+    echo -t @intel 4* 2Possible4 Trojan Virus 2Sender:4 $nick 2( $+ $3 $+ )
+
+    if (%mega.all.autokicks == OFF) { goto nend }
+    if (%ptvcount == $null) { set -u10 %ptvcount 0 }
+    inc %ptvcount 1
+    set %ptvnick. [ $+ [ %ptvcount ] ] $nick
+    set -u10 %ptvswitch 1
+    haltdef
+    set %loopchan 0
+    :iniloop2
+    inc %loopchan 1
+    if (($me isop $chan(%loopchan)) && ($nick ison $chan(%loopchan)) && ($nick !isop $chan(%loopchan))) {  
+      if ($istok(%mega.trojan.channels,$chan(%loopchan),32) == $true) { 
+        if (($nick isvoice $chan(%loopchan)) && (%mega.voice.exempt == ON)) { goto nend }
+        kick $chan(%loopchan) $nick 5Banned:14 %trojanvskmsg
+        ban -u $+ %mega.trojan.time. [ $+ [ $chan(%loopchan) ] ] $chan(%loopchan) $nick 3 
+        goto iniloop2
+      }
+    }
+    if ($chan(%loopchan) == $null) { goto addviolator }
+    goto iniloop2
+    :addviolator
+    if ($wildsite !isin %mega.blacklisted.host) { set %mega.blacklisted.host %mega.blacklisted.host $wildsite }
+  }
+  :nend
+}
+
+on 1:OP:#: {
+  if (%mega.all.autokicks == OFF) { goto done }
+  if ($opnick == $me) {
+    if ((%ptvswitch == 1) && ($istok(%mega.trojan.channels,$chan,32) == $true)) {
+      set %ptvloop 1
+      :ptvloop
+      .kick $chan %ptvnick. [ $+ [ %ptvloop ] ] 5Banned:14 %trojanvskmsg
+      .ban -u $+ %mega.trojan.time. [ $+ [ $chan ] ] $chan %ptvnick. [ $+ [ %ptvloop ] ] 3
+      if (%ptvloop >= %ptvcount) { goto ptv1done }
+      inc %ptvloop 1
+      goto ptvloop
+      :ptv1done
+      .unset %ptvswitch
+      .unset %ptvnick.*
+    }
+    if ((%ptvswitch == 2) && ($istok(%mega.trojan.channels,$chan,32) == $true)) {
+      .kick $chan %ptvnick 5Banned:14 %trojanvskmsg 
+      .ban -u $+ %mega.trojan.time. [ $+ [ $chan ] ] $chan %ptvnick 3
+      .unset %ptvswitch
+      .unset %ptvnick
+    }
+    if (%cndetected. [ $+ [ $chan ] ] == 1) {
+      set %m 1
+      :jloop
+      if (%nmtchtotal. [ $+ [ $chan ] ] >= %m) {
+        .kick $chan %cnd. [ $+ [ $chan ] ] [ $+ [ %m ] ] 5Banned:14 Change Your 4Nick
+        .ban $chan * $+ %cnd. [ $+ [ $chan ] ] [ $+ [ %m ] ] $+ *!*@*
+        inc %m 1
+        goto jloop
+      }
+      .unset %nmtchtotal. [ $+ [ $chan ] ]
+      .unset %cnd. [ $+ [ $chan  ] ] $+ *
+    }
+  }
+  :done
+}
+
+on @*:join:#: {
+  rave.acronym.check
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto end }
+  if (%mega.all.autokicks == OFF) { goto end }
+  if (($wildsite isin %mega.blacklisted.host) && ($istok(%mega.violators.channels,$chan,32) == $true)) {
+    .kick $chan $nick 5Banned:14 %offendermsg
+    .ban -u $+ %mega.violators.time. [ $+ [ $chan ] ] $chan $nick 2
+  }
+  if (%stop.botnet.check == 1) { goto offnick }
+  if ($istok(%mega.botnet.channels,$chan,32) == $false) { goto offnick }
+  if ($eval($+(%,mega.joinflood.check.,$chan),2) == $null) {
+    set -u5 $eval($+(%,mega.joinflood.check.,$chan),1) 0
+  }
+  set -k $eval($+(%,mega.joinflood.check.,$chan),1) $calc(($eval($+(%,mega.joinflood.check.,$chan),2))+1)
+  if ($eval($+(%,mega.joinflood.check.,$chan),2) >= 7) {
+    if (%netsplitevident == 1) { unset %netsplitevident | .set -u10 %stop.botnet.check 1 | goto offnick }
+    .echo -at 5* Join Flood Detected on4 $chan 5- 5[4 RAVE ® 5] 5-
+    .mode $chan +m
+    .timer 1 300 .mode $chan -m
+    .unset $eval($+(%,mega.joinflood.check.,$chan),1)
+    .set -u10 %stop.botnet.check 1
+  }
+  :offnick
+  set %totalbntrig $numtok(%badnick,32)
+  set %BN 1
+  :loopcheck
+  if (($gettok(%badnick,%BN,32) isin $nick) && (%totalbntrig >= %BN) && ($me isop $chan) && ($istok(%mega.Offnick.channels,$chan,32) == $true)) {
+    .kick $chan $nick 5Banned:14 %offnickmsg
+    .ban $chan * $+ $gettok(%badnick,%BN,32) $+ *!*@*
+  }
+  if (($gettok(%badnick,%BN,32) isin $gettok($address($nick,3),1,64)) && (%totalbntrig >= %BN) && ($me isop $chan) && ($istok(%mega.Offnick.channels,$chan,32) == $true)) {
+    .kick $chan $nick 5Banned:14 %offnickmsg
+    .ban $chan *!* $+ $gettok(%badnick,%BN,32) $+ *@*
+
+  }
+  if (%BN >= %totalbntrig) { goto end }
+  inc %BN 1
+  goto loopcheck
+
+  :end
+  unset %BN
+}
+
+on 1:INVITE:#: { 
+  if ($nick != ChanServ) {
+    if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) { goto end }
+    if (%mega.all.autokicks == OFF) { goto end }
+    if ($comchan($nick,1) != $null) { 
+      set %loopchan 0
+      :loop
+      inc %loopchan 1
+      if ($nick ison $chan(%loopchan)) {
+        if (($me isop $chan(%loopchan)) && ($nick !isop $chan(%loopchan)) && ($istok(%mega.invite.channels,$chan(%loopchan),32) == $true)) {
+          if (($nick isvoice $chan(%loopchan)) && (%mega.voice.exempt == ON)) { goto end }
+          kick $chan(%loopchan) $nick 5Banned:14 %csinvitekmsg  
+          ban -u $+ %mega.invite.time. [ $+ [ $chan(%loopchan) ] ] $chan(%loopchan) $nick 2 
+        }
+        goto loop
+      }
+      if ($chan(%loopchan) == $null) { goto end }
+      goto loop
+      :end
+      unset %loopchan
+    }
+  }
+}
+
+on *:NICK: {
+  if ($nick == $me) { goto end }
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) {
+    if ($istok(%rave.temp.friends,$nick,46) == $true) { set %rave.temp.friends $reptok(%rave.temp.friends,$nick,$newnick,1,46) $+ $chr(46) | goto end }
+    set %rave.temp.friends %rave.temp.friends $chr(32) $+ $nick $+ $chr(46) $+ $newnick $+ $chr(46)
+    goto end
+  }
+  if (%mega.all.autokicks == OFF) { goto end }
+  set %bnicktotal $numtok(%badnick,32)
+  set %bc 1
+  :looplist
+  if (($gettok(%badnick,%bc,32) isin $newnick) && (%bnicktotal >= %bc)) {
+    set %bncomtotal $comchan($newnick,0)
+    set %bnccount 1
+    :comchanloop
+    if ($istok(%mega.Offnick.channels,$comchan($newnick,%bnccount),32) == $true) {
+      if (($me isop $comchan($newnick,%bnccount)) && ($newnick !isop $comchan($newnick,%bnccount))) {
+        if (($newnick isvoice $comchan($newnick,%bnccount)) && (%mega.voice.exempt == ON)) { goto nickflood }
+        .kick $comchan($newnick,%bnccount) $newnick 5Banned:14 Change Your 4Nick
+        .ban $comchan($newnick,%bnccount) * $+ $newnick $+ *!*@* 
+      }
+    }
+    if (%bnccount = %bncomtotal) { goto nickflood }
+    inc %bnccount 1
+    goto comchanloop    
+  }
+  if (%bc >= %bnicktotal) { goto nickflood }
+  inc %bc 1
+  goto looplist
+  :NICKFLOOD
+  unset %bc
+  set %nfloop 0
+  :nfloodloop
+  inc %nfloop 1
+  if (($istok(%mega.nflood.channels,$comchan($newnick,%nfloop),32) == $true) && ($me isop $comchan($newnick,%nfloop))) {
+    set %wildsite $comchan($newnick,%nfloop) $+ $remove($wildsite,*,!,@)
+    set %rv.flood.sec %mega.nflood.seconds. [ $+ [ $comchan($newnick,%nfloop) ] ]
+    if (%nflood. [ $+ [ %wildsite ] ] == $null) { set -u $+ $eval(%rv.flood.sec,1) %nflood. [ $+ [ %wildsite ] ] 0 }
+    inc %nflood. [ $+ [ %wildsite ] ]  1 
+    if (%nflood. [ $+ [ %wildsite ] ] >= %mega.nflood.trigger. [ $+ [ $comchan($newnick,%nfloop) ] ] ) {
+      if ($newnick !isop $comchan($newnick,%nfloop)) {
+        if (($newnick isvoice $comchan($newnick,%nfloop)) && (%mega.voice.exempt == ON)) { goto nfloodloop }
+        kick $comchan($newnick,%nfloop) $newnick 5Banned:14 %nickfloodkmsg
+        ban -u $+ %mega.nflood.time. [ $+ [ $comchan($newnick,%nfloop) ] ] $comchan($newnick,%nfloop) $newnick 3
+        unset %nflood. [ $+ [ %wildsite ] ]
+      }
+    }
+  }
+  if ($comchan($newnick,%nfloop) == $null) { goto end }
+  goto nfloodloop
+  :end
+  unset %loopchan
+}
+
+on *:QUIT: {
+  if ((($istok(%rave.friends,$nick,32) == $true) || ($istok(%rave.temp.friends,$nick,46) == $true)) && (%friend.auto.kick == ON)) {
+    if ($istok(%rave.temp.friends,$nick,46) == $true) { set %rave.temp.friends $chr(32) $+ $deltok(%rave.temp.friends,$findtok(%rave.temp.friends,$matchtok(%rave.temp.friends,$nick,1,32),1,32),32) }
+    goto end 
+  }
+  if (%mega.all.autokicks == OFF) { goto end }
+  if (Excess Flood isin $1-) {
+    set %ef.chtotal $chan(0)
+    set %ef.loop 1
+    :loopchan
+    if (($me isop $chan(%ef.loop)) && ($istok(%mega.exflood.channels,$chan(%ef.loop),32) == $true)) {
+      .ban -u $+ %mega.exflood.time. [ $+ [ $chan(%ef.loop) ] ] $chan(%ef.loop) $wildsite
+    }
+    if (%ef.loop >= %ef.chtotal) { goto done }
+    inc %ef.loop 1
+    goto loopchan
+    :done
+    unset %ef.*
+  }
+  :end
+}
+
+alias F8 mega.clone.check
+alias mega.clone.check {
+  if ($chan == $null) { echo 4 -at * You're not on a Channel! * | goto stop }
+  if ($chan(#).ial != $true) {
+    echo -at 5 • IAL for  $+ $chan $+  is not fully updated. Updating..
+    set %scanip.who $chan | who $chan
+    set %cscan.chan $chan
+    set %cscan.switch 1
+    return
+  }
+  echo -t  | echo -t $chan 5 •  14Checking for clones on $chan ...
+  set %clone.ticks $ticks
+  set %clone.chtotal $nick($chan,0)
+  set %clone.loop 1
+  :loopcheck
+  set %clone.nick $nick($chan,%clone.loop)
+  set %clone.ipadd $address(%clone.nick,2) 
+  if (($ialchan($address(%clone.nick,2),$chan,0) > 1) && (%clone. [ $+ [ %clone.ipadd ] ] == $null)) {
+    set %clone.number $ialchan($address(%clone.nick,2),$chan,0)
+    set %clone.nloop 1
+    :nickloop
+    set %clone. [ $+ [ %clone.ipadd ] ] %clone. [ $+ [ %clone.ipadd ] ] $ialchan($address(%clone.nick,2),$chan,%clone.nloop).nick
+    if (%clone.nloop >= %clone.number) { goto next }
+    inc %clone.nloop 1
+    goto nickloop
+    :next
+    echo -t $chan 5 • 4 %clone.number 5Clones Detected: (4 $+ $address(%clone.nick,2) $+ 5) %clone. [ $+ [ %clone.ipadd ] ]
+  }
+  if (%clone.loop >= %clone.chtotal) { goto done }
+  inc %clone.loop 1
+  goto loopcheck
+  :done
+  echo -t $chan 5 •  14Clone Scan for $chan Finished in $calc(($ticks - %clone.ticks) / 1000) sec(s)
+  echo -t 
+  unset %clone.*
+  :stop
+}
+
+alias mega.clone.aftercheck {
+  echo -t  | echo -t $1 5 •  14Checking for clones on $1 ...
+  set %clone.ticks $ticks
+  set %clone.chtotal $nick($1,0)
+  set %clone.loop 1
+  :loopcheck
+  set %clone.nick $nick($1,%clone.loop)
+  set %clone.ipadd $address(%clone.nick,2) 
+  if (($ialchan($address(%clone.nick,2),$1,0) > 1) && (%clone. [ $+ [ %clone.ipadd ] ] == $null)) {
+
+    set %clone.number $ialchan($address(%clone.nick,2),$1,0)
+    set %clone.nloop 1
+    :nickloop
+    set %clone. [ $+ [ %clone.ipadd ] ] %clone. [ $+ [ %clone.ipadd ] ] $ialchan($address(%clone.nick,2),$1,%clone.nloop).nick
+    if (%clone.nloop >= %clone.number) { goto next }
+    inc %clone.nloop 1
+    goto nickloop
+    :next
+    echo -t $1 5 • 4 %clone.number 5Clones Detected: (4 $+ $address(%clone.nick,2) $+ 5) %clone. [ $+ [ %clone.ipadd ] ]
+  }
+  if (%clone.loop >= %clone.chtotal) { goto done }
+  inc %clone.loop 1
+  goto loopcheck
+  :done
+  echo -t $1 5 •  14Clone Scan for $1 Finished in $calc(($ticks - %clone.ticks) / 1000) sec(s)
+  echo -t 
+  unset %clone.*
+  :stop
+}
+
+alias mega.connect.check {
+  if (%mega.all.autokicks == $null) { set %mega.all.autokicks ON }
+  if (%mega.kickmsg.color == $null) { set %mega.kickmsg.color ON }
+  if (%rave.ts.color == $null) { set %rave.ts.color 14 }
+  if (%rave.quit.message == $null) { set %rave.quit.message %user.quit.message }
+}
+
+on *:connect: {
+  set -u10 %rave.just.logged.in 1
+  unset %rave.identified.nicks
+  unset %ignore.clone.address %jflood.* %nflood*
+  unset %rave.pvt.block.nicks
+  unset %mega.blacklisted.host
+  unset %rave.temp.friends
+  unset %rave.ping.*
+  unset %jfloodcheck.*
+  unset %rv.chg.away
+  set %rave.days Mon Tue Wed Thu Fri Sat Sun
+  set %kicklogo 5-[14 RAVE 4v4.01 5]-
+  set %logo 5-[ 14RAVE5 ]-
+  set %sq.switch 0
+  rave.acronym.check
+  mega.connect.check
+  ak.autojoin.check
+  .timer 1 3  rno.auto.i.check
+  .title
+}
+
+on *:KICK:#:{ 
+  if (($knick != $me) && ($nick == $me)) {
+    inc %rave.kick.count 1
+    if (%rave.kick.count < 10) { set %kcount.display 00 $+ %rave.kick.count }
+    if ((%rave.kick.count >= 10) && (%rave.kick.count < 100)) { set %kcount.display 0 $+ %rave.kick.count }
+    if (%rave.kick.count >= 100) { set %kcount.display %rave.kick.count }
+    .echo -t @intel 5*** 13KICKS ( $+ $chan $+ ):4 $knick ( $+ $chr(35) $+ %kcount.display $+ )
+  }
+}
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;======================== Trademark ™ 2002  « acronix »  ===============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••

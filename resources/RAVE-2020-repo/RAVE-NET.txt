@@ -1,0 +1,568 @@
+﻿alias rv.dalnet { if ($network == DALnet) { return $1- } else { return } }
+alias rv.oper.mode { if (O isin $usermode) { return $1- } else { return } }
+alias rv.dalnet.memox { if ($network == DALnet) || ($server == $null) { return $chr(91) MemoExpress $chr(93) } else { return } }
+alias rv.freenode { if ($network == Freenode) { return $1- } else { return } }
+alias rv.undernet { if ($network == UnderNet) { return $1- } else { return } }
+alias rv.quakenet { if ($network == QuakeNet) { return $1- } else { return } }
+alias rv.efnet { if ($network == EFnet) { return $1- } else { return } }
+alias rv.ircnet { if ($network == IRCnet) { return $1- } else { return } }
+alias rv.rizon { if ($network == Rizon) { return $1- } else { return } }
+
+Menu MenuBar,Channel {
+  -
+  $rv.oper.mode(Oper Commands)
+  .Test: halt
+  -
+}
+;========== FREENODE START ==========
+Menu MenuBar,Channel {
+  -
+  $rv.freenode(ChanServ)
+  .Get Info: if ($chan == $null) { .cs info $$?="Enter Channel Name:" } else { .cs info # } 
+  .-
+  . $iif($chan == $null ,$style(2)) Access
+  ..View Flags: .cs flags #
+  ..-
+  ..Set Flags: .cs flags # $$?="Enter Nickname / Hostmask / Group Template:" $$?="Enter Flags: (See Help for more info)"
+  ..Add All To: .cs flags # $$?="Enter Nickname / Hostmask / Group Template:" +*
+  ..Remove All From: .cs flags # $$?="Enter Nicname / Hostmaks / Group Template:" -*
+   ..Wipe Flags: .cs clear # FLAGS
+  ..-
+  ..Add SOP: .cs access # add $$?="Enter Nick or Hostmask to Add as SOP:" SOP
+  ..Add AOP: .cs access # add $$?="Enter Nick or Hostmask to Add as AOP:" AOP
+  ..Add VOP: .cs access # add $$?="Enter Nick or Hostmask to Add as VOP:" VOP
+  ..-
+  .. $iif($chan == $null ,$style(2)) Why Op?: .cs why # $$?="Why Op? Nick:"
+  ..-
+  ..AKick Manager
+  ...List: .cs akick # list
+  ...-
+  ...Add: .cs akick # add $$?="Enter Nick/Hostmask:" $$?="Enter !P for Permanent or !T <minutes> for timed Akicks" $$?="Enter Reason for Akick:"
+  ...Del: .cs akick # del $$?="Enter Nickname/Hostmask:"
+  ..-
+  ..Flags Help: .cs help flags
+  . $iif($chan == $null ,$style(2)) Control
+  ..Op
+  ...Op Me: .cs op # $me
+  ...Op Nick: .cs op # $$?="Nick to Op"
+  ...Deop Me: .cs deop # $me
+  ...DeOp Nick: .cs deop # $$?="Nick to deOp"
+  ..Voice
+  ...Voice Me: .cs voice # $me
+  ...Voice Nick: .cs voice # $$?="Nick to Op"
+  ...DeVoice Me: .cs devoice # $me
+  ...DeVoice Nick: .cs devoice # $$?="Nick to deOp"
+  ..Quiet
+  ...Mute Nick: .cs quiet # $$?="Enter Nick/Hostname to Mute:"
+  ...UnMute: .cs unquiet # $$?="Enter Nick/Hostname to UnMute:"
+  ..-
+  ..Unban: .cs unban $chan
+  ..Unban *: .cs clear # bans
+  ..Recover: .cs recover $chan
+  ..MKick: .cs clear # users $?="Enter Reason for Mass Kick:"
+  .-
+  .Register: if ($chan != $null) { .cs register # | else r.reg.chan.freenode }
+  .Invite: .cs invite $$?="Request Invite from which Channel?"
+  .GetKey: .cs getkey $$?="Request Key for which Channel?"
+  .Drop: if ($chan != $null) { .cs drop # } | else { .cs drop $$?="Enter Your Channel to Drop:" }
+  .-
+  . $iif($chan == $null ,$style(2)) Settings
+  ..MLock
+  ...Set Mode: .cs set # mlock $$?="Enter MLock for Channel:"
+  ...-
+  ...+nt: .cs set # mlock +nt
+  ...+nts: .cs set # mlock +nts
+  ...+nt-ispk: .cs set # mlock +nt-ispk
+  ...+ntc-ispk: .cs set # mlock +ntc-ispk
+  ...+nts-ipk: .cs set # mlock +nts-ipk
+  ...-
+  ...Clear Modes: .cs set # mlock *
+  ..Email
+  ...Set Email: .cs set # email $$?="Enter Email Address for # $+ :"
+  ...Delete Email: .cs set # email
+  ..EntryMsg
+  ...Set EntryMsg: .cs set # entrymsg $$?="Enter Entry Message for # $+ :"
+  ...Clear Msg: .cs set # entrymsg
+  ..Founder
+  ...Send Request: .cs set # founder $$?="Enter Nick to set as Founder for # $+ :"
+  ...Cancel Request: .cs set # founder $$?="Enter Nick of Current Founder:"
+  ..Guard
+  ...ON: .cs set # guard on
+  ...OFF: .cs set # guard off
+  ..NoSync
+  ...ON: .cs set # nosync ON
+  ...OFF: .cs set # nosync OFF
+  ..KeepTopic
+  ...ON: .cs set # keeptopic ON
+  ...OFF: .cs set # keeptopic OFF
+  ..TopicLock
+  ...ON: .cs set # topiclock ON
+  ...OFF: .cs set # topiclock OFF
+  ..Verbose
+  ...ON: .cs set # verbose ON
+  ...OPS: .cs set # verbose OPS
+  ...OFF: .cs set # verbose OFF
+  ..Set URL
+  ...Set URL: .cs set # url $$?="Enter URL for Channel:"
+  ...Clear URL: .cs set # url
+  ..Property
+  ...Set Metadata: .cs set # property $$?="Enter Name of Metadata:" $$?="Enter Value of Metadata:"
+  ...Clear Metadata: .cs set # property $$?="Clear Which Metadata?"
+  ..Restricted
+  ...ON: .cs set # restricted ON
+  ...OFF: .cs set # restricted OFF
+  ..Secure
+  ...ON: .cs set # secure ON
+  ...OFF: .cs set # secure OFF
+  ..Private
+  ...ON: .cs set # private ON
+  ...OFF: .cs set # private OFF
+  .-
+  . $iif($chan == $null ,$style(2)) Topic
+  ..Specify:/topic # $$?="Enter A Topic"
+  ..Welcome:/topic # ©º°¨¨°º©©º°¨¨°º© \\/\//elcome to # ©º°¨¨°º©©º°¨¨°º©
+  ..-
+  . $iif($chan == $null ,$style(2)) Designs
+  ;Designs taken from redraven's protech script
+  ..°~`~*¤§ƒ :/topic # °~`~*¤§ƒ  $$?="Enter Topic" ƒ§¤*~`~°
+  ..©º°¨¨°º©:/topic # ©º°¨¨°º© $?="Enter Topic" ©º°¨¨°º©
+  ..©º°¨¨°º©©º°¨¨°º© :/topic # ©º°¨¨°º©©º°¨¨°º©  $$?="Enter Topic" ©º°¨¨°º©©º°¨¨°º©
+  ..(¯`·._(¯`·._(¯`·._( :/topic # (¯`·._(¯`·._(¯`·._( $$?="Enter Topic" )_.·´¯)_.·´¯)_.·´¯)
+  ..(¯`·.¸(¯`·.¸(¯`·.¸(¯`·.¸:/topic # .(¯`·.¸(¯`·.¸(¯`·.¸(¯`·.¸ $?="Enter Topic" ¸.·´¯)¸.·´¯)¸.·´¯)¸.·´¯)
+  ..(¯`·.¸¸.·´¯`·.¸¸.-> :/topic # (¯`·.¸¸.·´¯`·.¸¸.-> $$?="Enter Topic" <-.¸¸.·´¯`·.¸¸.·´¯)
+  ..¯°·.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.->:/topic # ¯°·.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.-> $?="Enter Topic" <-.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.·°¯
+  ..,-*-,._.,-*'^'~*-,._.,-*~>:/topic # .,-*-,._.,-*'^'~*-,._.,-*~> $?="Enter Topic" <~*-,._.,-*~'^'~*-,._.,-*-,.
+  ..|!¤*'~``~'*¤!||!¤*'~``~'*¤!|:/topic # |!¤*'~``~'*¤!||!¤*'~``~'*¤!| $?="Enter Topic" |!¤*'~``~'*¤!||!¤*'~``~'*¤!|
+  ..§¤*~`~*¤§|§¤*~`~*¤§|§¤*~ -==-:/topic # §¤*~`~*¤§|§¤*~`~*¤§|§¤*~ -==- $?="Enter Topic" -==- ~*¤§|§¤*~`~*¤§|§¤*~`~*¤§
+  ..«« «« ««:topic $chan 1,1««2««12««6««4««7««9««8««13,1 $$?="Topic:" 8»»9»»7»»4»»6»»12»»2»»1»»
+  ..Black and Gray:topic $chan 1,1.14,14.15,15.16,1 $$?="Topic:" 15,15.14,14.1,1.
+  ..Blue colors:topic $chan  11,0,%0,11%`12,11,%11,12%`2,12,%12,2%`11,2 $$?="Topic:" 12,2`%2,12%,11,12`%12,11%,0,11`%11,0%,
+  ..Green color:topic $chan 9`%0,9%, 3,9`%9,3%, 1,3`%3,1%,9 $$?="Topic:" 3,1`%1,3%, 9,3`%3,9%, 0,9`%9%,
+  ..Bold Blue:topic $chan 0,12æ¸2,12`æ12,2æ¸1,2`æ2,1æ¸0,1 -= $$?="Topic:" =- 2,1`æ1,2æ¸12,2`æ2,12æ¸0,12`æ12
+  ..Bold Green:topic $chan 9,0æ0,9æ3,9æ9,3æ1,3æ3,1æ9 $$?="Topic:" 3,1æ1,3æ9,3æ3,9æ0,9æ9,0æ
+  ..Ryany:topic $chan 4,0%0,4%4,4 5,4%4,5%5,5 1,5%5,1%1,1 0,1 $$?="Topic:" 5,1%1,5%5,5 4,5%5,4%4,4 0,4%4,0% 
+  ..yellow, red and black:topic $chan 8,0æ0,8æ7,8æ8,7æ4,7æ7,4æ5,4æ4,5æ1,5æ5,1æ8,1 $$?="Topic:" 5,1æ1,5æ4,5æ5,4æ7,4æ4,7æ8,7æ7,8æ0,8æ8,0æ
+  ..yellow, red and black with |||:topic $chan 8,0|0,8|8,7|4,7|7,4|5,4|4,5|1,5|5,1|9,1 $$?="Topic:" 5,1|1,5|4,5|5,4|7,4|4,7|8,7|0,8|8,0|  9,12 
+  ..yellow, red and black small:topic $chan 8æ0,8æ4,8æ8,4æ1,4æ4,1æ8,1 $$?="Topic:" 4,1æ1,4æ8,4æ4,8æ0,8æ8,16æ
+  ..Blue colors with |||:topic $chan 11,0¦|0,11¦|12,11¦|11,12¦|2,12¦|12,2¦|1,2¦|2,1¦|11,1 $$?="Topic:" 2,1|¦1,2|¦12,2|¦2,12|¦11,12|¦12,11|¦0,11|¦11,0|¦4
+  ..Rainbow |||:topic $chan 6,12|12,6|13,6|6,13|4,13|13,4|7,4|4,7|8,7|7,8|9,8|8,9|10,9|9,10|12,10|10,12|16,12 $$?="Topic:" 10,12|12,10|9,10|10,9|8,9|9,8|7,8|8,7|4,7|7,4|13,4|4,13|6,1
+  ..nice one:topic $chan 15,0"¾0,15¾»13,15"¾15,13¾»6,13"¾13,6¾»14,6"¾6,14¾»1,14"¾14,1¾»1,1t0 $$?="Topic:" 1,1t14,1"¾1,14¾»6,14"¾14,6¾»13,6"¾6,13¾»15,13"¾13,15¾»0,15"¾15,0¾»
+  ..Very nice gray:topic $chan 14,15<16>14<16>14<16>14<16>14<16>1 $$?="Topic:" 14,15<16>14<16>14<16>14<16>14<16>
+  ..Very nice blue..:topic $chan 12,10<11>12<11>12<11>12<11>12<11> $$?="Topic:" 12,10<11>12<11>12<11>12<11>12<11>
+  ..©º°°º©©º°°º© with rainbow:topic $chan 4,1©8,1º3,1°12,1°6,1º10©10©6,1º12,1°3,1°8,1º4,1©15,1 $$?="Topic:" 4,1©8,1º3,1°12,1°6,1º10©10©6,1º12,1°3,1°8,1º4,1©
+  ..«» gray:topic $chan 14,15«16»1 $$?="Topic:" 14,15«16»
+
+  .-
+  .Help
+  ..ChanServ: .rv.freenode.cs.info
+  ..-
+  ..REGISTER: .cs help register
+  ..SET
+  ...SET: .cs help set
+  ...-
+  ...EMAIL: .cs help set EMAIL
+
+  ...ENTRYMSG: .cs help set ENTRYMSG
+  ...FOUNDER: .cs help set FOUNDER
+  ...GUARD: .cs help set GUARD
+  ...KEEPTOPIC: .cs help set KEEPTOPIC
+  ...MLOCK: .cs help set MLOCK
+  ...NOSYNC: .cs help set NOSYNC
+  ...PRIVATE: .cs help set PRIVATE
+  ...PROPERTY: .cs help set PROPERTY
+  ...RESTRICTED: .cs help set RESTRICTED
+  ...SECURE: .cs help set SECURE
+  ...TOPICLOCK: .cs help set TOPICLOCK
+  ...URL: .cs help set URL
+  ...VERBOSE: .cs help set VERBOSE
+  ..FLAGS: .cs help FLAGS
+  ..INVITE: .cs help INVITE
+  ..AKICK: .cs help AKICK
+  ..OP: .cs help OP
+  ..DEOP: .CS HELP DEOP
+  ..VOICE: .cs help VOICE
+  ..DEVOICE: .CS HELP DEVOICE
+  ..QUIET: .cs help QUIET
+  ..UNQUIET: .CS HELP UNQUIET
+  ..RECOVER: .cs help RECOVER
+  ..UNBAN: .cs help UNBAN
+  ..ACCESS: .cs help ACCESS
+  ..COUNT: .cs help COUNT
+  ..CLEAR: .cs help CLEAR
+  ..GETKEY: .cs help GETKEY
+  ..INFO: .cs help INFO
+  ..STATUS: .cs help STATUS
+  ..SYNC: .cs help SYNC
+  ..TAXONOMY: .cs help TAXONOMY
+  ..TEMPLATE: .cs help TEMPLATE
+  ..TOPIC: .cs help TOPIC
+  ..TOPICAPPEND: .cs help TOPICAPPEND
+  ..TOPICPREPEND: .CS HELP TOPICPREPEND
+  ..TOPICSWAP: .CS HELP TOPICSWAP
+}
+
+Menu MenuBar,Status,Channel {
+  $rv.freenode(NickServ)
+  .Nick Information: .ns info $$?="Enter Nick to Info:" 
+  .-
+  .Change Nick: nick $$?="Enter Nick:"
+  .-
+  .Identify Nick: set %rv.ns.id.switch $$?!="Identify $me $+ ?" | if (%rv.ns.id.switch == $true) { .ns identify $$?*="Enter Your Password:" } else { .ns identify $$?="Identify which Nick?" $$?*="Enter Your Password:" }
+  .Ghost Nick: .ns GHOST $$?="Ghost Which Nick?"
+  .Ghost w/ PW: .ns GHOST $$?="Ghost Which Nick:" $$?*="Password:"
+  .Request Release: .ns release $$?="Release which Nick?"
+  .Recover Nick: .ns recover $$?="Recover which Nick?"
+  .-
+  .Settings
+  ..Access
+  ...LIST: .ns ACCESS LIST
+  ...ADD: .ns ACCESS ADD $$?="Add Hostmask (user@host):"
+  ...DEL: .ns ACCESS DEL $$?="Delete Which Hostmask (user@host)?"
+  ..Nick URL
+  ...Set URL: .ns SET URL $$?="Enter URL:"
+  ...Clear URL: .ns SET URL
+  ..Set Email
+  ...View Current Email: .ns set email
+  ...Set New Email: .ns set email $$?*="Enter Password for $me $+ :" $$?="Enter New Email Address:"
+  ..MailBlock
+  ...Status: .ns set mailblock
+  ...-
+  ...ON: .ns set mailblock on
+  ...OFF: .ns set mailblock off
+  ..NoMemo
+  ...Status: .ns set nomemo
+  ...-
+  ...ON: .ns set nomemo on
+  ...OFF: .ns set nomemo off
+  ..NoOp
+  ...Status: .ns set noop
+  ...-
+  ...ON: .ns set noop on
+  ...OFF: .ns set noop off
+  ..ShowEmail
+  ...Status: .ns set showemail
+  ...-
+  ...ON: .ns set showemail on
+  ...OFF: .ns set showemail off
+  ..ChangePass: .ns SET PASSWD $$?*="Enter Old Password:" $$?*="Enter New Password:"
+  ..SendPass: .ns sendpass $$?="Enter Nick to Reset Password:" $$?="Enter Email Address of Specified Nick:"
+  .Language
+  ..English: .ns lang EN
+  ..Spanish: .ns lang ES
+  ..Italian: .ns lang IT
+  ..French: .ns lang FR
+  ..Arabic: .ns lang AR
+  ..German: .ns lang DE
+  ..Indonesian: .ns lang ID
+  ..Swedish: .ns lang SE
+  ..Malaysian: .ns lang MY
+  ..Romanian: .ns lang RO
+  ..Portuguese: .ns lang PT
+  ..Urdu: .ns lang UR
+  .Help
+  ..ACCESS: .NS HELP ACCESS
+  ..DROP: .NS HELP DROP
+  ..GHOST: .NS HELP GHOST
+  ..IDENTIFY: .NS HELP IDENTIFY
+  ..RECOVER: .NS HELP RECOVER
+  ..REGISTER: .NS HELP REGISTER
+  ..SENDPASS: .NS HELP SENDPASS
+  ..SET
+  ...SET: .NS HELP SET
+  ...-
+  ...EMAIL: .NS HELP SET EMAIL
+  ...MAILBLOCK: .NS HELP SET MAILBLOCK
+  ...NOMEMO: .NS HELP SET NOMEMO
+  ...NOOP: .NS HELP SET NOOP
+  ...PASSWD: .NS HELP SET PASSWD
+  ...SHOWEMAIL: .NS HELP SET SHOWEMAIL
+  ...URL: .NS HELP SET URL
+  ..RELEASE: .NS HELP RELEASE
+  ..INFO: .NS HELP INFO
+  ..ACC: .NS HELP ACC
+  ..LANG: .NS HELP LANG 
+  .-
+  .Register Nick: .ns REGISTER $$?="Set Your Password:" $$?="Enter Your Email Add:"
+  .Drop Nick: .ns drop $$?="Drop Which Nick?"
+  .-
+  .About NickServ: rv.freenode.ns.info
+  $rv.freenode(MemoServ)
+  .Send
+  ..Send To Nick: .ms send $$?="Nick to send to:" $$?="Message to send:"
+  ..Send To Channel: .ms send $$?="Channel to Send to:" $$?="Message to send:"
+  ..Send SOP: .ms sendsop $$?="Channel to SendSOP:" $$?="Message to Send"
+  .Help
+  ..General: .ms help | .disable #memohalt
+  ..Specific: .ms help $$?="What topic?" | .disable #memohalt
+  .-
+  .Read: memos | listmemos
+  .Forward: .ms forward $$?="Enter Nick for Memos to be forward to:" $$?="Enter Password for that Nick!" | .disable #memohalt
+  .-
+}
+
+alias r.reg.chan.freenode {
+  set %r.reg.chan.temp $$?="Enter Channel to Register:"
+  if ($me isop %r.reg.chan.temp) { .cs register %r.reg.chan.temp } 
+  else { echo $color(notice) -at You must be an Operator of %r.reg.chan.temp in order to register it. }
+}
+;========== FREENODE END ==========
+
+
+;========== UNDERNET START ==========
+Menu MenuBar,Channel {
+  -
+  $rv.undernet(X Commands)
+  .Control
+  ..X Part (500): .msg X@channels.undernet.org part $iif($chan == $null,$$?="Enter Channel Name for X to Part:",#)
+  ..X Join (450+): .msg X@channels.undernet.org join $iif($chan == $null,$$?="Enter Channel Name for X to Join:",#)
+  ..-
+  .. $iif($chan == $null ,$style(2)) X OP (100+)
+  ...OP Nick(s):  .msg X@channels.undernet.org op # $$?="Enter Nick(s) to OP:"
+  ...OP Me: .msg X@channels.undernet.org op #
+  .. $iif($chan == $null ,$style(2)) X DeOP (100+)
+  ...DeOP Nick(s):  .msg X@channels.undernet.org deop # $$?="Enter Nick(s) to DeOP:"
+  ...DeOP Me:  .msg X@channels.undernet.org deop #
+  ..-
+  .. $iif($chan == $null ,$style(2)) X Voice (25+)
+  ...Voice Nick(s):  .msg X@channels.undernet.org voice # $$?="Enter Nick(s) to Voice:"
+  ...Voice Me: .msg X@channels.undernet.org voice #
+  .. $iif($chan == $null ,$style(2)) X DeVoice (25+)
+  ...DeVoice Nick(s):  .msg X@channels.undernet.org devoice # $$?="Enter Nick(s) to DeVoice:"
+  ...DeVoice Me:  .msg X@channels.undernet.org devoice #
+  ..-
+  .. $iif($chan == $null ,$style(2)) X Kick (50+): .msg X@channels.undernet.org kick # $$?="Enter Nick to Kick:" $?="Enter Kick Reason: (optional)"
+  .. $iif($chan == $null ,$style(2)) X MassKick (200+): .msg X@channels.undernet.org kick # $$?="Hostmask to Mass Kick:" $?="Enter Mass Kick Reason: (optional)"
+  ..-
+  .. $iif($chan == $null ,$style(2)) X Ban (75+): .msg X@channels.undernet.org ban # $$?="Enter Nick or Hostmask to Ban:" $?="Enter Duration in Hrs: (Default = 3hrs)" $?="Enter Ban Level: (Default 75)" $?="Enter Reason for Ban: (optional)"
+  .. $iif($chan == $null ,$style(2)) X UnBan (75+): .msg X@channels.undernet.org unban # $$?="Enter Nick or Hostmask to Unban:"
+  ..-
+  ..ClearMode (400+): .msg X@channels.undernet.org clearmode $iif($chan == $null,$$?="Enter Channel to ClearMode:",#)
+  ..Invite (100+): .msg X@channels.undernet.org invite $iif($chan == $null,$$?="Enter Channel to Get Invite from X:",#)
+  .Get Info
+  ..Status (1+): .msg X@channels.undernet.org  status $iif($chan == $null,$$?="Enter Channel to View Status:",#)
+  ..-
+  ..Chan Info:  .msg X@channels.undernet.org info $iif($chan == $null,$$?="Enter Channel Name to Get Info:",#)
+  ..User Info: .msg X@channels.undernet.org info $$?="Enter Username to Get Info:"
+  ..Verify Nick: .msg X@channels.undernet.org verify $$?="Enter Nick to Verify:"
+  ..-
+  ..Banlist (1+): .msg X@channels.undernet.org banlist $iif($chan == $null,$$?="Enter Channel to View Banlist:",#)
+  ..LBanlist: .msg X@channels.undernet.org lbanlist $iif($chan == $null,$$?="Enter Channel to View Banlist:",#) $$?="Enter Pattern: ( Use  *  to see whole list )"
+  ..-
+  ..Commands: .msg X@channels.undernet.org showcommands $iif($chan == $null,$$?="Channel to Check for Available Commands:",#)
+  
+  .-
+  . $iif($chan == $null ,$style(2)) Access
+  ..AddUser (400+): .msg X@channels.undernet.org adduser # $$?="Enter Username to Add to # $+ :" $$?="Enter Access Level to Assign:"
+  ..RemUser (400+): .msg X@channels.undernet.org remuser # $$?="Enter Username to Remove from # $+ :"
+  ..-
+  ..ModInfo (400+)
+  ...AutoMode (400+)
+  ....None: .msg X@channels.undernet.org modinfo # automode $$?="Enter Username to Modify:" none
+  ....OP: .msg X@channels.undernet.org modinfo # automode $$?="Enter Username to Modify:" op
+  ....Voice: .msg X@channels.undernet.org modinfo # automode $$?="Enter Username to Modify:" voice
+  ...Access (400+): .msg X@channels.undernet.org modinfo # access $$?="Enter Username to Change Level:" $$?="Enter New Access Level:"
+  ..-
+  ..Suspend (100+)
+  ...For Minutes: .msg X@channels.undernet.org suspend # $$?="Enter Username to Suspend:" $$?="Enter Duration: (Minutes)" M $?="Suspend Access Level:"
+  ...For Hours: .msg X@channels.undernet.org suspend # $$?="Enter Username to Suspend:" $$?="Enter Duration: (Hours)" H $?="Suspend Access Level:"
+  ...For Days: .msg X@channels.undernet.org suspend # $$?="Enter Username to Suspend:" $$?="Enter Duration: (Days)" D $?="Suspend Access Level:"
+  ...-
+  ...UnSuspend: .msg X@channels.undernet.org unsuspend # $$?="Enter Username to Unsuspend"
+  ..-
+  ..LookUp (1+)
+  ...Show All: .msg X@channels.undernet.org access # *
+  ...-
+  ...Pattern: .msg X@channels.undernet.org access # $$?="Enter Wildcard Pattern:"
+  ...Custom: .msg X@channels.undernet.org access # $$?="Enter String: ( * $chr(124) pattern $chr(124) username $chr(124) =nickname )" $?="Optional: Min Level? ( -min <level> )" $?="Optional: Max Level? ( -max <level> )" $?="Optional: AutoMode? ( -none $chr(124) -voice $chr(124) -op )"
+  ...-
+  ...Username: .msg X@channels.undernet.org access # $$?="Enter Username:"
+  ...Nickname: .msg X@channels.undernet.org access # $chr(61) $+ $$?="Enter Nick:"
+  ...-
+  ...Minimum: .msg X@channels.undernet.org access # -min $$?="Enter Min Level: (will show all from min level)"
+  ...Maximum: .msg X@channels.undernet.org access # -max $$?="Enter Max Level: (will show all below max level)"
+  ...-
+  ...Auto Ops: .msg X@channels.undernet.org access # -op
+  ...Auto Voice: .msg X@channels.undernet.org access # -voice
+  ...No AutoMode: .msg X@channels.undernet.org access # -none
+  ...-
+  ...Last Modified: .msg X@channels.undernet.org access # -modif
+  ...-
+  ...Help: echo $color(notice) -at Usage: /msg x access <#channel> <*|pattern|username|=nickname> [-min <level>] [-max <level>] [-modif] [-none|-voice|-op]
+  
+  . $iif($chan == $null ,$style(2)) Settings
+  ..X Auto Join (500)
+  ...ON: .msg X@channels.undernet.org set # autojoin on
+  ...OFF: .msg X@channels.undernet.org set # autojoin off
+  ..MassDeopPro (500)
+  ...0 in 15sec: .msg X@channels.undernet.org set # massdeoppro 0
+  ...1 in 15sec: .msg X@channels.undernet.org set # massdeoppro 1
+  ...2 in 15sec: .msg X@channels.undernet.org set # massdeoppro 2
+  ...3 in 15sec: .msg X@channels.undernet.org set # massdeoppro 3
+  ...4 in 15sec: .msg X@channels.undernet.org set # massdeoppro 4
+  ...5 in 15sec: .msg X@channels.undernet.org set # massdeoppro 5
+  ...6 in 15sec: .msg X@channels.undernet.org set # massdeoppro 6
+  ...7 in 15sec: .msg X@channels.undernet.org set # massdeoppro 7
+  ..NoOP (500)
+  ...ON: .msg X@channels.undernet.org set # noop on
+  ...OFF: .msg X@channels.undernet.org  set # noop off
+  ..StrictOP (500)
+  ...ON: .msg X@channels.undernet.org  set # strictop on
+  ...OFF: .msg X@channels.undernet.org  set # strictop off
+  ..AutoTopic (450+)
+  ...ON: .msg X@channels.undernet.org set # autotopic on
+  ...OFF: .msg X@channels.undernet.org set # autotopic off
+  ..Description (450+)
+  ...Set Desc: .msg X@channels.undernet.org set # desc $$?="Enter Channel Description for # $+ :"
+  ...-
+  ...Clear: .msg X@channels.undernet.org set # desc
+  ..FloatLim (450+)
+  ...ON: .msg X@channels.undernet.org set # floatlim on
+  ...OFF: .msg X@channels.undernet.org set # floatlim off
+  ...-
+  ...FloatGrace (450+): .msg X@channels.undernet.org set # floatgrace $$?="Enter Grace Value for Floating Limit: ( 0 - 19 )"
+  ...FloatMargin (450+): .msg X@channels.undernet.org set # floatmargin $$?="Enter  User Margin for Floating Limit: ( 2 - 20 )"
+  ...FloatMax (450+): .msg X@channels.undernet.org set # floatmax $$?="Enter Maximum Limit for Floating Limit: ( 0 - 65536 )"
+  ...FloatPeriod (450+): .msg X@channels.undernet.org set # floatperiod $$?="Time in Seconds Before X Resets Channel Limit: ( 20 - 200 )"
+  ..Keywords (450+)
+  ...Set Keywords: .msg X@channels.undernet.org set # keywords $$?="Enter Keywords for # $+ :"
+  ...-
+  ...Clear: .msg X@channels.undernet.org set # keywords
+  ..Mode (450+)
+  ...Save Current: .msg X@channels.undernet.org set # mode
+  ..URL (450+)
+  ...Set URL: .msg X@channels.undernet.org set # url $$?="Enter Channel URL: (75 chars max)"
+  ...-
+  ...Clear: .msg X@channels.undernet.org set # url
+  ..UserFlags (450+)
+  ...None: .msg X@channels.undernet.org set # userflags 0
+  ...Op: .msg X@channels.undernet.org set # userflags 1
+  ...Voice: .msg X@channels.undernet.org set # userflags 2
+  ..-
+  ..Support Channel
+  ...YES: .msg X@channels.undernet.org support # yes
+  ...NO: .msg X@channels.undernet.org support # no
+  .-
+  .User Login: .msg X@channels.undernet.org login $$?="Enter CService Username:" $$?*="Enter CService Password:"
+  .-
+    
+  . $iif($chan == $null ,$style(2)) Set Topic
+  ;..$submenu($rv.topic.menu($1))
+  ..Specify: $rv.topic.specify
+  ..Welcome: $rv.topic.welcome
+  ..-
+  ..X Topic (50+): .msg X@channels.undernet.org topic # $$?="Enter Channel Topic:"
+  . $iif($chan == $null ,$style(2)) Designs
+  ;Designs taken from redraven's protech script
+  ..°~`~*¤§ƒ : $rv.topic.d1
+  ..©º°¨¨°º©: $rv.topic.d2
+  ..©º°¨¨°º©©º°¨¨°º© : $rv.topic.d3
+  ..(¯`·._(¯`·._(¯`·._( : $rv.topic.d4
+  ..(¯`·.¸(¯`·.¸(¯`·.¸(¯`·.¸: $rv.topic.d5
+  ..(¯`·.¸¸.·´¯`·.¸¸.-> : $rv.topic.d6
+  ..¯°·.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.->: $rv.topic.d7
+  ..,-*-,._.,-*'^'~*-,._.,-*~>: $rv.topic.d8
+  ..|!¤*'~``~'*¤!||!¤*'~``~'*¤!|: $rv.topic.d9
+  ..§¤*~`~*¤§|§¤*~`~*¤§|§¤*~ -==-: $rv.topic.d10
+  ..«« «« ««: $rv.topic.d11
+  ..Black and Gray: $rv.topic.d12
+  ..Blue colors: $rv.topic.d13
+  ..Green color: $rv.topic.d14
+  ..Bold Blue: $rv.topic.d15
+  ..Bold Green: $rv.topic.d16
+  ..Ryany: $rv.topic.d17 
+  ..yellow, red and black: $rv.topic.d18
+  ..yellow, red and black with |||: $rv.topic.d19 
+  ..yellow, red and black small: $rv.topic.d20
+  ..Blue colors with |||: $rv.topic.d21
+  ..Rainbow |||: $rv.topic.d22
+  ..nice one: $rv.topic.d23
+  ..Very nice gray: $rv.topic.d24
+  ..Very nice blue..: $rv.topic.d25
+  ..©º°°º©©º°°º© with rainbow: $rv.topic.d26
+  ..«» gray: $rv.topic.d27
+  .-
+  .Help
+  ..Topics: /rv.undernet.help
+  ..-
+  ..xcmds.txt: /run https://cservice.undernet.org/docs/xcmds.txt
+  
+  $rv.undernet(User Settings)
+  .Hide Real IP: mode $me +x
+  .-
+  .Invisible
+  ..ON: .msg X@channels.undernet.org set invisible on
+  ..OFF: .msg X@channels.undernet.org set invisible off
+  .NoAddUser
+  ..ON: .msg X@channels.undernet.org set noadduser on
+  ..OFF: .msg X@channels.undernet.org set noadduser off
+  .-
+  .Show Ignore: .msg X@channels.undernet.org showignore
+  .-
+  .Register: /run https://cservice.undernet.org/live
+  .Visit Website: /run https://cservice.undernet.org
+  .View Motd: .msg X@channels.undernet.org motd
+  .-
+  .Language
+  ..Arabic: .msg X@channels.undernet.org set lang ar
+  ..Catalan: .msg X@channels.undernet.org set lang ca
+  ..Christmas: .msg X@channels.undernet.org set lang ch
+  ..German: .msg X@channels.undernet.org set lang de
+  ..Danish: .msg X@channels.undernet.org set lang dk
+  ..Easter: .msg X@channels.undernet.org set lang ea
+  ..English: .msg X@channels.undernet.org set lang en
+  ..Spanish: .msg X@channels.undernet.org set lang es
+  ..Français: .msg X@channels.undernet.org set lang fr
+  ..Greek: .msg X@channels.undernet.org set lang gr
+  ..Halloween: .msg X@channels.undernet.org set lang ha
+  ..Hungarian: .msg X@channels.undernet.org set lang hu
+  ..Italian: .msg X@channels.undernet.org set lang it
+  ..Macedonian: .msg X@channels.undernet.org set lang mk
+  ..Dutch: .msg X@channels.undernet.org set lang nl
+  ..Norsk: .msg X@channels.undernet.org set lang no
+  ..Portuguese: .msg X@channels.undernet.org set lang pt
+  ..Romanian: .msg X@channels.undernet.org set lang ro
+  ..Svenska: .msg X@channels.undernet.org set lang sv
+  ..Turkce: .msg X@channels.undernet.org set lang tr
+  .-
+  .User Login: .msg X@channels.undernet.org login $$?="Enter Your Username:" $$?*="Enter Your Password:"
+  .-
+  -
+}
+
+;======= Designs taken from redraven's protech script =======
+alias rv.topic.specify { return /topic # $$?="Enter Channel Topic:" }
+alias rv.topic.welcome { return /topic # ©º°¨¨°º©©º°¨¨°º© \\/\//elcome to # ©º°¨¨°º©©º°¨¨°º© }
+alias rv.topic.d1 { return /topic # °~`~*¤§ƒ  $$?="Enter Topic" ƒ§¤*~`~° }
+alias rv.topic.d2 { return /topic # ©º°¨¨°º© $?="Enter Topic" ©º°¨¨°º© }
+alias rv.topic.d3 { return /topic # ©º°¨¨°º©©º°¨¨°º©  $$?="Enter Topic" ©º°¨¨°º©©º°¨¨°º© }
+alias rv.topic.d4 { return /topic # (¯`·._(¯`·._(¯`·._( $$?="Enter Topic" )_.·´¯)_.·´¯)_.·´¯) }
+alias rv.topic.d5 { return /topic # .(¯`·.¸(¯`·.¸(¯`·.¸(¯`·.¸ $?="Enter Topic" ¸.·´¯)¸.·´¯)¸.·´¯)¸.·´¯) }
+alias rv.topic.d6 { return /topic # (¯`·.¸¸.·´¯`·.¸¸.-> $$?="Enter Topic" <-.¸¸.·´¯`·.¸¸.·´¯) }
+alias rv.topic.d7 { return /topic # ¯°·.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.-> $?="Enter Topic" <-.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.·°¯ }
+alias rv.topic.d8 { return /topic # .,-*-,._.,-*'^'~*-,._.,-*~> $?="Enter Topic" <~*-,._.,-*~'^'~*-,._.,-*-,. }
+alias rv.topic.d9 { return /topic # |!¤*'~``~'*¤!||!¤*'~``~'*¤!| $?="Enter Topic" |!¤*'~``~'*¤!||!¤*'~``~'*¤!| }
+alias rv.topic.d10 { return /topic # §¤*~`~*¤§|§¤*~`~*¤§|§¤*~ -==- $?="Enter Topic" -==- ~*¤§|§¤*~`~*¤§|§¤*~`~*¤§ }
+alias rv.topic.d11 { return /topic # 1,1««2««12««6««4««7««9««8««13,1 $$?="Topic:" 8»»9»»7»»4»»6»»12»»2»»1»» }
+alias rv.topic.d12 { return /topic # 1,1.14,14.15,15.16,1 $$?="Topic:" 15,15.14,14.1,1. }
+alias rv.topic.d13 { return /topic #  11,0,%0,11%`12,11,%11,12%`2,12,%12,2%`11,2 $$?="Topic:" 12,2`%2,12%,11,12`%12,11%,0,11`%11,0%, }
+alias rv.topic.d14 { return /topic # 9`%0,9%, 3,9`%9,3%, 1,3`%3,1%,9 $$?="Topic:" 3,1`%1,3%, 9,3`%3,9%, 0,9`%9%, }
+alias rv.topic.d15 { return /topic # 0,12æ¸2,12`æ12,2æ¸1,2`æ2,1æ¸0,1 -= $$?="Topic:" =- 2,1`æ1,2æ¸12,2`æ2,12æ¸0,12`æ12 }
+alias rv.topic.d16 { return /topic # 9,0æ0,9æ3,9æ9,3æ1,3æ3,1æ9 $$?="Topic:" 3,1æ1,3æ9,3æ3,9æ0,9æ9,0æ }
+alias rv.topic.d17 { return /topic # 4,0%0,4%4,4 5,4%4,5%5,5 1,5%5,1%1,1 0,1 $$?="Topic:" 5,1%1,5%5,5 4,5%5,4%4,4 0,4%4,0% }
+alias rv.topic.d18 { return /topic # 8,0æ0,8æ7,8æ8,7æ4,7æ7,4æ5,4æ4,5æ1,5æ5,1æ8,1 $$?="Topic:" 5,1æ1,5æ4,5æ5,4æ7,4æ4,7æ8,7æ7,8æ0,8æ8,0æ }
+alias rv.topic.d19 { return /topic # 8,0|0,8|8,7|4,7|7,4|5,4|4,5|1,5|5,1|9,1 $$?="Topic:" 5,1|1,5|4,5|5,4|7,4|4,7|8,7|0,8|8,0|  9,12 }
+alias rv.topic.d20 { return /topic # 8æ0,8æ4,8æ8,4æ1,4æ4,1æ8,1 $$?="Topic:" 4,1æ1,4æ8,4æ4,8æ0,8æ8,16æ }
+alias rv.topic.d21 { return /topic # 11,0¦|0,11¦|12,11¦|11,12¦|2,12¦|12,2¦|1,2¦|2,1¦|11,1 $$?="Topic:" 2,1|¦1,2|¦12,2|¦2,12|¦11,12|¦12,11|¦0,11|¦11,0|¦4 }
+alias rv.topic.d22 { return /topic # 6,12|12,6|13,6|6,13|4,13|13,4|7,4|4,7|8,7|7,8|9,8|8,9|10,9|9,10|12,10|10,12|16,12 $$?="Topic:" 10,12|12,10|9,10|10,9|8,9|9,8|7,8|8,7|4,7|7,4|13,4|4,13|6,1 }
+alias rv.topic.d23 { return /topic # 15,0"¾0,15¾»13,15"¾15,13¾»6,13"¾13,6¾»14,6"¾6,14¾»1,14"¾14,1¾»1,1t0 $$?="Topic:" 1,1t14,1"¾1,14¾»6,14"¾14,6¾»13,6"¾6,13¾»15,13"¾13,15¾»0,15"¾15,0¾» }
+alias rv.topic.d24 { return /topic # 14,15<16>14<16>14<16>14<16>14<16>1 $$?="Topic:" 14,15<16>14<16>14<16>14<16>14<16> }
+alias rv.topic.d25 { return /topic # 12,10<11>12<11>12<11>12<11>12<11> $$?="Topic:" 12,10<11>12<11>12<11>12<11>12<11> }
+alias rv.topic.d26 { return /topic # 4,1©8,1º3,1°12,1°6,1º10©10©6,1º12,1°3,1°8,1º4,1©15,1 $$?="Topic:" 4,1©8,1º3,1°12,1°6,1º10©10©6,1º12,1°3,1°8,1º4,1© }
+alias rv.topic.d27 { return /topic # 14«15»14 $$?="Topic:" 14«15» }
+;======= Designs taken from redraven's protech script =======
+
+alias away {
+  if ($away == $true) && ($1 != $null) { away $1- | set %rv.chg.away 1 | halt }
+  if (($away == $true) && ($1 == $null)) { away } 
+  else { if ($1 == $null) { .echo -q $input(You are not marked as Away!,o,Attention) | halt } else { away $1- } } 
+}

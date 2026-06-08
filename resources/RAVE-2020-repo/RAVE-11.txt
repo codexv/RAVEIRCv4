@@ -1,0 +1,171 @@
+﻿alias rv.dalnet.cs.info {
+  echo $color(notice) -at  * * * * * * * * ChanServ@services.dal.net * * * * * * * *  
+  echo $color(notice) -at  
+  echo $color(notice) -at  ChanServ gives normal users the ability to keep hold of a
+  echo $color(notice) -at  channel, without the need for a bot. Unlike other IRC networks,
+  echo $color(notice) -at  channel takeovers are virtually impossible, when they are registered.
+  echo $color(notice) -at  Registration is a quick and painless process. Once registered,
+  echo $color(notice) -at  the founder can maintain complete and total control of the
+  echo $color(notice) -at  channel. ChanServ will stop monitoring a channel if no Op enters
+  echo $color(notice) -at  the channel for 30 days or the founder's nick expires.
+  echo $color(notice) -at  
+  echo $color(notice) -at  For more information on a command /cs help <command>
+  echo $color(notice) -at 
+  echo $color(notice) -at  Core Commands:
+  echo $color(notice) -at        REGISTER  - Register a channel
+  echo $color(notice) -at        SET       - Change various channel configuration settings
+  echo $color(notice) -at        SOP       - Maintain SuperOp channel operator list
+  echo $color(notice) -at        AOP       - Maintain AutoOp channel operator list
+  echo $color(notice) -at        AKICK     - Maintain the channel AutoKick banned user list
+  echo $color(notice) -at        MANAGER   - Maintain the channel manager list
+  echo $color(notice) -at        DROP      - Drop a registered channel
+  echo $color(notice) -at        SENDPASS  - Request that your password be sent via email
+  echo $color(notice) -at 
+  echo $color(notice) -at  Other Commands:
+  echo $color(notice) -at        IDENTIFY    ACCESS      OP          DEOP
+  echo $color(notice) -at        INFO        INVITE      MKICK       MDEOP
+  echo $color(notice) -at        UNBAN       COUNT       WHY         ACC
+  echo $color(notice) -at        LISTOPS
+  echo $color(notice) -at  
+  echo $color(notice) -at  Note: ChanServ command shortcuts are already
+  echo $color(notice) -at             included in RAVE IRC v4.01's menu.
+  echo $color(notice) -at  
+}
+alias rv.dalnet.ns.info {
+  echo $color(notice) -at  * * * * * * * * NickServ@services.dal.net * * * * * * * *  
+  echo $color(notice) -at  
+  echo $color(notice) -at  NickServ permits users to 'register' a nickname, and stop
+  echo $color(notice) -at  others from using that nick. NickServ allows the owner of a
+  echo $color(notice) -at  nick to disconnect a user using the owners registered nick.
+  echo $color(notice) -at  If a registered nick is not used by the owner for 30 days,
+  echo $color(notice) -at  NickServ will drop it, leaving it up for grabs by another user.
+  echo $color(notice) -at  Please do NOT register more nicks than you will actively use! =)
+  echo $color(notice) -at   
+  echo $color(notice) -at  For more information on a command, type
+  echo $color(notice) -at  /ns help <command>
+  echo $color(notice) -at   
+  echo $color(notice) -at  Core Commands:
+  echo $color(notice) -at        ACCESS    - Change the list of addresses allowed to use a nick
+  echo $color(notice) -at        DROP      - Drop a registered nickname
+  echo $color(notice) -at        GHOST     - Terminate a ghosted nickname
+  echo $color(notice) -at        IDENTIFY  - Authorize yourself using a password
+  echo $color(notice) -at        RECOVER   - Stop someone from using your registered nick
+  echo $color(notice) -at        REGISTER  - Register a nickname
+  echo $color(notice) -at        SENDPASS  - Request that your password be sent via email
+  echo $color(notice) -at        SET       - Change settings
+  echo $color(notice) -at   
+  echo $color(notice) -at  Other Commands:
+  echo $color(notice) -at        RELEASE              INFO                   ACC
+  echo $color(notice) -at        LANG
+  echo $color(notice) -at  
+  echo $color(notice) -at  Note: NickServ command shortcuts are already
+  echo $color(notice) -at             included in RAVE IRC v4.01's menu.
+  echo $color(notice) -at  
+}
+alias rv.dalnet.ms.info {
+  echo $color(notice) -at  * * * * * * * * MemoServ@services.dal.net * * * * * * * *  
+  echo $color(notice) -at  
+  echo $color(notice) -at   MemoServ allows users registered with NickServ to send
+  echo $color(notice) -at   each other messages, which can be read by the recipient at
+  echo $color(notice) -at   his/her leisure. Memos can be sent to people even when they
+  echo $color(notice) -at   are not on IRC.
+  echo $color(notice) -at    
+  echo $color(notice) -at   For more information on a command, please type:
+  echo $color(notice) -at     /ms help <command>
+  echo $color(notice) -at    
+  echo $color(notice) -at   Commands:
+  echo $color(notice) -at              SEND      - Send another user or a channel a memo
+  echo $color(notice) -at              SENDCHAN  - Sends a memo to a channel's ops
+  echo $color(notice) -at              SENDSOP   - Sends a memo to all SOPs
+  echo $color(notice) -at              LIST      - List your current memos
+  echo $color(notice) -at              READ      - Read a memo
+  echo $color(notice) -at              DEL       - Mark a memo as deleted
+  echo $color(notice) -at              UNDEL     - Mark a memo as not deleted
+  echo $color(notice) -at              PURGE     - Erase memos marked as deleted
+  echo $color(notice) -at              FORWARD   - Arrange or modify memo forwarding
+  echo $color(notice) -at              NEWS      - Recent news and information about DALnet
+  echo $color(notice) -at              IGNORE    - Maintain the MemoServ ignore list
+  echo $color(notice) -at  
+  echo $color(notice) -at  Note: RAVE IRC v4.01 already has a MemoExpress System
+  echo $color(notice) -at            built-in for easier access to your Memos.
+  echo $color(notice) -at  
+}
+alias rv.freenode.cs.info {
+  echo $color(notice) -at  * * * * * * * * ChanServ@services * * * * * * * *  
+  echo $color(notice) -at  
+  echo $color(notice) -at  ChanServ gives normal users the ability to maintain control
+  echo $color(notice) -at  of a channel, without the need of a bot. Channel takeovers are
+  echo $color(notice) -at  virtually impossible when a channel is registered with ChanServ.
+  echo $color(notice) -at  Registration is a quick and painless process. Once registered,
+  echo $color(notice) -at  the founder can maintain complete and total control over the channel.
+  echo $color(notice) -at  Please note that channels will expire if there are no eligible channel successors.
+  echo $color(notice) -at  Successors are primarily those who have the +R flag
+  echo $color(notice) -at  set on their account in the channel, although other
+  echo $color(notice) -at  people may be chosen depending on their access
+  echo $color(notice) -at  level and activity.
+  echo $color(notice) -at   
+  echo $color(notice) -at  For more information on a command, type:
+  echo $color(notice) -at  /msg ChanServ help <command>
+  echo $color(notice) -at  For a verbose listing of all commands, type:
+  echo $color(notice) -at  /msg ChanServ help commands
+  echo $color(notice) -at   
+  echo $color(notice) -at  The following commands are available:
+  echo $color(notice) -at        FLAGS          - Manipulates specific permissions on a channel.
+  echo $color(notice) -at        INVITE         - Invites you to a channel.
+  echo $color(notice) -at        OP             - Gives channel ops to a user.
+  echo $color(notice) -at        RECOVER        - Regain control of your channel.
+  echo $color(notice) -at        REGISTER       - Registers a channel.
+  echo $color(notice) -at        SET            - Sets various control flags.
+  echo $color(notice) -at        UNBAN          - Unbans you on a channel.
+  echo $color(notice) -at  
+  echo $color(notice) -at  Other commands: ACCESS, AKICK, CLEAR, COUNT, DEOP, DEVOICE, 
+  echo $color(notice) -at                      DROP, GETKEY, HELP, INFO, QUIET, STATUS, 
+  echo $color(notice) -at                      SYNC, TAXONOMY, TEMPLATE, TOPIC, TOPICAPPEND, 
+  echo $color(notice) -at                      TOPICPREPEND, TOPICSWAP, UNQUIET, VOICE, 
+  echo $color(notice) -at                      WHY
+  echo $color(notice) -at  
+}
+alias rv.undernet.help {
+  echo $color(notice) -at  * * * * * * * * UnderNet X Commands * * * * * * * *  
+  echo $color(notice) -at  
+  echo $color(notice) -at  Unlike other Networks, UnderNet uses X Services to manage
+  echo $color(notice) -at  users and channels. The following are the available commands:
+  echo $color(notice) -at  
+  echo $color(notice) -at        PART - Tells X to part your channel.
+  echo $color(notice) -at        JOIN - Tells X to join the channel.
+  echo $color(notice) -at        SET - Sets flags for your channel.
+  echo $color(notice) -at        ADDUSER - Adds a user to the channel's userlist.
+  echo $color(notice) -at        REMUSER - Removes a user from the channel database.
+  echo $color(notice) -at        CLEARMODE - Clears all channel modes.
+  echo $color(notice) -at        MODINFO - Modify user attributes.
+  echo $color(notice) -at        KICK - Makes X kick users.
+  echo $color(notice) -at        STATUS - Displays all channel status.
+  echo $color(notice) -at        OP - Ops one or more users in the channel.
+  echo $color(notice) -at        DEOP - Deops one or more users in the channel.
+  echo $color(notice) -at        INVITE - Asks X to invite you into the channel.
+  echo $color(notice) -at        SUSPEND - Suspends a user's access to X.
+  echo $color(notice) -at        UNSUSPEND - Unsuspends a user's access to X.
+  echo $color(notice) -at        BAN - Adds a user or hostmask to X's channel banlist.
+  echo $color(notice) -at        UNBAN - Removes a ban from X's channel banlist.
+  echo $color(notice) -at        TOPIC - Makes X change the topic in the channel.
+  echo $color(notice) -at        VOICE - Voices one or more users in the channel.
+  echo $color(notice) -at        DEVOICE - Devoices one or more users in the channel.
+  echo $color(notice) -at        BANLIST - Displays the channel banlist.
+  echo $color(notice) -at        ACCESS - Looks up access info for a certain user.
+  echo $color(notice) -at        CHANINFO - Displays info about a channel.
+  echo $color(notice) -at        INFO - Displays info about a username.
+  echo $color(notice) -at        ISREG - Checks if a channel is registered or not.
+  echo $color(notice) -at        LBANLIST - Searches X's banlist for the specified string.
+  echo $color(notice) -at        LOGIN - Authenticates user and loads access list.
+  echo $color(notice) -at        MOTD - Displays X's "Message of the Day."
+  echo $color(notice) -at        SHOWCOMMANDS - Shows all commands you can use on a channel.
+  echo $color(notice) -at        SHOWIGNORE - Shows X's current ignore list.
+  echo $color(notice) -at        SUPPORT - Confirm or deny support for a channel application.
+  echo $color(notice) -at        VERIFY - Displays whether or not a person is logged in.
+  echo $color(notice) -at  
+  echo $color(notice) -at  For more information on a command, please type:
+  echo $color(notice) -at      /msg X help <command> 
+  echo $color(notice) -at  
+  echo $color(notice) -at  (Make sure your language is set to ENGLISH in order to receive help topics)
+  echo $color(notice) -at  
+}

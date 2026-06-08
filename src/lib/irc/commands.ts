@@ -22,6 +22,7 @@ export type CommandResult =
         | "chanstats"
         | "scratchpad"
         | "editor"
+        | "topicart"
         | "setkey"
         | "enc";
       arg?: string;
@@ -148,6 +149,10 @@ export function parseInput(input: string, ctx: CommandContext): CommandResult {
       if (!ctx.target) return { type: "error", message: "No active channel." };
       return { type: "raw", lines: [rest ? `TOPIC ${ctx.target} :${rest}` : `TOPIC ${ctx.target}`] };
     }
+
+    case "topicart":
+    case "topicdesign":
+      return needConn() ?? { type: "client", action: "topicart", arg: rest };
 
     case "kick": {
       const e = needConn();

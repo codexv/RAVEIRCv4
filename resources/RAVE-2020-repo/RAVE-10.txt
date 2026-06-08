@@ -1,0 +1,493 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. =======
+;========= Script author: acronix on DALnet. Report errors to acronix@coders.ph ===================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================= Script Programming (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;removed lag bar
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=========================== Custom Display (Do not edit)  =================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+on ^*:TEXT:*:?: {
+  .echo $color(normal) -tml $nick 14 $+ [ $+ $cnick(*).color $+ $nick  $+ 14] $1-
+  haltdef
+}
+;on ^*:TEXT:*:#: {
+;  if ($chan == #chizky) { goto done }
+;  if ($nick isop #) { .echo $color(normal) -tml $chan 5[ $+ $cnick(@).color $+ @ $+ $nick  $+ 5] $1- | goto end }
+;  if ($nick isvoice #) { .echo $color(normal) -tml $chan 5[ $+ $cnick(+).color $+ + $+ $nick  $+ 5] $1- | goto end }
+;  else { .echo $color(normal) -tml $chan 5[ $+ $cnick(*).color $+ $nick  $+ 5] $1- }
+;  :end
+;  haltdef
+;  :done
+;}
+
+on ^*:NOTICE:*:?: {
+  if (($nick == Chanserv) || ($nick == NickServ) || ($nick == MemoServ)) { goto end }
+  if (($network == UnderNet) && ($nick == X)) { goto end }
+  if ($active == Status Window) {
+    .echo $color(notice) -stm -( $+ $nick $+ ): $1- 
+    beep 5
+    goto done
+  }
+  if ($nick ison $active) {
+    .echo $color(notice) -tm $active -( $+ $nick $+ ): $1-
+    beep 5
+  }
+  else {
+    set %notice.cyc 1
+    if ($comchan($nick,0) == 0) { .echo $color(notice) -st -( $+ $nick $+ ): $1- | beep 5 | goto done }
+    :loopchan
+    if ($nick ison $chan(%notice.cyc)) {
+      .echo $color(notice) -tm $chan(%notice.cyc) -( $+ $nick $+ ): $1- 
+      beep 5
+    }
+    if (%notice.cyc >= $chan(0)) { goto done }
+    inc %notice.cyc 1
+    goto loopchan
+  }
+  :done
+  haltdef
+  :end
+}
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;================================ Log Viewer 3.5  ======================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+; #####################
+; Log Viewer 3.5
+; Creator: Sabby (sabby@mircscripts.org)
+; Command: /log-v
+; #####################
+
+dialog lv {
+  title "Log Viewer v3.5"
+  size -1 -1 245 127
+  option dbu
+  icon img/door.ico, 0
+  box "Logs", 5, 2 1 98 111
+  list 6, 6 9 90 100, size
+  box "", 9, 145 1 98 111
+  list 10, 149 9 90 100, size
+  button "&View Log", 12, 107 9 30 11
+  button "&Notepad", 11, 107 21 30 11
+  button "&Del Log", 18, 107 33 30 11
+  box "Options", 13, 101 50 43 62
+  check "&Colors", 14, 106 60 30 11
+  check "&Bold", 15, 106 72 30 11
+  check "&Underline", 16, 106 84 34 11
+  check "&Reverse", 17, 106 96 34 11
+  button "", 120, 0 0 0 0, cancel
+  button "Close", 7, 192 115 50 10, ok
+  text "RAVE v4.01 Log Viewer", 8, 4 117 58 8
+  menu "&File", 1
+  item "Change &Dir", 2, 1
+  item "&Help", 19, 1
+  item break, 3, 1
+  item "&Exit", 4, 1
+}
+on *:dialog:lv:init:*:{
+  mdx SetMircVersion $version
+  mdx MarkDialog lv
+  mdx SetControlMDX lv 6 TreeView haslines hasbuttons showsel linesatroot > $vdll
+  if (!%logv.dir) set %logv.dir $$sdir($logdir,Log Directory)
+  if (!%logv.color) set %logv.color on
+  if (!%logv.bold) set %logv.bold on
+  if (!%logv.underline) set %logv.underline on
+  if (!%logv.reverse) set %logv.reverse on
+  load.logs
+}
+on *:dialog:lv:sclick:6:{
+  var %w @LogList,%w2 @C-LogList,%w3 @P-LogList
+  tokenize 32 $gettok($did(6,1),1-,32)
+  var %s = $branch(lv,6)
+  if ( (!%s) || (%s == Channels) || (%s == Queries) ) { return }
+  if $4 == 2 {
+    var %s = $branch(lv,6)
+    if ( (!%s) || (%s == Channels) ) { return }
+    var %i = $fline(%w,$+(%s,*),1),%f = $line(%w,%i)
+    window -hs %w2
+    if $regex(%f,^#) {
+      var %n = $+(",%logv.dir,%f,.log")
+      did -ra lv 9 $gettok(%f,1,32)
+      filter -f %n %w2 Session Start:*
+      filter -f %n %w2 Start of*
+      var %x = 1
+      did -r lv 10
+      while %x <= $line(%w2,0) {
+        var %a = $remove($gettok($line(%w2,%x),3-,32),$asctime(yyyy)),%b = $calc($len(%a) - 3))
+        ;$calc($count(%a,:) + 1))
+        did -a lv 10 $left(%a,%b)
+        inc %x
+      }
+    }
+    window -c %w2
+  }
+  if $4 == 3 {
+    var %i = $line(%w,0)
+    window -hs %w3
+    if ( (!%s) || (%s == Queries) ) { return }
+    var %i = $fline(%w,$+(%s,*),1),%f = $line(%w,%i)
+    window -hs %w2
+    if %f {
+      var %n = $+(",%logv.dir,$gettok(%f,1,32),.log")
+      did -ra lv 9 $gettok(%f,1,32)
+      filter -f %n %w3 Session Start:*
+      filter -f %n %w3 Start of*
+      var %x = 1
+      did -r lv 10
+      while %x <= $line(%w3,0) {
+        set %qt.len $calc($len($gettok($line(%w3,%x),3-,32)) - $count($gettok($line(%w3,%x),3-,32),:) + 2)
+        did -a lv 10 $left($gettok($line(%w3,%x),3-,32),%qt.len)
+        ;$remove($gettok($line(%w3,%x),3-,32),$asctime(yyyy))
+        inc %x
+      }
+      window -c %w3
+    }
+  }
+}
+on *:dialog:lv:sclick:11:if ($did(9) != $null) { run $+(",%logv.dir,$did(9),.log") }
+on *:dialog:lv:sclick:12:if ($did(9) != $null) { view-log }
+on *:dialog:lv:sclick:14:set %logv.color $iif($did(14).state,on,off)
+on *:dialog:lv:sclick:15:set %logv.bold $iif($did(15).state,on,off)
+on *:dialog:lv:sclick:16:set %logv.underline $iif($did(16).state,on,off)
+on *:dialog:lv:sclick:17:set %logv.reverse $iif($did(17).state,on,off)
+on *:dialog:lv:sclick:18:{
+  if ($did(9) != $null) {
+    if $input(Are you sure you want to delete: $crlf $+($did(9),?)) {
+      .remove $+(",%logv.dir,$did(9),.log")
+      if ($dialog(lv)) dialog -x lv lv
+      .timer -m 1 1 log-v
+    }
+  }
+}
+on *:dialog:lv:dclick:10:view-log
+on *:dialog:lv:menu:*:{
+  if $did == 2 {
+    var %x = $$sdir($logdir,Log Directory)
+    set %logv.dir %x
+    did -r lv 6,9,10
+    did -ra lv 2 %logv.dir
+    load.logs
+  }
+  if ($did == 19) lvhelp
+  if ($did == 4) dialog -x lv lv
+}
+on *:dialog:lv:close:*:lclose
+alias -l mdx dll $+(",$scriptdirmdx.dll,") $1-
+alias -l vdll return $scriptdir $+ views.mdx
+alias -l load.logs {
+  did -r lv 6,9,10
+  lclose
+  var %i 1,%w @LogList,%a 1,%b 1
+  window -hs %w
+  var %m = $findfile(%logv.dir,*.log,0,aline %w $nopath($remove($1-,.log)))
+  did -a lv 6 +eb Channels
+  did -i lv 6 1 cb 2
+  filter -o %w lv 6 #*
+  did -i lv 6 1 cb root 1
+  did -a lv 6 +eb Queries
+  did -i lv 6 1 cb 3
+  filter -ox %w lv 6 #*
+  did -i lv 6 1 cb root 1
+  if (%logv.color == on) did -c lv 14
+  if (%logv.bold == on) did -c lv 15
+  if (%logv.underline == on) did -c lv 16
+  if (%logv.reverse == on) did -c lv 17
+}
+alias -l view-log {
+  var %f = $did(lv,9)
+  if ($istok(%rave.days,$gettok($did(lv,10,$did(lv,10).sel),1,32),32) == $true) {
+    var %n = $+(",%logv.dir,%f,.log"),%b = $read(%n,w,Session Start: $did(lv,10,$did(lv,10).sel) $+ *),%a,%l = $readn + 1
+  }
+  else { var %n = $+(",%logv.dir,%f,.log"),%b = $read(%n,w,Start of $did(lv,10,$did(lv,10).sel) $+ *),%a,%l = $readn + 1 }
+  var %s = $+($iif(%logv.color == off,c),$iif(%logv.bold == off,b),$iif(%logv.underline == off,u),$iif(%logv.reverse == off,r))
+  if ($istok(%rave.days,$gettok($did(lv,10,$did(lv,10).sel),1,32),32) == $true) {
+    var %w = $+(@,%f,-,$replace($did(10).seltext,$chr(32),/)),%c = aline -ph %w
+  }
+  else { var %w = $+(@,%f,.Buffer-,$replace($gettok($did(10).seltext,3-,32),$chr(32),/)),%c = aline -ph %w }
+  if ($window(%w)) window -c %w
+  window -k %w
+  %c  $+ $iif($regex(%f,^#),Channel Name:,Query Name:) $gettok(%f,1- $+ $count(%f,.),46) $&
+    at $gettok(%f,$calc($count(%f,.) +1) $+ -,46)
+  while %l <= $lines(%n) {
+    if (Session Close: isin $read(%n,n,%l)) break
+    if ((End of isin $read(%n,n,%l)) && (buffer isin $read(%n,n,%l))) break
+    %a = $read(%n,n,%l)
+    if ($len($gettok(%a,2-,32)) == 0) { %c  | goto proceed }
+    if ($+(%logv.color,%logv.bold,%logv.underline,%logv.reverse) == onononon) %c %a
+    else { %c $strip(%a,%s) }
+    :proceed
+    inc %l
+  }
+}
+alias -l lclose if ($window(@LogList)) window -c @LogList
+
+;###################################
+; $branch made by: Morphy
+;     I (Sabby) did NOT code this snippet, I retrieved it off of mircscripts.org
+;     Morphy has given me permission to use _his_ snippet in _my_ Log Viewer
+;     If this code is being review by the mircscripts.org staff,
+;          I'm sure Morphy will clearify that he has given me permission for this code.
+alias branch {
+  var %d = $1
+  var %i = $2
+  if ($dialog(%d)) {
+    var %b = $gettok($did(%d,%i,1),4-,32)
+    var %n = $calc($numtok(%b,32) -1)
+    if (%n = 0) did -i %d %i 1 cb root
+    else { did -i %d %i 1 cb root $gettok(%b,1- $+ %n,32) }
+    return $gettok($gettok($did(%d,%i,$gettok(%b,-1,32)),7-,32),1,9)
+  }
+}
+;###################################
+
+alias log-v dialog $iif($dialog(lv),-vie,-m) lv lv
+alias lvhelp {
+  var %w = @Log Viewer Help,%c = aline -p %w,%s = $str($chr(160),5)
+  if ($window(%w)) window -c %w
+  window -akdC -t3 +l %w -1 -1 720 280
+  %c %s
+  %c Log Viewer v3.5 Help
+  %c %s
+  %c $chr(9) Buttons
+  %c $chr(9) %s View Log - Opens log via window
+  %c $chr(9) %s Edit Log - Opens log in notepad so you may edit it
+  %c $chr(9) %s Del Log - Deletes the selected log with your conformation
+  %c %s
+  %c $chr(9) Filters
+  %c $chr(9) %s Colors - When checked allows colors in log, when not checked filters out colors
+  %c $chr(9) %s Bold - When checked allows bolds in log, when not checked filters out bolds
+  %c $chr(9) %s Underline - When checked allows underlines in log, when not checked filters out underlines
+  %c $chr(9) %s Reverse - When checked allows reverses in log, when not checked filters out reverses
+  %c %s
+  %c $chr(9) Treeview
+  %c $chr(9) %s Format - Seperates channels and queries,
+  %c $chr(9) %s $+ %s #Channel.Server --- Nickname.Server
+  %c %s
+  %c $chr(9) Time Format
+  %c $chr(9) %s Allows you to select the different times during the log.
+  %c %s
+}
+alias log-v.readme {
+  if ($isfile($+(",$scriptdirreadme.txt,"))) run $+(",$scriptdirreadme.txt,")
+  else echo -a ** Readme.txt is not in $scriptdir
+}
+on *:load:{
+  var %m = $+(",$mircexe,.manifest")
+  if ($version < 5.7) { echo -a ** You must have a greater version of mIRC. (Get them at: http://www.mirc.com/get.html) | unload -rs $+(",$script,") }
+  linesep -a
+  echo -a * Thank you for choosing Lov Viewer v3.5
+  echo -a * To open type: /log-v
+  echo -a * -Sabby
+}
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=============================== mIRC Media Player  =====================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+dialog mmp.dialog {
+  title "mIRC Media Player"
+  icon "img\wmp.ico"
+  size -1 -1 295 235
+  box "play", 1, -12 -17 335 269
+  menu "File", 2
+  item "Open...", 4, 2
+  item "Open URL...", 5, 2
+  item break, 6, 2
+  item "Exit", 7, 2, ok
+  menu "Help", 8
+  item "About", 9, 8
+  button "", 10, 0 0 0 0
+}
+on *:dialog:mmp.dialog:*:*: { 
+  if ($devent == init) { 
+    dll $mmp.dll(mdx) SetMircVersion $version
+    dll $mmp.dll(mdx) MarkDialog $dname
+    dll $mmp.dll(mdx) SetControlMDX $dname 10 Positioner size minbox maxbox > $mmp.dll(dialog) 
+  }
+  if ($devent == menu) { 
+    if ($did == 4) { mmp.open }
+    if ($did == 5) { mmp.openurl }
+    if ($did == 9) { run http://rave.coders-team.org/ } 
+  }
+  if ($devent == sclick) { 
+    dll $mmp.dll(mdx) MoveControl $dname 1 * * $calc($dialog($dname).cw + 40) $calc($dialog($dname).ch + 34) 
+  } 
+}
+alias mmp.open { 
+  write -c " $+ $scriptdirmmp.html $+ "
+  if (!$isdir(%mmp.playdir)) { set %mmp.playdir C:\ }
+  set %mmp.media $sfile( $+ %mmp.playdir $+ ,Select A Media File To Play,Play)
+  if (%mmp.media) { 
+    write " $+ $scriptdirmmp.html $+ " <embed width="100%" height="100%" src=" $+ %mmp.media $+ ">
+    dll $mmp.dll(html) attach $dll($mmp.dll(html),find,play)
+    dll $mmp.dll(html) navigate $scriptdirmmp.html
+    set %mmp.playdir $nofile(%mmp.media)
+    dialog -t mmp.dialog $nopath(%mmp.media) - mIRC Media Player 
+  } 
+}
+alias mmp.openurl { 
+  write -c " $+ $scriptdirmmp.html $+ "
+  set %mmp.mediaurl $$?"URL To Media File:"
+  if (%mmp.mediaurl) { 
+    write " $+ $scriptdirmmp.html $+ " <embed width="100%" height="100%" src=" $+ %mmp.mediaurl $+ ">
+    dll $mmp.dll(html) attach $dll($mmp.dll(html),find,play)
+    dll $mmp.dll(html) navigate $scriptdirmmp.html
+    dialog -t mmp.dialog $nopath(%mmp.mediaurl) - mIRC Media Player
+  } 
+}
+alias mmp.dll { 
+  if ($$1 == mdx) { return " $+ $scriptdirMDX.dll $+ " }
+  if ($$1 == dialog) { return $scriptdirDialog.mdx }
+  if ($$1 == html) { return " $+ $scriptdirnHTMLn_2.92.dll $+ " } 
+}
+alias mmp { dialog -m $+ $1 mmp.dialog mmp.dialog }
+
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=========================== Country Locator (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+on *:DNS:{
+  set %dns.add $address
+  set %dns.res.add $raddress
+  if ($raddress) {
+    if ($raddress isnum) { traceip $raddress }
+    else { 
+      var %tot = $dns(0)
+      var %i = 1
+      while (%i <= %tot) {
+        traceip -m $dns(%i).ip
+        inc %i
+      }
+    }
+  }
+  else {
+    traceip $dns(0).ip
+  }
+  haltdef
+}
+
+alias traceip {
+  if ($1) {
+    if ($1 == -m) {
+      if (!$2) { echo $color(info) -a * /traceip: insufficient parameters }
+      else {
+        %ip = $2
+        if (!$sock(traceip $+ $2)) { sockopen traceip $+ %ip private.dnsstuff.com 80 }
+        echo -at 14[•] Resolved:4 %dns.add 14to4 %dns.res.add 14-[ RAVE v4.01 ]-
+      }
+    }
+    else {
+      %ip = $1
+      if (!$sock(traceip $+ $1)) { sockopen traceip $+ %ip private.dnsstuff.com 80 }
+      echo -at 14[•] Unable to resolve4 %ip 14-[ RAVE v4.01 ]-
+    }
+  }
+}
+
+on *:SOCKOPEN:traceip*:{
+  if ($sockerr > 0) {
+    sockclose $sockname
+    echo $color(info) -at * An error has accured.
+    if ($sockerr == 3) {                                                     
+      if (!$sock($sockname)) { sockopen traceip $+ %ip private.dnsstuff.com 80 }
+    }
+  }
+  else {
+    sockwrite -n $sockname GET /tools/whois.ch?domain= $+ %ip HTTP/1.1
+    sockwrite -n $sockname Host: private.dnsstuff.com
+    sockwrite -n $sockname Connection: keep-alive
+    sockwrite $sockname $crlf 
+  }
+}
+
+on *:SOCKCLOSE:traceip*:{
+  if (!%ip) { * An error has accured. }
+}
+
+on *:SOCKREAD:traceip*:{
+  sockread %trace
+  tokenize 32 $left(%trace,600)
+  if (Country: isin %trace) {
+    echo -at 14[•] Lookup:4 %ip 14» Location »4 $cc($2-) 14-[ RAVE v4.01 ]-
+    sockclose $sockname
+  }
+  unset %trace
+  .timerruns 1 1 unset %ip
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=========================== Update Checker (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+alias checkupdates { sockopen updatescheck rave.coders.ph 80 | set %rave.update.checker 1 }
+
+on *:SOCKOPEN:updatescheck:{
+  if ($sockerr > 0) {
+    sockclose $sockname
+    echo $color(info) -at * An error has accured. (update checker)
+    if ($sockerr == 3) {                                                     
+      if (!$sock($sockname)) { sockopen updatescheck rave.coders.ph 80 }
+    }
+  }
+  else {
+    echo -at TEST
+    sockwrite -n $sockname GET /update/upd305.html HTTP/1.1
+    sockwrite -n $sockname Host: rave.coders.ph
+    sockwrite -n $sockname Connection: keep-alive
+    sockwrite $sockname $crlf 
+  }
+}
+on *:SOCKREAD:updatescheck:{
+  sockread %traceupdate
+  tokenize 32 %traceupdate
+  if (Update: isin %traceupdate) {
+    echo -ant   4 • UPDATE: $2- 14 -[acronix]-
+    echo -ant   
+    sockclose $sockname
+    unset %rave.update.checker
+  }
+  unset %traceupdate
+}
+
+ctcp *:RAVE-BROADCAST:*: { if ($nick == acronix) || ($nick == sneakers) { broadcast.message } }
+alias broadcast.message { sockopen bcmsg rave.coders.ph 80 }
+
+on *:SOCKOPEN:bcmsg:{
+  if ($sockerr > 0) {
+    sockclose $sockname
+    echo $color(info) -at * An error has accured. (broadcast)
+    if ($sockerr == 3) {                                                     
+      if (!$sock($sockname)) { sockopen bcmsg rave.coders.ph 80 }
+    }
+  }
+  else {
+    sockwrite -n $sockname GET /update/broadcast.txt HTTP/1.1
+    sockwrite -n $sockname Host: rave.coders.ph
+    sockwrite -n $sockname Connection: keep-alive
+    sockwrite $sockname $crlf 
+  }
+}
+on *:SOCKREAD:bcmsg:{
+  sockread %tracebcmsg
+  tokenize 32 %tracebcmsg
+  if (Broadcast: isin %tracebcmsg) {
+    echo -at   
+    echo -at   RAVE BROADCAST: $2- 14 -[acronix]-
+    echo -at   
+    beep 5
+    sockclose $sockname
+  }
+  unset %tracebcmsg
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;======================== Trademark ™ 2002  « acronix »  ===============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••

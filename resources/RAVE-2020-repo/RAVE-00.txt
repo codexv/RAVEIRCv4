@@ -1,0 +1,328 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. ============
+;============= Script author: acronix on DALnet. Report errors to acronix@coders.ph =================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=============================== Menus (Do not edit)  ==============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+Menu MenuBar,Channel {
+  -
+  $rv.dalnet(ChanServ)
+  .Get Info: if ($chan == $null) { .cs info $$?="Enter Channel Name:" } else { .cs info # } 
+  .-
+  . $iif($chan == $null ,$style(2)) Access
+  ..Count: .cs count #
+  ..ListOps: .cs listops #
+  ..-
+  ..Manager
+  ...List: .cs manager # list
+  ...-
+  ...Add: .cs manager # add $$?="Enter Nick to be Added to the Manager List:"
+  ...Del: .cs manager # del $$?="Nick to be Deleted from the Manager List:"
+  ...Wipe: .cs manager # wipe
+  ..SOP
+  ...List: .cs sop # list
+  ...-
+  ...Add: .cs sop # add $$?="Enter Nick to be Added to the SOP List:"
+  ...Del: .cs sop # del $$?="Nick to be Deleted from the SOP List:"
+  ...Wipe: .cs sop # wipe
+  ..AOP
+  ...List: .cs aop # list
+  ...-
+  ...Add: .cs aop # add $$?="Enter Nick to be Added to the AOP List:"
+  ...Del: .cs aop #  del $$?="Enter Nick to be Deleted from the AOP List:"
+  ...Wipe: .cs aop # wipe
+  ..AKick
+  ...List: .cs akick # list
+  ...-
+  ...Add: .cs akick # add $$?="Enter Nick or Mask to Akick:"
+  ...Del: .cs akick # del $$?="Enter Nick or Mask to be Removed from the Akick List:"
+  ...Wipe: .cs akick # wipe
+  ..-
+  .. $iif($chan == $null ,$style(2)) My Access: .cs access # 
+  .. $iif($chan == $null ,$style(2)) Other Access: .cs access # $$?="Nick to Check Access for:"
+  .. $iif($chan == $null ,$style(2)) Why Op?: .cs why # $$?="Why Op? Nick:"  
+  . $iif($chan == $null ,$style(2)) Control
+  ..ChanServ Op
+  ...Op Me: .cs op # $me
+  ...Op Nick: .cs op # $$?="Nick to Op"
+  ...Deop Me: .cs deop # $me
+  ...DeOp Nick: .cs deop # $$?="Nick to deOp"
+  ..ChanServ Unban
+  ...Unban Me: .cs unban $chan
+  ...Unban All: .cs unban $chan *
+  ..-
+  ..Mass DeOp: .cs mdeop # 
+  ..Mass Kick: .cs mkick # 
+  ..Regain Control: .cs mdeop #  | .cs unban # $me | join #
+  .-
+  .Register: if ($chan != $null) { .cs register # $$?*="Enter a Password:" $$?="Enter Channel Description:" } | else r.reg.chan
+  .Identify: if ($chan != $null) { .cs identify # $$?*="Enter Password for $chan $+ :" } | else { set %r.ident.temp $$?="Enter Channel to Identify:" | .cs identify %r.ident.temp $$?*="Enter Password for %r.ident.temp $+ : | unset %r.ident.temp }
+  .Drop: if ($chan != $null) { .cs drop # } | else { .cs drop $$?="Enter Your Channel to Drop:" }
+  .Invite: .cs invite $$?="Enter Channel:"
+  .-
+  . $iif($chan == $null ,$style(2)) Settings
+  ..Set MLock
+  ...Set Mode: .cs set # mlock $$?="Enter MLock for Channel:"
+  ...-
+  ...+nt: .cs set # mlock +nt
+  ...+nts: .cs set # mlock +nts
+  ...+nt-ispk: .cs set # mlock +nt-ispk
+  ...+ntc-ispk: .cs set # mlock +ntc-ispk
+  ...+nts-ipk: .cs set # mlock +nts-ipk
+  ...-
+  ...Clear Modes: .cs set # mlock *
+  ..Description
+  ...Set Channel Description: .cs set # desc $$?="Enter Channel Description:"
+  ..Founder
+  ...Set $me As Founder: .cs set # founder
+  ..Successor
+  ...Set Channel Successor: .cs set # successor $$?="Enter Nick to Set as Successor of #"
+  ...Remove me as Successor: .cs successor # del
+  ..LeaveOps
+  ...ON: .cs set # leaveops ON
+  ...OFF: .cs set # leaveops OFF
+  ..Memo Level
+  ...NONE: .cs set # memo NONE
+  ...AOP: .cs set # memo AOP
+  ...SOP: .cs set # memo SOP
+  ...MANAGER: .cs set # memo MANAGER
+  ...FOUNDER: .cs set # memo FOUNDER
+  ..KeepTopic
+  ...ON: .cs set # keeptopic ON
+  ...OFF: .cs set # keeptopic OFF
+  ..TopicLock
+  ...FOUNDER: .cs set # topiclock FOUNDER
+  ...MANAGER: .cs set # topiclock MANAGER
+  ...SOP: .cs set # topiclock SOP
+  ...OFF: .cs set # topiclock OFF
+  ..Verbose
+  ...ON: .cs set # verbose ON
+  ...OFF: .cs set # verbose OFF
+  ..Set URL
+  ...Set URL: .cs set # url $$?="Enter URL for Channel:"
+  ...Clear URL: .cs set # url
+  . $iif($chan == $null ,$style(2)) Security
+  ..OpGuard
+  ...ON: .cs set # opguard ON
+  ...OFF: .cs set # opguard OFF
+  ..Restrict
+  ...ON: .cs set # restrict ON
+  ...OFF: .cs set # restrict OFF
+  ..Unsecure
+  ...ON: .cs set # unsecure ON
+  ...OFF: .cs set # unsecure OFF
+  ..Ident
+  ...ON: .cs set # ident ON
+  ...OFF: .cs set # ident OFF
+  ..Private
+  ...ON: .cs set # private ON
+  ...OFF: .cs set # private OFF
+  ..MailBlock
+  ...ON: .cs set # mailblock ON
+  ...OFF: .cs set # mailblock OFF
+  ..Password
+  ...Change Password for #: .cs set # passwd $$?*="Enter CURRENT Password for # $+ :" $$?*="Enter New Password for # $+ :"
+  ..SendPass
+  ...Request Password Reset: .cs sendpass # $$?="Enter Email Address Associated with # $+ :"
+  .-
+  . $iif($chan == $null ,$style(2)) Topic
+  ..Specify: $rv.topic.specify
+  ..Welcome: $rv.topic.welcome
+  ..-
+  . $iif($chan == $null ,$style(2)) Designs
+  ;Designs taken from redraven's protech script
+  ..°~`~*¤§ƒ : $rv.topic.d1
+  ..©º°¨¨°º©: $rv.topic.d2
+  ..©º°¨¨°º©©º°¨¨°º© : $rv.topic.d3
+  ..(¯`·._(¯`·._(¯`·._( : $rv.topic.d4
+  ..(¯`·.¸(¯`·.¸(¯`·.¸(¯`·.¸: $rv.topic.d5
+  ..(¯`·.¸¸.·´¯`·.¸¸.-> : $rv.topic.d6
+  ..¯°·.¸¸.·°¯°·.¸¸.·°¯°·.¸¸.->: $rv.topic.d7
+  ..,-*-,._.,-*'^'~*-,._.,-*~>: $rv.topic.d8
+  ..|!¤*'~``~'*¤!||!¤*'~``~'*¤!|: $rv.topic.d9
+  ..§¤*~`~*¤§|§¤*~`~*¤§|§¤*~ -==-: $rv.topic.d10
+  ..«« «« ««: $rv.topic.d11
+  ..Black and Gray: $rv.topic.d12
+  ..Blue colors: $rv.topic.d13
+  ..Green color: $rv.topic.d14
+  ..Bold Blue: $rv.topic.d15
+  ..Bold Green: $rv.topic.d16
+  ..Ryany: $rv.topic.d17 
+  ..yellow, red and black: $rv.topic.d18
+  ..yellow, red and black with |||: $rv.topic.d19 
+  ..yellow, red and black small: $rv.topic.d20
+  ..Blue colors with |||: $rv.topic.d21
+  ..Rainbow |||: $rv.topic.d22
+  ..nice one: $rv.topic.d23
+  ..Very nice gray: $rv.topic.d24
+  ..Very nice blue: $rv.topic.d25
+  ..©º°°º©©º°°º© with rainbow: $rv.topic.d26
+  ..«» gray: $rv.topic.d27
+  .-
+  .Help
+  ..ChanServ: .rv.dalnet.cs.info
+  ..-
+  ..REGISTER: .cs help register
+  ..SET
+  ...SET: .cs help set
+  ...-
+  ...DESC: .cs help set desc
+  ...FOUNDER: .cs help set founder
+  ...IDENT: .cs help set ident
+  ...KEEPTOPIC: .cs help set keeptopic
+  ...MAILBLOCK: .cs help set mailblock
+  ...MLOCK: .cs help set mlock
+  ...OPGUARD: .cs help set opguard
+  ...PASSWD: .cs help set passwd
+  ...RESTRICT: .cs help set restrict
+  ...SUCCESSOR: .cs help set successor
+  ...URL: .cs help set url
+  ...VERBOSE: .cs help set verbose
+  ...TOPICLOCK: .cs help set topiclock
+  ...LEAVEOPS: .cs help set leaveops
+  ...PRIVATE: .cs help set private
+  ...MEMO: .cs help set memo
+  ..SOP: .cs help sop
+  ..AOP: .cs help aop
+  ..AKICK: .cs help akick
+  ..MANAGER: .cs help manager
+  ..DROP: .cs help drop
+  ..SENDPASS: .cs help sendpass
+  ..IDENTIFY: .cs help identify
+  ..ACCESS: .cs help access
+  ..OP: .cs help op
+  ..DEOP: .cs help deop
+  ..INFO: .cs help info
+  ..INVITE: .cs help invite
+  ..MKICK: .cs help mkick
+  ..MDEOP: .cs help mdeop
+  ..UNBAN: .cs help unban
+  ..COUNT: .cs help count
+  ..WHY: .cs help why
+  ..ACC: .cs help acc
+  ..LISTOPS: .cs help listops  
+}
+
+Menu MenuBar,Status,Channel {
+  $rv.dalnet(NickServ)
+  .Get Info: .ns info $$?="Enter Nick to Info:" 
+  .-
+  .Change Nick: nick $$?="Enter Nick:"
+  .-
+  .Identify: set %rv.ns.id.switch $$?!="Identify $me $+ ?" | if (%rv.ns.id.switch == $true) { .ns identify $$?*="Enter Your Password:" } else { .ns identify $$?="Identify which Nick?" $$?*="Enter Your Password:" }
+  .Ghost Nick: .ns GHOST $$?="Ghost Which Nick?"
+  .Ghost w/ PW: .ns GHOST $$?="Ghost Which Nick:" $$?*="Password:"
+  .Release: .ns release $$?="Release which Nick?"
+  .Recover: .ns recover $$?="Recover which Nick?"
+  .-
+  .Settings
+  ..Access
+  ...LIST: .ns ACCESS LIST
+  ...ADD: .ns ACCESS ADD $$?="Add Hostmask (user@host):"
+  ...DEL: .ns ACCESS DEL $$?="Delete Which Hostmask (user@host)?"
+  ..Nick URL
+  ...Set URL: .ns SET URL $$?="Enter URL:"
+  ...Clear URL: .ns SET URL
+  ..Set Email
+  ...View Current Email: .ns set email
+  ...Set New Email: .ns set email $$?*="Enter Password for $me $+ :" $$?="Enter New Email Address:"
+  ..MailBlock
+  ...Status: .ns set mailblock
+  ...-
+  ...ON: .ns set mailblock on
+  ...OFF: .ns set mailblock off
+  ..NoMemo
+  ...Status: .ns set nomemo
+  ...-
+  ...ON: .ns set nomemo on
+  ...OFF: .ns set nomemo off
+  ..NoOp
+  ...Status: .ns set noop
+  ...-
+  ...ON: .ns set noop on
+  ...OFF: .ns set noop off
+  ..ShowEmail
+  ...Status: .ns set showemail
+  ...-
+  ...ON: .ns set showemail on
+  ...OFF: .ns set showemail off
+  ..ChangePass: .ns SET PASSWD $$?*="Enter Old Password:" $$?*="Enter New Password:"
+  ..SendPass: .ns sendpass $$?="Enter Nick to Reset Password:" $$?="Enter Email Address of Specified Nick:"
+  .Language
+  ..English: .ns lang EN
+  ..Spanish: .ns lang ES
+  ..Italian: .ns lang IT
+  ..French: .ns lang FR
+  ..Arabic: .ns lang AR
+  ..German: .ns lang DE
+  ..Indonesian: .ns lang ID
+  ..Swedish: .ns lang SE
+  ..Malaysian: .ns lang MY
+  ..Romanian: .ns lang RO
+  ..Portuguese: .ns lang PT
+  ..Urdu: .ns lang UR
+  .-
+  .Register Nick: .ns REGISTER $$?="Set Your Password:" $$?="Enter Your Email Add:"
+  .Drop Nick: .ns drop $$?="Drop Which Nick?"
+  .-
+  .Help
+  ..NickServ: rv.dalnet.ns.info
+  ..-
+  ..ACCESS: .NS HELP ACCESS
+  ..DROP: .NS HELP DROP
+  ..GHOST: .NS HELP GHOST
+  ..IDENTIFY: .NS HELP IDENTIFY
+  ..RECOVER: .NS HELP RECOVER
+  ..REGISTER: .NS HELP REGISTER
+  ..SENDPASS: .NS HELP SENDPASS
+  ..SET
+  ...SET: .NS HELP SET
+  ...-
+  ...EMAIL: .NS HELP SET EMAIL
+  ...MAILBLOCK: .NS HELP SET MAILBLOCK
+  ...NOMEMO: .NS HELP SET NOMEMO
+  ...NOOP: .NS HELP SET NOOP
+  ...PASSWD: .NS HELP SET PASSWD
+  ...SHOWEMAIL: .NS HELP SET SHOWEMAIL
+  ...URL: .NS HELP SET URL
+  ..RELEASE: .NS HELP RELEASE
+  ..INFO: .NS HELP INFO
+  ..ACC: .NS HELP ACC
+  ..LANG: .NS HELP LANG 
+  $rv.dalnet(MemoServ)
+  .Send to
+  ..Nick: .ms send $$?="Nick to send to:" $$?="Message to Send:"
+  ..Channel: .ms send $iif($chan == $null, $$?="Enter Channel: (Will be sent to all OPs)", #) $$?="Message to All OPs:"
+  ..-
+  ..Founder: .ms sendchan $iif($chan == $null, $$?="Enter Channel: (Will be sent to Founder)", #) FOUNDER $$?="Message to Founder:"
+  ..Manager: .ms sendchan $iif($chan == $null, $$?="Enter Channel: (Will be sent to Managers & Founder)", #) MANAGER $$?="Message to All Managers & Founder:"
+  ..-
+  ..SOP+: .ms sendsop $iif($chan == $null, $$?="Enter Channel: (Will be sent to SOPs, Managers, & Founder)", #) $$?="Message to SOP's, Managers, & Founder:"
+  ..SOP: .ms sendchan $iif($chan == $null, $$?="Enter Channel: (Will be sent to all SOPs & Founder)", #) SOP $$?="Message to All SOP's & Founder:"
+  ..AOP: .ms sendchan $iif($chan == $null, $$?="Enter Channel: (Will be sent to all AOPs & Founder)", #) AOP $$?="Message to All AOP's & Founder:"
+  .-
+  .Read: memos | listmemos
+  .Forward: .ms forward $$?="Enter Nick for Memos to be forward to:" $$?="Enter Password for that Nick!" | .disable #memohalt
+  .-
+  .Help
+  ..MemoServ: rv.dalnet.ms.info
+  ..-
+  ..SEND: .MS HELP SEND | .disable #memohalt
+  ..SENDCHAN: .MS HELP SENDCHAN | .disable #memohalt
+  ..SENDSOP: .MS HELP SENDSOP | .disable #memohalt
+  ..LIST: .MS HELP LIST | .disable #memohalt
+  ..READ: .MS HELP READ | .disable #memohalt
+  ..DEL: .MS HELP DEL | .disable #memohalt
+  ..UNDEL: .MS HELP UNDEL | .disable #memohalt
+  ..PURGE: .MS HELP PURGE | .disable #memohalt
+  ..FORWARD: .MS HELP FORWARD | .disable #memohalt
+  ..NEWS: .MS HELP FORWARD | .disable #memohalt
+  ..IGNORE: .MS HELP IGNORE | .disable #memohalt
+}
+
+alias r.reg.chan {
+  set %r.reg.chan.temp $$?="Enter Channel to Register:"
+  if ($me isop %r.reg.chan.temp) { .cs register %r.reg.chan.temp $$?="Enter a Password:" $$?="Enter Channel Description:" } 
+  else { echo $color(notice) -at You must be an Operator of %r.reg.chan.temp in order to register it. }
+}

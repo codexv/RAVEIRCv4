@@ -22,6 +22,13 @@ describe("detectNetwork", () => {
   it("detects Libera", () => {
     expect(detectNetwork(srv("irc.libera.chat", "Libera.Chat"))).toBe("libera");
   });
+  it("detects Rizon, QuakeNet, EFnet, IRCnet, freenode", () => {
+    expect(detectNetwork(srv("irc.rizon.net", "Rizon"))).toBe("rizon");
+    expect(detectNetwork(srv("irc.quakenet.org", "QuakeNet"))).toBe("quakenet");
+    expect(detectNetwork(srv("irc.efnet.org", "EFnet"))).toBe("efnet");
+    expect(detectNetwork(srv("open.ircnet.net", "IRCnet"))).toBe("ircnet");
+    expect(detectNetwork(srv("irc.freenode.net", "freenode"))).toBe("freenode");
+  });
   it("falls back to generic", () => {
     expect(detectNetwork(srv("irc.unknown.net"))).toBe("generic");
   });
@@ -71,5 +78,34 @@ describe("service profiles", () => {
   it("invite with a nick uses raw INVITE on all networks", () => {
     const p = serviceProfile(srv("irc.libera.chat", "Libera.Chat"));
     expect(p.invite("#test", "bob")).toEqual(["INVITE bob #test"]);
+  });
+
+  it("Rizon uses atheme plain ChanServ/NickServ", () => {
+    const p = serviceProfile(srv("irc.rizon.net", "Rizon"));
+    expect(p.hasServices).toBe(true);
+    expect(p.op("#x", "bob")).toEqual(["PRIVMSG ChanServ :OP #x bob"]);
+    expect(p.identify("me", "pw")).toEqual(["PRIVMSG NickServ :IDENTIFY me pw"]);
+  });
+
+  it("QuakeNet routes through the Q bot and auths with AUTH", () => {
+    const p = serviceProfile(srv("irc.quakenet.org", "QuakeNet"));
+    expect(p.identify("me", "pw")).toEqual(["PRIVMSG Q@CServe.quakenet.org :AUTH me pw"]);
+    expect(p.op("#x", "bob")).toEqual(["PRIVMSG Q@CServe.quakenet.org :op #x bob"]);
+    expect(p.ms(null)).toEqual([]); // no MemoServ
+  });
+
+  it("EFnet has no services and acts via raw MODE", () => {
+    const p = serviceProfile(srv("irc.efnet.org", "EFnet"));
+    expect(p.hasServices).toBe(false);
+    expect(p.op("#x", "bob")).toEqual(["MODE #x +o bob"]);
+    expect(p.akickAdd("#x", "*!*@bad")).toEqual(["MODE #x +b *!*@bad"]);
+    expect(p.identify("me", "pw")).toEqual([]);
+    expect(p.cs("anything")).toEqual([]);
+  });
+
+  it("IRCnet behaves like EFnet (no services)", () => {
+    const p = serviceProfile(srv("open.ircnet.net", "IRCnet"));
+    expect(p.hasServices).toBe(false);
+    expect(p.deop("#x", "bob")).toEqual(["MODE #x -o bob"]);
   });
 });

@@ -1,0 +1,252 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. =======
+;========= Script author: acronix on DALnet. Report errors to acronix@coders.ph ==================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================= Script Programming (Do not edit)  ================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+alias -l secho { echo -tai2 5 • 5 $1- }
+alias scanip {
+  if ($1) {
+    var %i = 1, %o = $iif($1 ischan,$1,$active), %u = $iif($1 !ischan,$1,$2)
+    if (%o !ischan) { secho Usage: /scanip [#channel] <searchstring> | return }
+    if ($chan(%o).ial != $true) {
+      echo -t  | echo -at 5 • IAL for  $+ %o $+  is not fully updated. Updating..
+      set %scanip.who %o | who %o
+      set %scan.this $2
+      set %scan.chan $1
+      set %scan.switch 1
+      return
+    }
+    echo -t  | secho 14Scanning  $+ %o $+ : %u | var %scanip.ticks = $ticks
+    if ($ialchan(%u,%o,0) == 0) { echo -at 5 •  14No match! }
+    while (%i <= $ialchan(%u,%o,0)) {
+      var %a = $ialchan(%u,%o,%i)
+      secho 4 $+ $gettok(%a,1,33) 5( $+ $gettok(%a,2-,33) $+ ) - $cc($gettok(%a,$numtok(%a,46),46))
+      inc %i
+    }
+    secho 14End of Scan, $calc(%i - 1) match(es) found in $calc(($ticks - %scanip.ticks) / 1000) sec(s) | echo -t 
+  }
+  else { echo -a 2,0* Usage: /scanip [#channel] <searchstring> }
+}
+raw *:*: { 
+  if (($istok(352.315,$numeric,46)) && ($istok(%scanip.who,$2,32))) { 
+    if ($numeric == 315) { 
+      unset %scanip.who
+      echo -at 5 • IAL for  $+ $2 $+  is updated • 
+      if (%scan.switch == 1) {
+        scanip %scan.chan %scan.this
+        unset %scan.switch
+        unset %scan.chan
+        unset %scan.this
+      }
+      if (%cscan.switch == 1) {
+        mega.clone.aftercheck %cscan.chan
+        unset %cscan.switch
+        unset %cscan.chan
+      }
+    }
+    halt
+  }
+}
+
+alias cc {
+  if ($1 == AD) { return Andorra } | if ($1 == AE) { return United Arab Emirates } | if ($1 == AF) { return Afghanistan } | if ($1 == AG) { return Antigua and Barbuda } | if ($1 == AI) { return Anguilla } | if ($1 == AL) { return Albania } | if ($1 == AM) { return Armenia } | if ($1 == AN) { return Netherlands Antilles } | if ($1 == AO) { return Angola } | if ($1 == AQ) { return Antarctica } | if ($1 == AR) { return Argentina } | if ($1 == AS) { return American Samoa }
+  if ($1 == AT) { return Austria } | if ($1 == AU) { return Australia } | if ($1 == AW) { return Aruba } | if ($1 == AZ) { return Azerbaijan } | if ($1 == BA) { return Bosnia and Herzegovina } | if ($1 == BB) { return Barbados } | if ($1 == BD) { return Bangladesh } | if ($1 == BE) { return Belgium } | if ($1 == BF) { return Burkina Faso } | if ($1 == BG) { return Bulgaria } | if ($1 == BH) { return Bahrain } | if ($1 == BI) { return Burundi } | if ($1 == BJ) { return Benin } | if ($1 == BM) { return Bermuda }
+  if ($1 == BN) { return Brunei Darussalam } | if ($1 == BO) { return Bolivia } | if ($1 == BR) { return Brazil } | if ($1 == BS) { return Bahamas } | if ($1 == BT) { return Bhutan } | if ($1 == BV) { return Bouvet Island } | if ($1 == BW) { return Botswana } | if ($1 == BY) { return Belarus } | if ($1 == BZ) { return Belize } | if ($1 == CA) { return Canada } | if ($1 == CC) { return Cocos (Keeling) Islands } | if ($1 == CF) { return Central African Republic } | if ($1 == CG) { return Congo } | if ($1 == CH) { return Switzerland }
+  if ($1 == CI) { return Cote D'Ivoire (Ivory Coast) } | if ($1 == CK) { return Cook Islands } | if ($1 == CL) { return Chile } | if ($1 == CM) { return Cameroon } | if ($1 == CN) { return China } | if ($1 == CO) { return Colombia } | if ($1 == CR) { return Costa Rica } | if ($1 == CS) { return Czechoslovakia (former) } | if ($1 == CU) { return Cuba } | if ($1 == CV) { return Cape Verde } | if ($1 == CX) { return Christmas Island } | if ($1 == CY) { return Cyprus } | if ($1 == CZ) { return Czech Republic } | if ($1 == DE) { return Germany }
+  if ($1 == DJ) { return Djibouti } | if ($1 == DK) { return Denmark } | if ($1 == DM) { return Dominica } | if ($1 == DO) { return Dominican Republic } | if ($1 == DZ) { return Algeria } | if ($1 == EC) { return Ecuador } | if ($1 == EE) { return Estonia } | if ($1 == EG) { return Egypt } | if ($1 == EH) { return Western Sahara } | if ($1 == ER) { return Eritrea } | if ($1 == ES) { return Spain } | if ($1 == ET) { return Ethiopia } | if ($1 == FI) { return Finland } | if ($1 == FJ) { return Fiji } | if ($1 == FK) { return Falkland Islands (Malvinas) } | if ($1 == FM) { return Micronesia }
+  if ($1 == FO) { return Faroe Islands } | if ($1 == FR) { return France } | if ($1 == FX) { return France, Metropolitan } | if ($1 == GA) { return Gabon } | if ($1 == GB) { return Great Britain (UK) } | if ($1 == GD) { return Grenada } | if ($1 == GE) { return Georgia } | if ($1 == GF) { return French Guiana } | if ($1 == GH) { return Ghana } | if ($1 == GI) { return Gibraltar } | if ($1 == GL) { return Greenland } | if ($1 == GM) { return Gambia } | if ($1 == GN) { return Guinea } | if ($1 == GP) { return Guadeloupe } | if ($1 == GQ) { return Equatorial Guinea } | if ($1 == GR) { return Greece }
+  if ($1 == GS) { return S. Georgia and S. Sandwich Isls. } | if ($1 == GT) { return Guatemala } | if ($1 == GU) { return Guam } | if ($1 == GW) { return Guinea-Bissau } | if ($1 == GY) { return Guyana } | if ($1 == HK) { return Hong Kong } | if ($1 == HM) { return Heard and McDonald Islands } | if ($1 == HN) { return Honduras } | if ($1 == HR) { return Croatia (Hrvatska) } | if ($1 == HT) { return Haiti } | if ($1 == HU) { return Hungary } | if ($1 == ID) { return Indonesia } | if ($1 == IE) { return Ireland } | if ($1 == IL) { return Israel } | if ($1 == IN) { return India }
+  if ($1 == IO) { return British Indian Ocean Territory } | if ($1 == IQ) { return Iraq } | if ($1 == IR) { return Iran } | if ($1 == IS) { return Iceland } | if ($1 == IT) { return Italy } | if ($1 == JM) { return Jamaica } | if ($1 == JO) { return Jordan } | if ($1 == JP) { return Japan } | if ($1 == KE) { return Kenya } | if ($1 == KG) { return Kyrgyzstan } | if ($1 == KH) { return Cambodia } | if ($1 == KI) { return Kiribati } | if ($1 == KM) { return Comoros } | if ($1 == KN) { return Saint Kitts and Nevis } | if ($1 == KP) { return Korea (North) } | if ($1 == KR) { return Korea (South) }
+  if ($1 == KW) { return Kuwait } | if ($1 == KY) { return Cayman Islands } | if ($1 == KZ) { return Kazakhstan } | if ($1 == LA) { return Laos } | if ($1 == LB) { return Lebanon } | if ($1 == LC) { return Saint Lucia } | if ($1 == LI) { return Liechtenstein } | if ($1 == LK) { return Sri Lanka } | if ($1 == LR) { return Liberia } | if ($1 == LS) { return Lesotho } | if ($1 == LT) { return Lithuania } | if ($1 == LU) { return Luxembourg } | if ($1 == LV) { return Latvia } | if ($1 == LY) { return Libya } | if ($1 == MA) { return Morocco } | if ($1 == MC) { return Monaco } | if ($1 == MD) { return Moldova }
+  if ($1 == MG) { return Madagascar } | if ($1 == MH) { return Marshall Islands } | if ($1 == MK) { return Macedonia } | if ($1 == ML) { return Mali } | if ($1 == MM) { return Myanmar } | if ($1 == MN) { return Mongolia } | if ($1 == MO) { return Macau } | if ($1 == MP) { return Northern Mariana Islands } | if ($1 == MQ) { return Martinique } | if ($1 == MR) { return Mauritania } | if ($1 == MS) { return Montserrat } | if ($1 == MT) { return Malta } | if ($1 == MU) { return Mauritius } | if ($1 == MV) { return Maldives } | if ($1 == MW) { return Malawi } | if ($1 == MX) { return Mexico }
+  if ($1 == MY) { return Malaysia } | if ($1 == MZ) { return Mozambique } | if ($1 == NA) { return Namibia } | if ($1 == NC) { return New Caledonia } | if ($1 == NE) { return Niger } | if ($1 == NF) { return Norfolk Island } | if ($1 == NG) { return Nigeria } | if ($1 == NI) { return Nicaragua } | if ($1 == NL) { return Netherlands } | if ($1 == NO) { return Norway } | if ($1 == NP) { return Nepal } | if ($1 == NR) { return Nauru } | if ($1 == NT) { return Neutral Zone } | if ($1 == NU) { return Niue } | if ($1 == NZ) { return New Zealand (Aotearoa) } | if ($1 == OM) { return Oman }
+  if ($1 == PA) { return Panama } | if ($1 == PE) { return Peru } | if ($1 == PF) { return French Polynesia } | if ($1 == PG) { return Papua New Guinea } | if ($1 == PH) { return Philippines } | if ($1 == PK) { return Pakistan } | if ($1 == PL) { return Poland } | if ($1 == PM) { return St. Pierre and Miquelon } | if ($1 == PN) { return Pitcairn } | if ($1 == PR) { return Puerto Rico } | if ($1 == PT) { return Portugal } | if ($1 == PW) { return Palau } | if ($1 == PY) { return Paraguay } | if ($1 == QA) { return Qatar } | if ($1 == RE) { return Reunion } | if ($1 == RO) { return Romania } | if ($1 == RU) { return Russian Federation }
+  if ($1 == RW) { return Rwanda } | if ($1 == SA) { return Saudi Arabia } | if ($1 == SB) { return Solomon Islands } | if ($1 == SC) { return Seychelles } | if ($1 == SD) { return Sudan } | if ($1 == SE) { return Sweden } | if ($1 == SG) { return Singapore } | if ($1 == SH) { return St. Helena } | if ($1 == SI) { return Slovenia } | if ($1 == SJ) { return Svalbard and Jan Mayen Islands } | if ($1 == SK) { return Slovak Republic } | if ($1 == SL) { return Sierra Leone } | if ($1 == SM) { return San Marino } | if ($1 == SN) { return Senegal } | if ($1 == SO) { return Somalia } | if ($1 == SR) { return Suriname } | if ($1 == ST) { return Sao Tome and Principe }
+  if ($1 == SU) { return USSR (former) } | if ($1 == SV) { return El Salvador } | if ($1 == SY) { return Syria } | if ($1 == SZ) { return Swaziland } | if ($1 == TC) { return Turks and Caicos Islands } | if ($1 == TD) { return Chad } | if ($1 == TF) { return French Southern Territories } | if ($1 == TG) { return Togo } | if ($1 == TH) { return Thailand } | if ($1 == TJ) { return Tajikistan } | if ($1 == TK) { return Tokelau } | if ($1 == TM) { return Turkmenistan } | if ($1 == TN) { return Tunisia } | if ($1 == TO) { return Tonga } | if ($1 == TP) { return East Timor } | if ($1 == TR) { return Turkey } | if ($1 == TT) { return Trinidad and Tobago }
+  if ($1 == TV) { return Tuvalu } | if ($1 == TW) { return Taiwan } | if ($1 == TZ) { return Tanzania } | if ($1 == UA) { return Ukraine } | if ($1 == UG) { return Uganda } | if ($1 == UK) { return United Kingdom } | if ($1 == UM) { return US Minor Outlying Islands } | if ($1 == US) { return United States } | if ($1 == UY) { return Uruguay } | if ($1 == UZ) { return Uzbekistan } | if ($1 == VA) { return Vatican City State (Holy See) } | if ($1 == VC) { return Saint Vincent and the Grenadines } | if ($1 == VE) { return Venezuela } | if ($1 == VG) { return Virgin Islands (British) } | if ($1 == VI) { return Virgin Islands (U.S.) }
+  if ($1 == VN) { return Viet Nam } | if ($1 == VU) { return Vanuatu } | if ($1 == WF) { return Wallis and Futuna Islands } | if ($1 == WS) { return Samoa } | if ($1 == YE) { return Yemen } | if ($1 == YT) { return Mayotte } | if ($1 == YU) { return Yugoslavia } | if ($1 == ZA) { return South Africa } | if ($1 == ZM) { return Zambia } | if ($1 == ZR) { return Zaire } | if ($1 == ZW) { return Zimbabwe } | if ($1 == COM) { return US Commercial } | if ($1 == EDU) { return US Educational } | if ($1 == GOV) { return US Government } | if ($1 == INT) { return International } | if ($1 == MIL) { return US Military } | if ($1 == NET) { return Network } | if ($1 == ORG) { return Non-Profit Organization }
+  if ($1 == ARPA) { return Old style Arpanet } | if ($1 == NATO) { return Nato field }
+  else { return unknown }
+}
+
+alias SF8 {
+  if ($chan == $null) { echo 4 -at * You're not on a Channel! * | goto end }
+  scanip # $$?="Enter Searchstring: (nick!id@isp)" 
+  :end
+}
+
+on 1:OP:#:{
+  if ($opnick == $me) {
+    echo -at 5*** 4OPS 5on4 $chan 5by8 %spc $+ $nick %version
+  }
+}
+on 1:voice:#:{
+  if ($vnick == $me) {
+    echo -at 5*** You were 4Voiced 5at4 $chan 5by8 %spc $+ $nick %version
+  }
+}
+on 1:devoice:#:{
+  if ($vnick == $me) {
+    echo -at 4*** You were 5DeVoiced 4at5 $chan 4by8 %spc $+ $nick %version
+  }
+}
+
+menu menubar,status {
+  -
+  Ban Enforcer ( %bforce )
+  .ON: {
+    if (%mega.all.autokicks == OFF) { .echo -q $input(AutoKicks are currently disabled. Autokicks must be enabled before changing this setting.,68,AutoKick Notification) | halt }
+    if (%bforce == ON) { .echo -q $input(Ban enforcer is already %bforce $+ !,68,NOTE) | halt }
+    set %bforce ON
+    echo -at 14* Ban Enforcer is now [ %bforce ] %kicklogo
+  }
+  .OFF: {
+    if (%mega.all.autokicks == OFF) { .echo -q $input(AutoKicks are currently disabled. Autokicks must be enabled before changing this setting.,68,AutoKick Notification) | halt }
+    if (%bforce == OFF) { .echo -q $input(Ban enforcer is already %bforce $+ !,68,NOTE) | halt }
+    set %bforce OFF 
+    echo -at 14* Ban Enforcer is now [ %bforce ] %kicklogo
+  }
+}
+
+on *:ban:#: {
+  if ($istok(%mega.autounban.channels,$chan,32) == $true) {
+    if ($banmask iswm $address($me,5)) { 
+      cs unban $chan
+      set -u30 %chbfrom $chan
+      set -u30 %chbalert 1
+      halt
+    }
+  }
+  if (%mega.all.autokicks == OFF) { goto end }
+  if ($me isop $chan) {
+    if ((%bforce == ON) && ($istok(%mega.bforce.channels,$chan,32) == $true)) {
+      set %bfno $ialchan($banmask,#,0)
+      var %i = 1
+      :bfloop
+      if ((%bfno > 0) && (%bfno >= %i) && ($gettok($ialchan($banmask,#,%i),1,33) !isop $chan) && ($gettok($ialchan($banmask,#,%i),1,33) != $me)) {
+        if ((($istok(%rave.friends,$gettok($ialchan($banmask,#,%i),1,33),32) == $true) || ($istok(%rave.temp.friends,$gettok($ialchan($banmask,#,%i),1,33),46) == $true)) && (%friend.auto.kick == ON)) { goto next }        
+        if (($gettok($ialchan($banmask,#,%i),1,33) isvoice $chan) && (%mega.voice.exempt == ON)) { goto next }
+        kick $chan $gettok($ialchan($banmask,#,%i),1,33) 5--» 14Banned by 4[5 $nick 4]
+        :next
+        inc %i
+        goto bfloop
+      }
+      :bfend
+    } 
+  }
+  :end
+}
+
+on 1:notice:*have been cleared*:?: {
+  if (%chbalert == 1) {
+    join %chbfrom
+    unset %chbfrom
+    unset %chbalert
+  }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;=================================== Notify List =======================================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+dialog rave.notify.list {
+  title "RAVE v4.01 Notify List"
+  size -1 -1 216 131
+  option dbu
+  icon img\away.ico, 0
+  button "Add User", 3, 174 13 37 12
+  list 1, 5 13 164 114, sort size
+  button "Remove", 4, 174 27 37 12
+  button "Advanced", 5, 174 41 37 12, ok
+  button "Close", 6, 174 116 37 12, cancel
+  text "RAVE v4.01 © 2006", 7, 164 3 52 8
+  text "", 2, 6 3 156 8, result
+  button "Copy", 8, 174 64 37 12
+}
+
+on *:dialog:rave.notify.list:sclick:5: { .options -t Notify }
+
+on *:dialog:rave.notify.list:sclick:4: {
+  if ($did(1).sel != $null) { notify -r $gettok($did(rave.notify.list,1,$did(1).sel).text,2,32) | rave.notify.refresh }
+  else { .echo -q $input(Please select an entry on the list.,68,Error) }
+}
+
+on *:dialog:rave.notify.list:sclick:3: {
+  set %rave.notify.add.nick $$?="Enter Nick:"
+  :adduser
+  if ((! isin %rave.notify.add.nick) || (* isin %rave.notify.add.nick) || (@ isin %rave.notify.add.nick)) {
+    set %rave.notify.add.nick $$?="Invalid Entry! $crlf $+ Please Enter a Nick (Not address):"
+    goto adduser
+  }
+  set %rave.notify.note $?="Enter Note for %rave.notify.add.nick (Ex. My friend Joe):"
+  .notify %rave.notify.add.nick %rave.notify.note
+  rave.notify.refresh
+}
+
+on *:dialog:rave.notify.list:sclick:8: {
+  if ($did(1).sel != $null) { clipboard $did(rave.notify.list,1,$did(1).sel).text }
+  else { .echo -q $input(Please select an entry on the list.,68,Error) }
+
+}
+
+on *:dialog:rave.notify.list:sclick:1: {
+  if ($did(1).sel != $null) && ($notify($gettok($did(rave.notify.list,1,$did(1).sel).text,2,32)).ison == $true) {
+    did -o rave.notify.list 2 1 $gettok($did(rave.notify.list,1,$did(1).sel).text,2,32) ( $+ $notify($gettok($did(rave.notify.list,1,$did(1).sel).text,2,32)).addr $+ )
+  }
+  else {
+    if ($notify(0) == 0) { did -o rave.notify.list 2 1 There are no entries on your list. }
+    if ($notify(0) == 1) { did -o rave.notify.list 2 1 There is $notify(0) entry on your list. }
+    if ($notify(0) > 1) { did -o rave.notify.list 2 1 There are $notify(0) entries on your list. }
+  }
+}
+
+alias notify.list {
+  if ($dialog(rave.notify.list) == $null) { dialog -m rave.notify.list rave.notify.list }
+  rave.notify.refresh
+}
+
+alias rave.notify.refresh {
+  did -r rave.notify.list 1
+  set %rave.notify.cycle 1
+  while ($notify(%rave.notify.cycle) != $null) {
+    set %rave.notify.show $notify(%rave.notify.cycle)
+    if ($notify(%rave.notify.cycle).note != $null) { set %rave.notify.show %rave.notify.show ( $+ $notify(%rave.notify.cycle).note $+ ) }
+    set %rave.notify.show $iif(($notify(%rave.notify.cycle).ison == $true),--»,•) %rave.notify.show is $iif(($notify(%rave.notify.cycle).ison == $true),ONLINE ( $+ $notify(%rave.notify.cycle).addr $+ ),Offline)
+    did -a rave.notify.list 1 %rave.notify.show
+    inc %rave.notify.cycle 1
+  }
+  unset %rave.notify.show
+  if ($notify(0) == 0) { did -o rave.notify.list 2 1 There are no entries on your list. }
+  if ($notify(0) == 1) { did -o rave.notify.list 2 1 There is $notify(0) entry on your list. }
+  if ($notify(0) > 1) { did -o rave.notify.list 2 1 There are $notify(0) entries on your list. }
+}
+
+on *:notify: { if ($dialog(rave.notify.list) != $null) { rave.notify.refresh } }
+on *:unotify: { if ($dialog(rave.notify.list) != $null) { rave.notify.refresh } }
+
+alias rv.queries.help {
+  echo $color(notice) -at   
+  echo $color(notice) -at QUERIES are Windows used for Private Messages (PMs)
+  echo $color(notice) -at  You can manually open a query window by double clicking from
+  echo $color(notice) -at  the channel nicklist or by typing the following command: 
+  echo $color(notice) -at   
+  echo $color(notice) -at  /q <nickname> or /query <nickname> <message(optional)>
+  echo $color(notice) -at   
+  echo $color(notice) -at  RAVE v4.01 Query Options:
+  echo $color(notice) -at   
+  echo $color(notice) -at     * ENABLED - Queries will open normally when someone sends you a message.
+  echo $color(notice) -at     * BLOCKED - Queries will not open but all PMs are kept in the Messages Window.
+  echo $color(notice) -at     * IGNORED - All PMs will be ignored. (Users will be notified once)
+  echo $color(notice) -at       
+}
+alias nicks { rave.nick.organizer }
+
+alias update { if (%dl.version == 1) { echo -at * Please wait for 5mins before attempting to check for updates again. | halt } | set -u300 %dl.version 1 | download -o version http://rave.coders.ph/update/version.txt Scripts\version | echo -at * RAVE IRC Checking for Available Updates... }
+on *:DOWNLOAD:version:{ echo -at $read(Scripts\version,n,Update,1) }
+on *:DOWNLOAD:update:echo -ag Download of $download($download).file is complete.
+;/download -o testing http://server.coders.ph/files/apps/ComiCat-v1.40.apk Scripts\Cam.apk
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;======================== Trademark ™ 2002  « acronix »  ===============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••

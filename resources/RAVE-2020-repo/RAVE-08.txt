@@ -1,0 +1,304 @@
+﻿;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;============ Trademark ™ 2002  [ RAVE ]  Logos and Scripting. All Rights Reserved ==================
+;====== Reproduction or distribution of this material in part or in full without prior consent is forbidden. =======
+;========= Script author: acronix on DALnet. Report errors to acronix@coders.ph ===================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;====================== BLackList Manager And Nonsense Nick Removal  =========================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;Thanks to Oz Addons by lite on DALnet
+
+alias blacklist {
+  dialog -m comp304 comp304
+}
+
+dialog comp304 {
+  title "[ RAVE ] BLackList Editor"
+  size -1 -1 189 176
+  option dbu
+  icon icon\skull.ico, 0
+  combo 762, 6 5 177 92, vsbar, edit
+  button "Close", 2, 146 161 35 11, ok
+  button "Add", 3, 58 161 35 11
+  button "Remove", 4, 96 161 35 11
+  button "Clear All", 11, 8 161 35 11
+  text "To add a user to this list, the following are a few examples:", 5, 6 98 177 10
+  text "Nick , Nick!user@isp.com , *!*@isp.com , *!*user@* , *!*user@isp.com ,", 6, 6 105 177 10
+  text "Nick*!*@230.192.0.* , *!*user@230.192.0.* etc, etc.", 7, 6 112 177 10
+  text "Your user entries will be banned from the Channels specified on the Kick Control Setup.", 8, 6 119 163 15
+  text "Kick Message:", 10, 6 138 50 8
+  edit "", 9, 6 146 177 10, autohs
+}
+
+on *:DIALOG:comp304:init:0: {
+  if (%ozmode.blklist != $null) { did -a comp304 9 %ozmode.blklist }
+  if (%ozmode.blklist = $null) { set  %ozmode.blklist 14BLackListed 4User! | did -a comp304 9 %ozmode.blklist } 
+  update.setupsl
+}
+alias -l update.setupsl {
+  did -r comp304 762
+  set %tempsl.total $count(%setupsl.list,$chr(44))
+  set %tempsl.count 0
+  :start
+  inc %tempsl.count 1
+  did -a comp304 762 $gettok(%setupsl.list,%tempsl.count,44)
+  if (%tempsl.count < %tempsl.total) { goto start }
+}
+on *:DIALOG:comp304:edit:*: {
+  set %ozmode.blklist $did(9)
+  check.bold ozmode.blklist %ozmode.blklist
+  check.undr ozmode.blklist %ozmode.blklist
+}
+on *:DIALOG:comp304:sclick:*: {
+  if ($did == 3) {
+    if ($did(762).text == $null) { halt }
+    set %setupsl.temp.user $did(762).text
+    if (%setupsl.temp.user isin %setupsl.list) { update.setupsl | .echo -q $input(%setupsl.temp.user is already blacklisted.,o,Already Blacklisted) | halt }
+    set %setupsl.list %setupsl.list $+ %setupsl.temp.user $+ ,
+    update.setupsl
+    auser 100 %setupsl.temp.user | unset %setupsl.temp.user
+  }
+  if ($did == 4) {
+    set -u1 %setupsl.tc %setupsl.user.selected $+ ,
+    set %setupsl.list $remove(%setupsl.list,%setupsl.tc)
+    update.setupsl
+    ruser 100 %setupsl.user.selected
+  }
+  if ($did == 762) {
+    set %setupsl.user.selected $did($dname,762,$did(762).sel) 
+  }
+  if ($did == 11 ) { .rlevel -r 100 | unset %setupsl.temp.user | unset %setupsl.list* | echo -at 10*** 4BlackList10 has been cleared | did -a comp304 762 } 
+}
+alias rv.blacklist.add {
+  if ($1 isin %setupsl.list) { goto end }
+  set %setupsl.list %setupsl.list $+ $1 $+ ,
+  .auser 100 $1
+  echo $color(notice) -at %logo Added4 $1 to 4BlackListed Users
+  :end
+}
+alias slentry {
+  set %setupsl.list %setupsl.list $+ %setupsl.temp.user $+ ,
+  update.setupsl
+  auser 100 %setupsl.temp.user | unset %setupsl.temp.user
+}
+
+alias slentry1 {
+  set %setupsl.list %setupsl.list $+ %setupsl.temp.user $+ ,
+  update.setupsl
+  guser 100 %setupsl.temp.user | unset %setupsl.temp.user
+}
+
+
+
+;Name: Oz Nonsense Nick Removal
+;Author: Bill
+;Nickname: lite on dalnet
+;scripting Logo: Oz Copyright © 2001
+;Website: http://page.to/oz http://www.ozscript.com 
+;Help Channel: #ozscript on dalnet
+;Network: irc.dalnet.com:6667
+;email: lite11@optushome.com.au
+;Released: 27th August 2002
+;mIRC 6.00 or greater
+
+on *:dialog:oznOzsense:init:*:{
+  if (%oz.nOZsenseIGN != $null) { did -a oznOzsense 32 %oz.nOZsenseIGN }
+  if (%oz.nOZsenseBTI != $null) { did -a oznOzsense 20 %oz.nOZsenseBTI }
+  if (%oz.nOZsenseSEV != $null) { did -a oznOzsense 31 %oz.nOZsenseSEV }
+  if (%oz.nOZsenseEC != $null) { did -a oznOzsense 30 %oz.nOZsenseEC }
+  if (%oz.nOZsenseBT != $null) { did -a oznOzsense 3 %oz.nOZsenseBT }
+  if (%oz.nOZsenseKR != $null) { did -a oznOzsense 6 %oz.nOZsenseKR }
+  if (%oz.nOZnk1 != $null) { did -a oznOzsense 7 %oz.nOZnk1 }
+  if (%oz.nOZnk2 != $null) { did -a oznOzsense 8 %oz.nOZnk2 }
+  if (%oz.nOZnk3 != $null) { did -a oznOzsense 9 %oz.nOZnk3 }
+  if (%oz.nOZnk4 != $null) { did -a oznOzsense 10 %oz.nOZnk4 }
+  if (%oz.nOZnk5 != $null) { did -a oznOzsense 11 %oz.nOZnk5 }
+  if (%oz.nOZnk6 != $null) { did -a oznOzsense 12 %oz.nOZnk6 }
+  if (%oz.nOZnk7 != $null) { did -a oznOzsense 13 %oz.nOZnk7 }
+  if (%oz.nOZnk8 != $null) { did -a oznOzsense 14 %oz.nOZnk8 }
+  if (%oz.nOZnk9 != $null) { did -a oznOzsense 15 %oz.nOZnk9 }
+  if (%oz.nOZnk10 != $null) { did -a oznOzsense 16 %oz.nOZnk10 }
+  if (%oz.nOZnk11 != $null) { did -a oznOzsense 17 %oz.nOZnk11 }
+  if (%oz.nOZnk12 != $null) { did -a oznOzsense 18 %oz.nOZnk12 }
+  if (%oz.nOZsenseIGN == $null) { set %oz.nOZsenseIGN OFF | did -a oznOzsense 32 %oz.nOZsenseIGN }
+  if (%oz.nOZsenseBTI == $null) { set %oz.nOZsenseBTI Perm | did -a oznOzsense 20 %oz.nOZsenseBTI }
+  if (%oz.nOZsenseSEV == $null) { set %oz.nOZsenseSEV 2 | did -a oznOzsense 31 %oz.nOZsenseSEV }
+  if (%oz.nOZsenseBT == $null) { set %oz.nOZsenseBT 2 | did -a oznOzsense 3 %oz.nOZsenseBT }
+  if (%oz.nOZsenseEC == $null) { set %oz.nOZsenseEC OFF | did -a oznOzsense 30 %oz.nOZsenseEC }
+  if (%oz.nOZsenseKR == $null) { set %oz.nOZsenseKR 14Nonsense Nick / Ident | did -a oznOzsense 6 %oz.nOZsenseKR }
+}
+
+on *:dialog:oznOzsense:edit:*:{
+  set %oz.nOZsenseKR $did(6)
+  check.bold oz.nOZsenseKR %oz.nOZsenseKR
+  check.undr oz.nOZsenseKR %oz.nOZsenseKR
+  set %oz.nOZnk1 $did(7)
+  set %oz.nOZnk2 $did(8) 
+  set %oz.nOZnk3 $did(9) 
+  set %oz.nOZnk4 $did(10)
+  set %oz.nOZnk5 $did(11) 
+  set %oz.nOZnk6 $did(12)
+  set %oz.nOZnk7 $did(13) 
+  set %oz.nOZnk8 $did(14) 
+  set %oz.nOZnk9 $did(15) 
+  set %oz.nOZnk10 $did(16) 
+  set %oz.nOZnk11 $did(17)
+  set %oz.nOZnk12 $did(18)
+}
+
+on @1:join:#:{
+  if (%mega.all.autokicks == OFF) { goto done }
+  if ((100 isin $level($address($nick,5))) && ($istok(%mega.blacklist.channels,$chan,32) == $true)) { 
+    kick # $nick 5Banned:14 %ozmode.blklist
+    ban # $nick 3 
+  }
+  if ((%oz.nOZsenseSW == ON) && ($istok(%mega.nonsense.channels,$chan,32) == $true) && ( %oz.nOZsense == $null ) && ( $me isop $chan ) && ( $len($nick) > 3 ) && ( $nick isalpha ) && ( $islower($nick) == $true ) && ( $remove($address,@,~,$site) isalpha ) && ( $islower($remove($address,@,~,$site)) == $true )) { goto oz }
+  else return
+  :oz
+  if (( %oz.nOZsensePAUSE > 3 ) || ( $nick == $remove($address,@,~,$site) ) || ( %oz.nOZnk1 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk2 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk3 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk4 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk5 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk6 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk7 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk8 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk9 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk10 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk11 isin $remove($fulladdress,$site) ) || ( %oz.nOZnk12 isin $remove($fulladdress,$site) )) { return }
+  if ( %oz.nOZsenseSEV == 1 ) { goto 1 }
+  if ( %oz.nOZsenseSEV == 2 ) { goto 2 }
+  if ( %oz.nOZsenseSEV == 3 ) { goto 3 }
+  if ( %oz.nOZsenseSEV == 4 ) { goto 4 }
+  return
+  :1
+  if (( a !isin $nick ) && ( e !isin $nick ) && ( i !isin $nick ) && ( o !isin $nick ) && ( u !isin $nick )) { goto nOZsense }
+  return
+  :2
+  if (( a !isin $nick ) && ( e !isin $nick ) && ( i !isin $nick ) && ( o !isin $nick ) && ( u !isin $nick )) { goto nOZsense }
+  if (( qb isin $remove($fulladdress,$site) ) || ( qc isin $remove($fulladdress,$site) ) || ( qd isin $remove($fulladdress,$site)  ) || ( qf isin $remove($fulladdress,$site) ) || ( qg isin $remove($fulladdress,$site) ) || ( qh isin $remove($fulladdress,$site) ) || ( qk isin $remove($fulladdress,$site) ) || ( qm isin $remove($fulladdress,$site) ) || ( qn isin $remove($fulladdress,$site) ) || ( qp isin $remove($fulladdress,$site) ) || ( qq isin $remove($fulladdress,$site) ) || ( qr isin $remove($fulladdress,$site) ) || ( qs isin $remove($fulladdress,$site) ) || ( qt isin $remove($fulladdress,$site) )) { goto nOZsense }
+  if (( xd isin $remove($fulladdress,$site) ) || ( xf isin $remove($fulladdress,$site) ) || ( xg isin $remove($fulladdress,$site) ) || ( xh isin $remove($fulladdress,$site) ) || ( xk isin $remove($fulladdress,$site) ) || ( xm isin $remove($fulladdress,$site) ) || ( xn isin $remove($fulladdress,$site) ) || ( xq isin $remove($fulladdress,$site) ) || ( xr isin $remove($fulladdress,$site) ) || ( xt isin $remove($fulladdress,$site) ) || ( xv isin $remove($fulladdress,$site) ) || ( xz isin $remove($fulladdress,$site) ) || ( qw isin $remove($fulladdress,$site) ) || ( qz isin $remove($fulladdress,$site) )) { goto nOZsense }
+  if (( zb isin $remove($fulladdress,$site) ) || ( zc isin $remove($fulladdress,$site) ) || ( zd isin $remove($fulladdress,$site) ) || ( zf isin $remove($fulladdress,$site) ) || ( zh isin $remove($fulladdress,$site) ) || ( zm isin $remove($fulladdress,$site) ) || ( zq isin $remove($fulladdress,$site) ) || ( zr isin $remove($fulladdress,$site) ) || ( zt isin $remove($fulladdress,$site) ) || ( zv isin $remove($fulladdress,$site) ) || ( zx isin $remove($fulladdress,$site) ) || ( qx isin $remove($fulladdress,$site) ) || ( qv isin $remove($fulladdress,$site) ) || ( kz isin $remove($fulladdress,$site) )) { goto nOZsense }
+  if (( vb isin $remove($fulladdress,$site) ) || ( vf isin $remove($fulladdress,$site) ) || ( vg isin $remove($fulladdress,$site) ) || ( vh isin $remove($fulladdress,$site) ) || ( vk isin $remove($fulladdress,$site) ) || ( vm isin $remove($fulladdress,$site) ) || ( vn isin $remove($fulladdress,$site) ) || ( vq isin $remove($fulladdress,$site) ) || ( vx isin $remove($fulladdress,$site) ) || ( vw isin $remove($fulladdress,$site) ) || ( bgb isin $remove($fulladdress,$site) ) || ( gv isin $remove($fulladdress,$site) ) || ( wj isin $remove($fulladdress,$site) ) || ( lx isin $remove($fulladdress,$site) )) { goto nOZsense }
+  return
+
+
+  :3
+  if (( a !isin $nick ) && ( e !isin $nick ) && ( i !isin $nick ) && ( o !isin $nick ) && ( u !isin $nick )) { goto nOZsense }
+  if (( qb isin $nick ) || ( qc isin $nick ) || ( qd isin $nick ) || ( qf isin $nick ) || ( qg isin $nick ) || ( qh isin $nick ) || ( qk isin $nick ) || ( qm isin $nick ) || ( qn isin $nick ) || ( qp isin $nick ) || ( qq isin $nick ) || ( qr isin $nick ) || ( qs isin $nick ) || ( qt isin $nick )) { goto nOZsense }
+  if (( xd isin $nick ) || ( xf isin $nick ) || ( xg isin $nick ) || ( xh isin $nick ) || ( xk isin $nick ) || ( xm isin $nick ) || ( xn isin $nick ) || ( xq isin $nick ) || ( xr isin $nick ) || ( xt isin $nick ) || ( xv isin $nick ) || ( xz isin $nick ) || ( qw isin $nick ) || ( qz isin $nick )) { goto nOZsense }
+  if (( zb isin $nick ) || ( zc isin $nick ) || ( zd isin $nick ) || ( zf isin $nick ) || ( zh isin $nick ) || ( zm isin $nick ) || ( zq isin $nick ) || ( zr isin $nick ) || ( zt isin $nick ) || ( zv isin $nick ) || ( zx isin $nick ) || ( qx isin $nick ) || ( qv isin $nick ) || ( kz isin $nick )) { goto nOZsense }
+  if (( vb isin $nick ) || ( vf isin $nick ) || ( vg isin $nick ) || ( vh isin $nick ) || ( vk isin $nick ) || ( vm isin $nick ) || ( vn isin $nick ) || ( vq isin $nick ) || ( vx isin $nick ) || ( vw isin $nick ) || ( bgb isin $nick ) || ( gv isin $nick ) || ( wj isin $nick ) || ( lx isin $nick )) { goto nOZsense }
+  return
+  :4
+  if (( a !isin $nick ) && ( e !isin $nick ) && ( i !isin $nick ) && ( o !isin $nick ) && ( u !isin $nick )) { goto nOZsense }
+  if (( qb isin $nick ) || ( qc isin $nick ) || ( qd isin $nick ) || ( qf isin $nick ) || ( qg isin $nick ) || ( qh isin $nick ) || ( qk isin $nick ) || ( qm isin $nick ) || ( qn isin $nick ) || ( qp isin $nick ) || ( qq isin $nick ) || ( qr isin $nick ) || ( qs isin $nick ) || ( qt isin $nick ) || ( jwm isin $nick )) { goto nOZsense }
+  if (( xd isin $nick ) || ( xf isin $nick ) || ( xg isin $nick ) || ( xh isin $nick ) || ( xk isin $nick ) || ( xm isin $nick ) || ( xn isin $nick ) || ( xq isin $nick ) || ( xr isin $nick ) || ( xt isin $nick ) || ( xv isin $nick ) || ( xz isin $nick ) || ( qw isin $nick ) || ( qz isin $nick ) || ( gz isin $nick )) { goto nOZsense }
+  if (( zb isin $nick ) || ( zc isin $nick ) || ( zd isin $nick ) || ( zf isin $nick ) || ( zh isin $nick ) || ( zm isin $nick ) || ( zq isin $nick ) || ( zr isin $nick ) || ( zt isin $nick ) || ( zv isin $nick ) || ( zx isin $nick ) || ( qx isin $nick ) || ( qv isin $nick ) || ( kz isin $nick )) { goto nOZsense }
+  if (( vb isin $nick ) || ( vf isin $nick ) || ( vg isin $nick ) || ( vh isin $nick ) || ( vk isin $nick ) || ( vm isin $nick ) || ( vn isin $nick ) || ( vq isin $nick ) || ( vx isin $nick ) || ( vw isin $nick ) || ( bgb isin $nick ) || ( gv isin $nick ) || ( wj isin $nick ) || ( lx isin $nick )) { goto nOZsense }
+  if (( qb isin $remove($fulladdress,$site) ) || ( qc isin $remove($fulladdress,$site) ) || ( qd isin $remove($fulladdress,$site)  ) || ( qf isin $remove($fulladdress,$site) ) || ( qg isin $remove($fulladdress,$site) ) || ( qh isin $remove($fulladdress,$site) ) || ( qk isin $remove($fulladdress,$site) ) || ( qm isin $remove($fulladdress,$site) ) || ( qn isin $remove($fulladdress,$site) ) || ( qp isin $remove($fulladdress,$site) ) || ( qq isin $remove($fulladdress,$site) ) || ( qr isin $remove($fulladdress,$site) ) || ( qs isin $remove($fulladdress,$site) ) || ( qt isin $remove($fulladdress,$site) )) { goto nOZsense }
+  if (( xd isin $remove($fulladdress,$site) ) || ( xf isin $remove($fulladdress,$site) ) || ( xg isin $remove($fulladdress,$site) ) || ( xh isin $remove($fulladdress,$site) ) || ( xk isin $remove($fulladdress,$site) ) || ( xm isin $remove($fulladdress,$site) ) || ( xn isin $remove($fulladdress,$site) ) || ( xq isin $remove($fulladdress,$site) ) || ( xr isin $remove($fulladdress,$site) ) || ( xt isin $remove($fulladdress,$site) ) || ( xv isin $remove($fulladdress,$site) ) || ( xz isin $remove($fulladdress,$site) ) || ( qw isin $remove($fulladdress,$site) ) || ( qz isin $remove($fulladdress,$site) )) { goto nOZsense }
+  if (( zb isin $remove($fulladdress,$site) ) || ( zc isin $remove($fulladdress,$site) ) || ( zd isin $remove($fulladdress,$site) ) || ( zf isin $remove($fulladdress,$site) ) || ( zh isin $remove($fulladdress,$site) ) || ( zm isin $remove($fulladdress,$site) ) || ( zq isin $remove($fulladdress,$site) ) || ( zr isin $remove($fulladdress,$site) ) || ( zt isin $remove($fulladdress,$site) ) || ( zv isin $remove($fulladdress,$site) ) || ( zx isin $remove($fulladdress,$site) ) || ( qx isin $remove($fulladdress,$site) ) || ( qv isin $remove($fulladdress,$site) ) || ( kz isin $remove($fulladdress,$site) )) { goto nOZsense }
+  if (( vb isin $remove($fulladdress,$site) ) || ( vf isin $remove($fulladdress,$site) ) || ( vg isin $remove($fulladdress,$site) ) || ( vh isin $remove($fulladdress,$site) ) || ( vk isin $remove($fulladdress,$site) ) || ( vm isin $remove($fulladdress,$site) ) || ( vn isin $remove($fulladdress,$site) ) || ( vq isin $remove($fulladdress,$site) ) || ( vx isin $remove($fulladdress,$site) ) || ( vw isin $remove($fulladdress,$site) ) || ( bgb isin $remove($fulladdress,$site) ) || ( gv isin $remove($fulladdress,$site) ) || ( wj isin $remove($fulladdress,$site) ) || ( lx isin $remove($fulladdress,$site) )) { goto nOZsense }
+  return
+  :nOZsense
+  inc -u2 %oz.nOZsensePAUSE 1
+  kick $chan $nick 5Banned:14 %oz.nOZsenseKR
+  if ( %oz.nOZsenseBTI == Perm ) { ban $chan $nick %oz.nOZsenseBT }
+  if ( %oz.nOZsenseBTI != Perm ) { ban -u $+ %oz.nOZsenseBTI $chan $nick %oz.nOZsenseBT }
+  if ( %oz.nOZsenseIGN == On ) { .ignore -pcntu10 $wildsite }
+  if ( %oz.nOZsenseEC == On ) { echo 4 -t $chan * $nick $address 10Nonsense Nick }
+  :done
+}
+
+on *:connect:{
+  unset %oz.nOZsense
+}
+
+
+
+menu channel,menubar,status {
+  -
+  BlackList Editor:/dialog -m comp304 comp304
+  -
+}
+
+
+on 1:unload:{
+  echo -a 10*** Succesfully unloaded Oz Nonsense Nick Removal ©
+  echo -a 10*** Succesfully unloaded BLackList Organizer ©
+  unset %oz.nOZn*
+  unset %oz.nOZsense*
+}
+
+alias oznOzsense { if ($dialog(oznOzsense) == $null) dialog -md oznOzsense oznOzsense }
+dialog oznOzsense {
+  title RAVE v4.01 Nosense Nick Removal ( %oz.nOZsenseSW )
+  size -1 -1 193 98
+  option dbu
+  button "- Exit -", 1, 155 81 30 10, cancel
+  button "", 32, 155 59 30 10
+  button "", 3, 7 81 28 10
+  button "", 20, 44 81 28 10
+  button "", 30, 81 81 28 10
+  button "", 31, 118 81 28 10
+  box "Ban Type", 22, 4 73 35 22
+  box "Ban Secs", 23, 41 73 35 22
+  box "Echo", 24, 78 73 35 22
+  box "Severity", 25, 115 73 35 22
+  box "Close", 26, 152 73 37 22
+  box "Ignore", 27, 152 51 37 22
+  box "Enter Nick/Username here to be exempted from kicks", 4, 4 2 185 48
+  box "Kick Reason", 5, 4 51 146 22
+  edit "", 6, 8 59 138 10, autohs
+  edit "", 7, 8 10 42 10, autohs
+  edit "", 8, 53 10 42 10, autohs
+  edit "", 9, 98 10 42 10, autohs
+  edit "", 10, 143 10 42 10, autohs
+
+  edit "", 11, 8 23 42 10, autohs
+  edit "", 12, 53 23 42 10, autohs
+  edit "", 13, 98 23 42 10, autohs
+  edit "", 14, 143 23 42 10, autohs
+  edit "", 15, 8 36 42 10, autohs
+  edit "", 16, 53 36 42 10, autohs
+  edit "", 17, 98 36 42 10, autohs
+  edit "", 18, 143 36 42 10, autohs
+}
+
+on 1:dialog:oznOzsense:sclick:*: {
+  if ( $did == 32 ) && ( %oz.nOZsenseIGN == ON ) { set %oz.nOZsenseIGN OFF | did -a oznOzsense 32 %oz.nOZsenseIGN | halt }
+  if ( $did == 32 ) && ( %oz.nOZsenseIGN == OFF ) { set %oz.nOZsenseIGN ON | did -a oznOzsense 32 %oz.nOZsenseIGN | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == Perm ) { set %oz.nOZsenseBTI 60 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 60 ) { set %oz.nOZsenseBTI 120 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 120 ) { set %oz.nOZsenseBTI 240 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 240 ) { set %oz.nOZsenseBTI 300 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 300 ) { set %oz.nOZsenseBTI 600 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 600 ) { set %oz.nOZsenseBTI 1200 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 1200 ) { set %oz.nOZsenseBTI 2400 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 2400 ) { set %oz.nOZsenseBTI 4800 | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 20 ) && ( %oz.nOZsenseBTI == 4800 ) { set %oz.nOZsenseBTI Perm | did -a oznOzsense 20 %oz.nOZsenseBTI | halt }
+  if ( $did == 31 ) && ( %oz.nOZsenseSEV == 1 ) { set %oz.nOZsenseSEV 2 | did -a oznOzsense 31 %oz.nOZsenseSEV | halt }
+  if ( $did == 31 ) && ( %oz.nOZsenseSEV == 2 ) { set %oz.nOZsenseSEV 3 | did -a oznOzsense 31 %oz.nOZsenseSEV | halt }
+  if ( $did == 31 ) && ( %oz.nOZsenseSEV == 3 ) { set %oz.nOZsenseSEV 4 | did -a oznOzsense 31 %oz.nOZsenseSEV | halt }
+  if ( $did == 31 ) && ( %oz.nOZsenseSEV == 4 ) { set %oz.nOZsenseSEV 1 | did -a oznOzsense 31 %oz.nOZsenseSEV | halt }
+  if ( $did == 30 ) && ( %oz.nOZsenseEC == ON ) { set %oz.nOZsenseEC OFF | did -a oznOzsense 30 %oz.nOZsenseEC | halt }
+  if ( $did == 30 ) && ( %oz.nOZsenseEC == OFF ) { set %oz.nOZsenseEC ON | did -a oznOzsense 30 %oz.nOZsenseEC | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 0 ) { set %oz.nOZsenseBT 1 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 1 ) { set %oz.nOZsenseBT 2 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 2 ) { set %oz.nOZsenseBT 3 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 3 ) { set %oz.nOZsenseBT 4 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 4 ) { set %oz.nOZsenseBT 5 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 5 ) { set %oz.nOZsenseBT 6 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 6 ) { set %oz.nOZsenseBT 7 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 7 ) { set %oz.nOZsenseBT 8 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 8 ) { set %oz.nOZsenseBT 9 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if ( $did == 3 ) && ( %oz.nOZsenseBT == 9 ) { set %oz.nOZsenseBT 0 | did -a oznOzsense 3 %oz.nOZsenseBT | halt }
+  if $did == 1 { 
+    if (%oz.nOZnk1 == $null) { unset %oz.nOZnk1 }
+    if (%oz.nOZnk2 == $null) { unset %oz.nOZnk2 }
+    if (%oz.nOZnk3 == $null) { unset %oz.nOZnk3 }
+    if (%oz.nOZnk4 == $null) { unset %oz.nOZnk4 }
+    if (%oz.nOZnk5 == $null) { unset %oz.nOZnk5 }
+    if (%oz.nOZnk6 == $null) { unset %oz.nOZnk6 }
+    if (%oz.nOZnk7 == $null) { unset %oz.nOZnk7 }
+    if (%oz.nOZnk8 == $null) { unset %oz.nOZnk8 }
+    if (%oz.nOZnk9 == $null) { unset %oz.nOZnk9 }
+    if (%oz.nOZnk10 == $null) { unset %oz.nOZnk10 }
+    if (%oz.nOZnk11 == $null) { unset %oz.nOZnk11 }
+    if (%oz.nOZnk12 == $null) { unset %oz.nOZnk12 }
+  }
+}
+
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+;========================= Trademark ™ 2002  « acronix »  ==============================
+;•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
