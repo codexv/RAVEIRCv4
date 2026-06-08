@@ -33,6 +33,10 @@
     const sel = window.getSelection()?.toString();
     if (sel) await navigator.clipboard.writeText(sel);
   }
+  // Double-clicking inside a query window whoises the person you're talking to.
+  function onDblClick() {
+    if (buffer?.kind === "query") irc.sendInput(`/whois ${buffer.name}`);
+  }
 
   function fmtTime(ts: number): string {
     const d = new Date(ts);
@@ -97,7 +101,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="messages" bind:this={viewport} onscroll={onScroll} oncontextmenu={openMenu} onclick={() => focusInput()}>
+<div class="messages" bind:this={viewport} onscroll={onScroll} oncontextmenu={openMenu} onclick={() => focusInput()} ondblclick={onDblClick}>
   {#if !buffer}
     <div class="placeholder">
       <h2>RAVE<span>IRC</span></h2>
@@ -137,6 +141,10 @@
     <div class="cm-title">{buffer.name}</div>
     <button onclick={copySel}>Copy selection</button>
     <button onclick={() => run("/clear")}>Clear window</button>
+    {#if buffer.kind === "query"}
+      <div class="cm-sep"></div>
+      <button onclick={() => run(`/whois ${buffer.name}`)}>Whois {buffer.name}</button>
+    {/if}
     {#if buffer.kind === "channel"}
       <div class="cm-sep"></div>
       <button onclick={setTopic}>Set topic…</button>
