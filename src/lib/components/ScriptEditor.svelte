@@ -21,11 +21,72 @@
     localStorage.setItem("raveirc.editorFont", String(fontSize));
   }
 
+  // Floating-window geometry (position + size), remembered across opens.
+  const GEO_KEY = "raveirc.editorGeo";
+  let geo = $state({ x: 0, y: 0, w: 720, h: 560 });
+  let editorEl = $state<HTMLElement | null>(null);
+
+  function loadGeo() {
+    try {
+      const r = JSON.parse(localStorage.getItem(GEO_KEY) ?? "");
+      if (r && typeof r.w === "number") geo = { x: r.x, y: r.y, w: r.w, h: r.h };
+    } catch {
+      /* defaults */
+    }
+    // Center the first time (or if off-screen).
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    if (geo.w > vw) geo.w = Math.max(380, vw - 40);
+    if (geo.h > vh) geo.h = Math.max(280, vh - 40);
+    if (geo.x <= 0 || geo.x > vw - 80) geo.x = Math.max(20, (vw - geo.w) / 2);
+    if (geo.y <= 0 || geo.y > vh - 80) geo.y = Math.max(20, (vh - geo.h) / 2);
+  }
+  function saveGeo() {
+    localStorage.setItem(GEO_KEY, JSON.stringify($state.snapshot(geo)));
+  }
+
   $effect(() => {
     if (irc.scriptEditorOpen && !config) {
+      loadGeo();
       config = structuredClone($state.snapshot(irc.raveConfig)) as RaveConfig;
     }
   });
+
+  // Track live size from the CSS resize handle and persist on release.
+  $effect(() => {
+    if (!editorEl) return;
+    const ro = new ResizeObserver(() => {
+      if (editorEl) {
+        geo.w = editorEl.offsetWidth;
+        geo.h = editorEl.offsetHeight;
+      }
+    });
+    ro.observe(editorEl);
+    const persist = () => saveGeo();
+    window.addEventListener("pointerup", persist);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("pointerup", persist);
+    };
+  });
+
+  /** Drag the window by its header (ignore clicks on buttons). */
+  function dragStart(e: PointerEvent) {
+    if ((e.target as HTMLElement).closest("button")) return;
+    const dx = e.clientX - geo.x;
+    const dy = e.clientY - geo.y;
+    const move = (ev: PointerEvent) => {
+      geo.x = Math.max(0, Math.min(window.innerWidth - 80, ev.clientX - dx));
+      geo.y = Math.max(0, Math.min(window.innerHeight - 40, ev.clientY - dy));
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      saveGeo();
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
 
   // Escape closes/cancels the editor.
   $effect(() => {
@@ -57,15 +118,6 @@
     tab = "remote";
   }
 
-  let pressedBackdrop = $state(false);
-  function backdropDown(e: PointerEvent) {
-    pressedBackdrop = e.target === e.currentTarget;
-  }
-  function backdropClick(e: MouseEvent) {
-    if (pressedBackdrop && e.target === e.currentTarget) close();
-    pressedBackdrop = false;
-  }
-
   const placeholders: Record<Tab, string> = {
     aliases: "alias hello /msg $chan Hello everyone!\n\nalias slap {\n  /me slaps $1 around a bit with a large trout\n}",
     remote:
@@ -75,15 +127,16 @@
 </script>
 
 {#if irc.scriptEditorOpen && config}
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
-    class="overlay"
-    onpointerdown={backdropDown}
-    onclick={backdropClick}
-    role="presentation"
+    class="editor"
+    bind:this={editorEl}
+    role="dialog"
+    tabindex="-1"
+    style="left:{geo.x}px; top:{geo.y}px; width:{geo.w}px; height:{geo.h}px"
   >
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <div class="editor" onclick={(e) => e.stopPropagation()} role="dialog" tabindex="-1">
-      <div class="ed-head">
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div class="ed-head" onpointerdown={dragStart} title="Drag to move">
         <span class="ed-title">Scripts <span class="msl">mIRC scripting</span></span>
         <div class="tabs">
           <button class:active={tab === "aliases"} onclick={() => (tab = "aliases")}>Aliases</button>
@@ -121,30 +174,26 @@
         </div>
       </div>
       {#if error}<p class="err">{error}</p>{/if}
-    </div>
   </div>
 {/if}
 
 <style>
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
+  /* Floating, non-modal, resizable window. */
   .editor {
-    width: 720px;
-    height: 560px;
+    position: fixed;
+    min-width: 380px;
+    min-height: 280px;
+    max-width: 100vw;
+    max-height: 100vh;
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    resize: both;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    z-index: 100;
   }
   .ed-head {
     display: flex;
@@ -152,6 +201,8 @@
     justify-content: space-between;
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
+    cursor: move;
+    user-select: none;
   }
   .ed-title {
     font-weight: 700;
