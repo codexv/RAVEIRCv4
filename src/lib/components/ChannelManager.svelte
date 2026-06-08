@@ -11,6 +11,21 @@
   // Offline "add channel" form.
   let addChan = $state("");
   let addNet = $state("dalnet");
+  // Channels the user manages (persisted), kept listed even when using global.
+  let managed = $state<string[]>([]);
+  const MKEY = "raveirc.managedChannels";
+  function loadManaged(): string[] {
+    try {
+      const r = JSON.parse(localStorage.getItem(MKEY) ?? "");
+      if (Array.isArray(r)) return r;
+    } catch {
+      /* ignore */
+    }
+    return [];
+  }
+  function persistManaged() {
+    localStorage.setItem(MKEY, JSON.stringify($state.snapshot(managed)));
+  }
 
   // Networks a channel can belong to (match detectNetwork() ids).
   const NETS = [
@@ -40,6 +55,7 @@
     if (irc.channelManagerOpen && !config) {
       config = structuredClone($state.snapshot(irc.raveConfig)) as RaveConfig;
       joinServer = irc.servers[0]?.id ?? null;
+      managed = loadManaged();
     }
   });
 
@@ -53,12 +69,13 @@
       const k = channelKey(net, b.name);
       map.set(k, { key: k, label: `${b.name} · ${netLabel(net)}`, joined: true, override: !!config!.channelProtections[k] });
     }
-    for (const k of Object.keys(config.channelProtections)) {
+    // Channels with overrides, plus ones the user manages (even if global).
+    for (const k of [...Object.keys(config.channelProtections), ...managed]) {
       if (!map.has(k)) {
         const slash = k.indexOf("/");
         const net = slash >= 0 ? k.slice(0, slash) : "generic";
         const chan = slash >= 0 ? k.slice(slash + 1) : k;
-        map.set(k, { key: k, label: `${chan} · ${netLabel(net)}`, joined: false, override: true });
+        map.set(k, { key: k, label: `${chan} · ${netLabel(net)}`, joined: false, override: !!config.channelProtections[k] });
       }
     }
     return [...map.values()];
@@ -73,11 +90,25 @@
     if (!config.channelProtections[key]) {
       config.channelProtections[key] = structuredClone($state.snapshot(config.protections)) as ProtectionsConfig;
     }
+    if (!managed.includes(key)) {
+      managed = [...managed, key];
+      persistManaged();
+    }
     selectedKey = key;
     addChan = "";
   }
 
+  /** Remove a managed channel entirely (its override + the list entry). */
+  function removeChannel(key: string) {
+    if (!config) return;
+    delete config.channelProtections[key];
+    managed = managed.filter((k) => k !== key);
+    persistManaged();
+    if (selectedKey === key) selectedKey = "";
+  }
+
   const activeProt = $derived(config && selectedKey ? config.channelProtections[selectedKey] ?? null : null);
+  const selected = $derived(channels.find((c) => c.key === selectedKey) ?? null);
 
   function customize() {
     if (!config || !selectedKey) return;
@@ -163,7 +194,7 @@
         <div class="list">
           <span class="group-label">Channels</span>
           {#if channels.length === 0}
-            <p class="empty">No channels yet — join one above.</p>
+            <p class="empty">No channels yet — add or join one above.</p>
           {/if}
           {#each channels as c (c.key)}
             <button class="ch" class:active={selectedKey === c.key} onclick={() => (selectedKey = c.key)}>
@@ -181,11 +212,21 @@
             <p class="muted">Select a channel to set its protections.</p>
           {:else if !activeProt}
             <p class="muted">Using <b>global</b> protections for this channel.</p>
-            <button class="go" onclick={customize}>Customize for this channel</button>
+            <div class="detail-actions">
+              <button class="go" onclick={customize}>Customize for this channel</button>
+              {#if selected && !selected.joined}
+                <button class="reset" onclick={() => removeChannel(selectedKey)}>Remove channel</button>
+              {/if}
+            </div>
           {:else}
             <div class="prot-head">
               <span class="muted">Custom protections for this channel</span>
-              <button class="reset" onclick={resetGlobal}>Use global</button>
+              <div class="detail-actions">
+                <button class="reset" onclick={resetGlobal}>Use global</button>
+                {#if selected && !selected.joined}
+                  <button class="reset" onclick={() => removeChannel(selectedKey)}>Remove</button>
+                {/if}
+              </div>
             </div>
             <div class="prot-grid">
               <div class="prot-hdr"><span>Protection</span><span>On</span><span>Ban</span></div>
@@ -357,6 +398,15 @@
     padding: 4px 10px;
     font-size: 12px;
     cursor: pointer;
+  }
+  .reset:hover {
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
   .prot-grid {
     display: flex;
