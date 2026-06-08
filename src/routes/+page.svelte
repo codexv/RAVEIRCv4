@@ -51,6 +51,16 @@
   }
 
   onMount(() => {
+    // Suppress the webview's default right-click menu (Reload/Inspect) everywhere
+    // except text fields, where native copy/paste is useful. Applies to both
+    // the main app and the scripts window.
+    const noCtx = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && t.closest("input, textarea, [contenteditable='true']")) return;
+      e.preventDefault();
+    };
+    window.addEventListener("contextmenu", noCtx);
+
     if (isScriptsWindow) return; // standalone editor view: no IRC init
     irc.init();
     appearance.init();

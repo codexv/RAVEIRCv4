@@ -110,6 +110,29 @@
   const activeProt = $derived(config && selectedKey ? config.channelProtections[selectedKey] ?? null : null);
   const selected = $derived(channels.find((c) => c.key === selectedKey) ?? null);
 
+  /** Parse "network/#channel" from a key. */
+  function splitKey(key: string): { net: string; chan: string } {
+    const i = key.indexOf("/");
+    return i >= 0 ? { net: key.slice(0, i), chan: key.slice(i + 1) } : { net: "generic", chan: key };
+  }
+
+  /** A connected server whose network matches the selected channel, if any. */
+  const joinTarget = $derived.by(() => {
+    if (!selected || selected.joined) return null;
+    const { net } = splitKey(selected.key);
+    return (
+      irc.servers.find(
+        (s) =>
+          (s.status === "registered" || s.status === "connected") && detectNetwork(s) === net,
+      ) ?? null
+    );
+  });
+
+  function joinSelected() {
+    if (!selected || !joinTarget) return;
+    irc.joinChannel(joinTarget.id, splitKey(selected.key).chan);
+  }
+
   function customize() {
     if (!config || !selectedKey) return;
     config.channelProtections[selectedKey] = structuredClone($state.snapshot(config.protections)) as ProtectionsConfig;
@@ -213,15 +236,23 @@
           {:else if !activeProt}
             <p class="muted">Using <b>global</b> protections for this channel.</p>
             <div class="detail-actions">
-              <button class="go" onclick={customize}>Customize for this channel</button>
               {#if selected && !selected.joined}
-                <button class="reset" onclick={() => removeChannel(selectedKey)}>Remove channel</button>
+                <button class="go" onclick={joinSelected} disabled={!joinTarget}
+                  title={joinTarget ? `Join on ${joinTarget.name}` : "Connect to this network to join"}>Join</button>
+              {/if}
+              <button class="reset" onclick={customize}>Customize</button>
+              {#if selected && !selected.joined}
+                <button class="reset" onclick={() => removeChannel(selectedKey)}>Remove</button>
               {/if}
             </div>
           {:else}
             <div class="prot-head">
               <span class="muted">Custom protections for this channel</span>
               <div class="detail-actions">
+                {#if selected && !selected.joined}
+                  <button class="go" onclick={joinSelected} disabled={!joinTarget}
+                    title={joinTarget ? `Join on ${joinTarget.name}` : "Connect to this network to join"}>Join</button>
+                {/if}
                 <button class="reset" onclick={resetGlobal}>Use global</button>
                 {#if selected && !selected.joined}
                   <button class="reset" onclick={() => removeChannel(selectedKey)}>Remove</button>
