@@ -15,6 +15,7 @@ import { acronym, beep, decryptText, encryptText, ENC_MARKER, uptime } from "../
 import { MslEngine, type EventData } from "../msl/engine";
 import type { MslHost } from "../msl/exec";
 import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
+import { HashStore } from "../msl/hash";
 import {
   aiAnalyze,
   aiModerate,
@@ -75,6 +76,8 @@ export class IrcStore {
   private encKey = "";
   /** mIRC-compatible scripting engine (aliases / on-events / variables). */
   private msl = new MslEngine();
+  /** mIRC hash tables (/hadd, $hget, …), session-scoped. */
+  private hash = new HashStore();
   /** /timer scheduler — fires commands in the window they were created in. */
   private timers = new TimerManager({
     fire: (command, ctx) => this.fireTimer(command, ctx),
@@ -122,11 +125,12 @@ export class IrcStore {
         this.add(b, "echo", text);
       },
       ident: (name, args, prop) => this.mslIdent(serverId, name, args, prop),
+      command: (name, rest) => this.hash.command(name, rest),
     };
   }
 
   /** Resolve a live (host-backed) mSL identifier against current client state. */
-  private mslIdent(serverId: number, name: string, args: string[], _prop?: string): string | null {
+  private mslIdent(serverId: number, name: string, args: string[], prop?: string): string | null {
     const s = this.server(serverId);
     const chans = () => this.buffers.filter((b) => b.serverId === serverId && b.kind === "channel");
     switch (name) {
@@ -167,7 +171,8 @@ export class IrcStore {
       case "ialchan":
         return this.ialLookup(serverId, args[0] ?? "", parseInt(args[2] ?? "1", 10) || 1, args[1] ?? null);
       default:
-        return null;
+        // Hash-table identifiers ($hget/$hfind) and anything else the host knows.
+        return this.hash.ident(name, args, prop);
     }
   }
 
