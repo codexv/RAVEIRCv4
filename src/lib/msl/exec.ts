@@ -9,6 +9,14 @@ export interface MslHost {
   sendRaw(line: string): void;
   /** Echo text to the user's active window. */
   echo(text: string): void;
+  /**
+   * Resolve a live (host-backed) identifier the built-ins/aliases don't cover —
+   * $network, $server, $comchan, $ial, $chan, $nick, $hget, $read, … Returns
+   * the value, or null if this host doesn't handle it. Optional.
+   */
+  ident?(name: string, args: string[], prop?: string): string | null;
+  /** Run a host-backed command ($amsg, $hadd, /write, …). Returns true if handled. */
+  command?(name: string, args: string): boolean;
 }
 
 type Stmt =
@@ -285,6 +293,8 @@ function dispatch(cmd: string, rest: string, ctx: EvalCtx, host: MslHost): Signa
       host.sendRaw(rest);
       return "normal";
     default:
+      // Host-backed commands ($hadd, /amsg, /write, …) get first refusal.
+      if (host.command && host.command(cmd, rest)) return "normal";
       // Unknown command: pass through as raw (mIRC-ish) so e.g. /cs works.
       host.sendRaw(`${cmd.toUpperCase()} ${rest}`.trim());
       return "normal";

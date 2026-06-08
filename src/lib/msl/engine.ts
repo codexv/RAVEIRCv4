@@ -1,7 +1,7 @@
 // mSL engine: loads aliases/events/variables, runs aliases on /command, and
 // dispatches IRC events to matching `on` handlers.
 
-import { emptyCtx, wildMatch, type EvalCtx } from "./eval";
+import { emptyCtx, evalString, wildMatch, type EvalCtx } from "./eval";
 import { execBody, parseBody, type MslHost } from "./exec";
 import { parseScript, parseVars, type EventDef } from "./parser";
 
@@ -81,11 +81,20 @@ export class MslEngine {
     _prop?: string,
   ): string | null {
     const body = this.aliases.get(name.toLowerCase());
-    if (body === undefined) return null;
-    if (depth > 64) return ""; // runaway-recursion guard
-    const c = this.ctx(data, args, host, depth + 1);
-    execBody(parseBody(body), c, host);
-    return c.returnValue ?? "";
+    if (body !== undefined) {
+      if (depth > 64) return ""; // runaway-recursion guard
+      const c = this.ctx(data, args, host, depth + 1);
+      execBody(parseBody(body), c, host);
+      return c.returnValue ?? "";
+    }
+    // Not an alias → ask the host for a live identifier ($network, $ial, …).
+    if (host.ident) return host.ident(name.toLowerCase(), args, _prop);
+    return null;
+  }
+
+  /** Evaluate an mSL expression with full context (aliases + host idents). */
+  evalExpr(text: string, data: EventData, host: MslHost): string {
+    return evalString(text, this.ctx(data, [], host));
   }
 
   /** Run a user alias by name with a parameter string. Returns false if none. */

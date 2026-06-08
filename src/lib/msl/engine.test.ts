@@ -39,6 +39,38 @@ describe("MslEngine aliases", () => {
     expect(echoed).toContain("42");
   });
 
+  it("resolves host-backed identifiers ($network) via MslHost.ident", () => {
+    const e = new MslEngine();
+    e.load("alias n /echo -a net is $network", "", "");
+    const echoed: string[] = [];
+    const host: MslHost = {
+      sendRaw: () => {},
+      echo: (t) => echoed.push(t),
+      ident: (name) => (name === "network" ? "DALnet" : null),
+    };
+    e.runAlias("n", "", data(), host);
+    expect(echoed).toContain("net is DALnet");
+  });
+
+  it("routes host-backed commands through MslHost.command", () => {
+    const e = new MslEngine();
+    e.load("alias h /hadd table key value", "", "");
+    const cmds: string[] = [];
+    const host: MslHost = {
+      sendRaw: (l) => cmds.push("RAW:" + l),
+      echo: () => {},
+      command: (name, rest) => {
+        if (name === "hadd") {
+          cmds.push("HADD:" + rest);
+          return true;
+        }
+        return false;
+      },
+    };
+    e.runAlias("h", "", data(), host);
+    expect(cmds).toEqual(["HADD:table key value"]);
+  });
+
   it("alias-as-identifier passes args and composes; unknown stays empty", () => {
     const e = new MslEngine();
     e.load(
