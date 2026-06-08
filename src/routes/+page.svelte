@@ -183,6 +183,9 @@
             <button class="ghost" onclick={() => irc.closeBuffer(active.id)} title="Close buffer">✕</button>
           {/if}
         {/if}
+        {#if server && (server.status === "registered" || server.status === "connected" || server.status === "connecting")}
+          <button class="opt-btn danger" onclick={() => irc.disconnectServer(server.id)} title="Disconnect from {server.name}">⏻ Disconnect</button>
+        {/if}
         <button class="opt-btn" onclick={() => (showConnect = true)} title="Add server">＋ Connect</button>
         <button class="opt-btn" onclick={() => (irc.nickManagerOpen = true)} title="Nick manager">🪪 Nick</button>
         <button class="opt-btn" onclick={() => (irc.channelManagerOpen = true)} title="Channel manager">＃ Channels</button>
@@ -302,6 +305,10 @@
   .opt-btn:hover {
     border-color: var(--accent);
     color: var(--fg);
+  }
+  .opt-btn.danger:hover {
+    border-color: #f0506e;
+    color: #f0506e;
   }
   .ghost {
     background: transparent;
