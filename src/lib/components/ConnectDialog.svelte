@@ -30,7 +30,9 @@
   let autojoin = $state("");
   let saslPassword = $state("");
   let nickservPassword = $state("");
+  let autoIdentify = $state(true);
   let autoGhost = $state(true);
+  let autoRelease = $state(false);
   // Pre-fill alt nicks from the Nick Manager list (shared via localStorage).
   let altNicks = $state(
     (typeof localStorage !== "undefined" ? localStorage.getItem("raveirc.altNicks") ?? "" : "")
@@ -69,6 +71,9 @@
     username = p.username || username;
     realname = p.realname || realname;
     nickservPassword = p.nickservPassword;
+    autoIdentify = p.autoIdentify;
+    autoGhost = p.autoGhost;
+    autoRelease = p.autoRelease;
     altNicks = p.altNicks
       .split(/[\n,]/)
       .map((n) => n.trim())
@@ -109,7 +114,9 @@
       saslPassword: saslPassword || undefined,
       saslAccount: saslPassword ? nick : undefined,
       nickservPassword: nickservPassword || undefined,
+      autoIdentify,
       autoGhost,
+      autoRelease,
       altNicks: altNicks
         .split(",")
         .map((n) => n.trim())
@@ -167,8 +174,10 @@
         <label class="wide">Alt nicks (comma separated)<input bind:value={altNicks} placeholder="RAVE_, RAVE__" /></label>
         <label class="wide">Auto-join (comma separated)<input bind:value={autojoin} placeholder="#channel, #another" /></label>
         <label class="wide">SASL password (optional)<input type="password" bind:value={saslPassword} /></label>
-        <label class="wide">NickServ password (auto-identify on connect)<input type="password" bind:value={nickservPassword} /></label>
-        <label class="check"><input type="checkbox" bind:checked={autoGhost} /> Auto-ghost my nick if in use</label>
+        <label class="wide">NickServ password<input type="password" bind:value={nickservPassword} /></label>
+        <label class="check wide"><input type="checkbox" bind:checked={autoIdentify} /> Auto-identify to NickServ on connect</label>
+        <label class="check wide"><input type="checkbox" bind:checked={autoGhost} /> Auto-ghost / regain my nick if in use</label>
+        <label class="check wide"><input type="checkbox" bind:checked={autoRelease} /> Auto-release my nick if held</label>
       </div>
 
       <div class="actions">

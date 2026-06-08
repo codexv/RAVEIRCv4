@@ -42,9 +42,15 @@ pub struct ServerConfig {
     /// NickServ password for auto-identify on connect (non-SASL).
     #[serde(default)]
     pub nickserv_password: Option<String>,
+    /// Auto-identify to services on connect (needs nickserv_password). Default on.
+    #[serde(default = "default_true")]
+    pub auto_identify: bool,
     /// Auto ghost/regain our nick if it's in use (needs nickserv_password).
     #[serde(default)]
     pub auto_ghost: bool,
+    /// Auto-RELEASE a held nick on login, then reclaim it (needs nickserv_password).
+    #[serde(default)]
+    pub auto_release: bool,
     /// Alternate nicks to try if the primary is taken.
     #[serde(default)]
     pub alt_nicks: Vec<String>,
@@ -88,8 +94,22 @@ fn ghost_line(config: &ServerConfig) -> Option<String> {
     }
 }
 
+/// Build the NickServ RELEASE line to free a held nick, if possible.
+fn release_line(config: &ServerConfig) -> Option<String> {
+    let pass = config.nickserv_password.as_ref()?;
+    match network_of(&config.host) {
+        "dalnet" => Some(format!("PRIVMSG NickServ@services.dal.net :RELEASE {} {pass}", config.nick)),
+        "undernet" => None, // Undernet has no nick ownership
+        _ => Some(format!("PRIVMSG NickServ :RELEASE {} {pass}", config.nick)),
+    }
+}
+
 fn default_port() -> u16 {
     6697
+}
+
+fn default_true() -> bool {
+    true
 }
 
 /// Anything we can read and write asynchronously (plain TCP or TLS).
@@ -320,8 +340,17 @@ async fn read_loop(
                 let nick = msg.param(0).unwrap_or(&config.nick).to_string();
                 emit(app, IrcEvent::Registered { server_id, nick });
                 // Auto-identify to services before joining channels.
-                if let Some(id) = identify_line(config) {
-                    let _ = out.send(id);
+                if config.auto_identify {
+                    if let Some(id) = identify_line(config) {
+                        let _ = out.send(id);
+                    }
+                }
+                // Optionally free a held nick, then reclaim it.
+                if config.auto_release {
+                    if let Some(r) = release_line(config) {
+                        let _ = out.send(r);
+                        let _ = out.send(format!("NICK {}", config.nick));
+                    }
                 }
                 for chan in &config.autojoin {
                     let _ = out.send(format!("JOIN {chan}"));
@@ -417,7 +446,9 @@ mod tests {
             sasl_account: None,
             sasl_password: None,
             nickserv_password: Some("secret".into()),
+            auto_identify: true,
             auto_ghost: true,
+            auto_release: false,
             alt_nicks: vec![],
             autojoin: vec![],
         }
@@ -441,6 +472,22 @@ mod tests {
         let und = test_config("irc.undernet.org");
         assert_eq!(identify_line(&und).unwrap(), "PRIVMSG X@channels.undernet.org :login rave secret");
         assert!(ghost_line(&und).is_none()); // Undernet has no nick ownership
+    }
+
+    #[test]
+    fn release_is_network_aware() {
+        let dal = test_config("irc.dal.net");
+        assert_eq!(
+            release_line(&dal).unwrap(),
+            "PRIVMSG NickServ@services.dal.net :RELEASE rave secret"
+        );
+        let lib = test_config("irc.libera.chat");
+        assert_eq!(release_line(&lib).unwrap(), "PRIVMSG NickServ :RELEASE rave secret");
+        assert!(release_line(&test_config("irc.undernet.org")).is_none());
+
+        let mut c = test_config("irc.dal.net");
+        c.nickserv_password = None;
+        assert!(release_line(&c).is_none());
     }
 
     #[test]
@@ -471,7 +518,9 @@ mod tests {
             sasl_account: None,
             sasl_password: None,
             nickserv_password: None,
+            auto_identify: true,
             auto_ghost: false,
+            auto_release: false,
             alt_nicks: vec![],
             autojoin: vec![],
         };
@@ -540,7 +589,9 @@ mod tests {
             sasl_account: None,
             sasl_password: None,
             nickserv_password: None,
+            auto_identify: true,
             auto_ghost: false,
+            auto_release: false,
             alt_nicks: vec![],
             autojoin: vec![],
         };

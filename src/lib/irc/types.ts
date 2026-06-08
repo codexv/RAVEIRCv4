@@ -38,7 +38,9 @@ export interface ServerConfig {
   saslAccount?: string;
   saslPassword?: string;
   nickservPassword?: string;
+  autoIdentify?: boolean;
   autoGhost?: boolean;
+  autoRelease?: boolean;
   altNicks?: string[];
   autojoin?: string[];
 }

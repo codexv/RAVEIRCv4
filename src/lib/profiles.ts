@@ -12,6 +12,10 @@ export interface NickProfile {
   nickservPassword: string;
   /** Where it applies: "any" | "dalnet" | "undernet" | "libera" | a host substring. */
   network: string;
+  /** Login behaviour (mirrors the original RAVE nick manager). */
+  autoIdentify: boolean;
+  autoGhost: boolean;
+  autoRelease: boolean;
 }
 
 const KEY = "raveirc.profiles";
@@ -35,7 +39,11 @@ function uid(): string {
 export function loadProfiles(): NickProfile[] {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw) as NickProfile[];
+    if (raw) {
+      const list = JSON.parse(raw) as NickProfile[];
+      // Backfill any fields missing from profiles saved before they existed.
+      return list.map((p) => ({ ...newProfile(), ...p }));
+    }
   } catch {
     /* ignore */
   }
@@ -56,6 +64,9 @@ export function newProfile(): NickProfile {
     realname: "RAVEIRC user",
     nickservPassword: "",
     network: "any",
+    autoIdentify: true,
+    autoGhost: true,
+    autoRelease: false,
   };
 }
 

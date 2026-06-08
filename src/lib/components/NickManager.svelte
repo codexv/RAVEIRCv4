@@ -126,6 +126,13 @@
             <label class="wide">NickServ password<input type="password" bind:value={sel.nickservPassword} oninput={persist} /></label>
           </div>
 
+          <div class="behaviour">
+            <span class="b-title">Login behaviour</span>
+            <label class="chk"><input type="checkbox" bind:checked={sel.autoIdentify} onchange={persist} /> Auto-identify to NickServ on connect</label>
+            <label class="chk"><input type="checkbox" bind:checked={sel.autoGhost} onchange={persist} /> Auto-ghost / regain this nick when it's in use</label>
+            <label class="chk"><input type="checkbox" bind:checked={sel.autoRelease} onchange={persist} /> Auto-release this nick when it's held</label>
+          </div>
+
           <div class="actions">
             <button onclick={dup}>Duplicate</button>
             <button class="danger" onclick={del}>Delete</button>
@@ -342,6 +349,34 @@
   input:focus,
   select:focus {
     border-color: var(--accent);
+  }
+  .behaviour {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .b-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--fg-faint);
+  }
+  .chk {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    cursor: pointer;
+  }
+  .chk input {
+    width: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    accent-color: var(--accent);
+    cursor: pointer;
   }
   .actions {
     display: flex;
