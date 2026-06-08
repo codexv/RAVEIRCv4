@@ -624,6 +624,9 @@ export class IrcStore {
     }
 
     switch (cmd) {
+      case "PING":
+      case "PONG":
+        return; // keepalive chatter — handled in the engine, not shown
       case "PRIVMSG":
         return this.handlePrivmsg(serverId, msg, from, false);
       case "NOTICE":
