@@ -19,6 +19,14 @@ import { HashStore } from "../msl/hash";
 import { FileStore } from "../msl/files";
 import { SocketStore, type SockEvent } from "../msl/sockets";
 import {
+  parseDialogs,
+  instantiate,
+  applyDid,
+  didIdent,
+  type DialogDef,
+  type OpenDialog,
+} from "../msl/dialogs";
+import {
   aiAnalyze,
   aiModerate,
   aiSummarize,
@@ -73,6 +81,12 @@ export class IrcStore {
   scratchpadOpen = $state(false);
   scriptEditorOpen = $state(false);
   nickManagerOpen = $state(false);
+  /** Open script-defined dialogs (rendered by DialogHost). */
+  dialogsOpen = $state<OpenDialog[]>([]);
+  private dialogDefs = new Map<string, DialogDef>();
+  /** $dname / $devent for the dialog event currently being handled. */
+  private dlgCurrent = "";
+  private dlgEvent = "";
 
   /** Session encryption passphrase (in-memory only). */
   private encKey = "";
@@ -141,6 +155,7 @@ export class IrcStore {
     }
     const sc = this.raveConfig.scripts;
     this.msl.load(sc.aliases, sc.remote, sc.variables);
+    this.dialogDefs = parseDialogs(sc.remote);
     // Preload persisted script-data files into the mSL FileStore cache.
     try {
       const data = await invoke<[string, string][]>("script_data_load");
@@ -155,6 +170,7 @@ export class IrcStore {
   applyConfig(config: RaveConfig) {
     this.raveConfig = config;
     this.msl.load(config.scripts.aliases, config.scripts.remote, config.scripts.variables);
+    this.dialogDefs = parseDialogs(config.scripts.remote);
   }
 
   /** An mSL host bound to a server (raw send + echo to a window). */
@@ -190,9 +206,104 @@ export class IrcStore {
           this.add(b, "action", `${this.ownNick(serverId)} ${rest}`);
         }
         return true;
+      case "dialog":
+        this.dialogCmd(rest);
+        return true;
+      case "did":
+        this.didCmd(rest);
+        return true;
       default:
         return false;
     }
+  }
+
+  // ---- script dialogs (/dialog, /did, $did) --------------------------------
+
+  private dialogCmd(rest: string) {
+    let r = rest.trim();
+    let flags = "";
+    const fm = /^-(\S+)\s+/.exec(r);
+    if (fm) {
+      flags = fm[1];
+      r = r.slice(fm[0].length);
+    }
+    const [name, table] = r.split(/\s+/);
+    if (!name) return;
+    if (flags.includes("x")) this.closeDialog(name);
+    else this.openDialog(name, table ?? name);
+  }
+
+  private didCmd(rest: string) {
+    let r = rest.trim();
+    let flags = "";
+    const fm = /^-(\S+)\s+/.exec(r);
+    if (fm) {
+      flags = fm[1];
+      r = r.slice(fm[0].length);
+    }
+    const sp1 = r.indexOf(" ");
+    const name = (sp1 === -1 ? r : r.slice(0, sp1)).toLowerCase();
+    r = sp1 === -1 ? "" : r.slice(sp1 + 1).trim();
+    const sp2 = r.indexOf(" ");
+    const id = parseInt(sp2 === -1 ? r : r.slice(0, sp2), 10) || 0;
+    const argsStr = sp2 === -1 ? "" : r.slice(sp2 + 1);
+    const dlg = this.dialogsOpen.find((d) => d.name === name);
+    if (dlg) applyDid(dlg, flags, id, argsStr.length ? argsStr.split(" ") : []);
+  }
+
+  openDialog(name: string, table: string) {
+    const def = this.dialogDefs.get(table.toLowerCase());
+    if (!def) return;
+    const key = name.toLowerCase();
+    if (this.dialogsOpen.some((d) => d.name === key)) return; // already open
+    const dlg = instantiate(def);
+    dlg.name = key;
+    this.dialogsOpen.push(dlg);
+    this.dlgFire(key, "init", "0");
+  }
+
+  closeDialog(name: string) {
+    const key = name.toLowerCase();
+    this.dialogsOpen = this.dialogsOpen.filter((d) => d.name !== key);
+  }
+
+  /** Fire an `on DIALOG` handler with $dname/$devent context. */
+  private dlgFire(dname: string, event: string, id: string) {
+    const prev = this.dlgCurrent;
+    const prevE = this.dlgEvent;
+    this.dlgCurrent = dname;
+    this.dlgEvent = event;
+    const sid = this.active?.serverId ?? this.servers[0]?.id ?? 0;
+    try {
+      this.msl.dispatchDialog(dname, event, id, this.mslData(sid, {}), this.mslHost(sid));
+    } finally {
+      this.dlgCurrent = prev;
+      this.dlgEvent = prevE;
+    }
+  }
+
+  // UI callbacks from DialogHost.
+  dlgButton(dname: string, id: number) {
+    this.dlgFire(dname, "sclick", String(id));
+  }
+  dlgEdit(dname: string, id: number, text: string) {
+    const c = this.dialogsOpen.find((d) => d.name === dname)?.controls.find((x) => x.id === id);
+    if (c) c.text = text;
+    this.dlgFire(dname, "edit", String(id));
+  }
+  dlgSelect(dname: string, id: number, index: number) {
+    const c = this.dialogsOpen.find((d) => d.name === dname)?.controls.find((x) => x.id === id);
+    if (c) c.sel = index;
+    this.dlgFire(dname, "sclick", String(id));
+  }
+  dlgCheck(dname: string, id: number, checked: boolean) {
+    const c = this.dialogsOpen.find((d) => d.name === dname)?.controls.find((x) => x.id === id);
+    if (c) c.checked = checked;
+    this.dlgFire(dname, "sclick", String(id));
+  }
+  dlgClose(dname: string) {
+    this.dlgFire(dname, "close", "0");
+    this.closeDialog(dname);
   }
 
   /** Resolve a live (host-backed) mSL identifier against current client state. */
@@ -236,6 +347,16 @@ export class IrcStore {
         return this.ialLookup(serverId, args[0] ?? "", parseInt(args[1] ?? "1", 10) || 1, null);
       case "ialchan":
         return this.ialLookup(serverId, args[0] ?? "", parseInt(args[2] ?? "1", 10) || 1, args[1] ?? null);
+      case "dname":
+        return this.dlgCurrent;
+      case "devent":
+        return this.dlgEvent;
+      case "dialog":
+        return this.dialogsOpen.some((d) => d.name === (args[0] ?? "").toLowerCase()) ? args[0] : "";
+      case "did": {
+        const dlg = this.dialogsOpen.find((d) => d.name === (args[0] ?? "").toLowerCase());
+        return dlg ? didIdent(dlg, parseInt(args[1] ?? "0", 10) || 0, args, prop) : "";
+      }
       default:
         // Hash tables, then file I/O, then sockets ($sock/$sockname/…).
         return (

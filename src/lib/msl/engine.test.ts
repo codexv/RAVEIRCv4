@@ -164,6 +164,16 @@ describe("MslEngine events", () => {
     expect(echoed).toContain("old now new");
   });
 
+  it("dispatches DIALOG events to matching on DIALOG handlers (name:event:id)", () => {
+    const e = new MslEngine();
+    e.load("", "on *:DIALOG:mydlg:sclick:3:{ /echo -a clicked OK }", "");
+    const { echoed, host } = harness();
+    e.dispatchDialog("mydlg", "sclick", "3", data(), host);
+    e.dispatchDialog("mydlg", "sclick", "4", data(), host); // different id: no match
+    e.dispatchDialog("other", "sclick", "3", data(), host); // different dialog: no match
+    expect(echoed).toEqual(["clicked OK"]);
+  });
+
   it("fires on JOIN with a channel filter", () => {
     const e = new MslEngine();
     e.load("", "on *:JOIN:#:{ /notice $nick welcome to $chan }", "");

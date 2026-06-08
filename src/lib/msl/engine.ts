@@ -124,6 +124,21 @@ export class MslEngine {
     return halted;
   }
 
+  /**
+   * Dispatch a dialog event to `on *:DIALOG:<name>:<event>:<id>:` handlers.
+   * Fields are matched as [name, event, id] with wildcards on name/id.
+   */
+  dispatchDialog(dname: string, devent: string, id: string, data: EventData, host: MslHost) {
+    for (const def of this.events) {
+      if (def.event !== "DIALOG") continue;
+      const [fName, fEvent, fId] = def.fields;
+      if (fName && fName !== "*" && !wildMatch(fName, dname)) continue;
+      if (fEvent && fEvent !== "*" && fEvent.toLowerCase() !== devent.toLowerCase()) continue;
+      if (fId && fId !== "*" && fId !== id) continue;
+      execBody(parseBody(def.body), this.ctx(data, [], host), host);
+    }
+  }
+
   /** Dispatch an IRC event to all matching `on` handlers. */
   dispatch(event: string, data: EventData, host: MslHost) {
     const ev = event.toUpperCase();

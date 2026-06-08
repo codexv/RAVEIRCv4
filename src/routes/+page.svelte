@@ -12,6 +12,7 @@
   import ServicesMenu from "$lib/components/ServicesMenu.svelte";
   import Scratchpad from "$lib/components/Scratchpad.svelte";
   import ScriptsWindow from "$lib/components/ScriptsWindow.svelte";
+  import DialogHost from "$lib/components/DialogHost.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
 
   // This page boots in two modes: the main app, or the standalone scripts window
@@ -199,6 +200,7 @@
 <Settings bind:open={showSettings} />
 <Scratchpad />
 <NickManager />
+<DialogHost />
 {/if}
 
 <style>
