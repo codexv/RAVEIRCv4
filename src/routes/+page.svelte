@@ -11,17 +11,50 @@
   import Settings from "$lib/components/Settings.svelte";
   import ServicesMenu from "$lib/components/ServicesMenu.svelte";
   import Scratchpad from "$lib/components/Scratchpad.svelte";
-  import ScriptEditor from "$lib/components/ScriptEditor.svelte";
+  import ScriptsWindow from "$lib/components/ScriptsWindow.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
+
+  // This page boots in two modes: the main app, or the standalone scripts window
+  // (a separate OS window opened with ?view=scripts).
+  const isScriptsWindow =
+    typeof location !== "undefined" && new URLSearchParams(location.search).get("view") === "scripts";
 
   let showConnect = $state(false);
   let showSettings = $state(false);
   let sidebarWidth = $state(220);
   let nicklistWidth = $state(170);
 
+  /** Open (or focus) the Scripts editor as its own OS window, floating over the app. */
+  async function openScriptsWindow() {
+    const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
+    const existing = await WebviewWindow.getByLabel("scripts");
+    if (existing) {
+      await existing.setFocus();
+      return;
+    }
+    new WebviewWindow("scripts", {
+      url: "/?view=scripts",
+      title: "RAVEIRC — Scripts",
+      width: 760,
+      height: 600,
+      minWidth: 380,
+      minHeight: 280,
+      resizable: true,
+    });
+  }
+
   onMount(() => {
+    if (isScriptsWindow) return; // standalone editor view: no IRC init
     irc.init();
     appearance.init();
+    // The scripts window asks the main app to reload + recompile after saving.
+    import("@tauri-apps/api/event").then(({ listen }) =>
+      listen("scripts-applied", async () => {
+        const { loadRaveConfig } = await import("$lib/irc/rave");
+        const cfg = await loadRaveConfig();
+        if (cfg) irc.applyConfig(cfg);
+      }),
+    );
     const sb = Number(localStorage.getItem("raveirc.sidebarWidth"));
     if (sb >= 160 && sb <= 480) sidebarWidth = sb;
     const nl = Number(localStorage.getItem("raveirc.nicklistWidth"));
@@ -84,6 +117,14 @@
   const startResizeNick = (e: PointerEvent) =>
     drag(e, () => nicklistWidth, (v) => (nicklistWidth = v), 120, 400, -1, "raveirc.nicklistWidth");
 
+  // Open the Scripts window whenever something requests the editor (topbar / /editor).
+  $effect(() => {
+    if (!isScriptsWindow && irc.scriptEditorOpen) {
+      irc.scriptEditorOpen = false;
+      openScriptsWindow();
+    }
+  });
+
   const active = $derived(irc.active);
   const server = $derived(irc.servers.find((s) => s.id === active?.serverId) ?? null);
 
@@ -94,6 +135,9 @@
   }
 </script>
 
+{#if isScriptsWindow}
+  <ScriptsWindow />
+{:else}
 <div class="app">
   <div class="sidebar" style="width:{sidebarWidth}px">
     <TreeBar onAddServer={() => (showConnect = true)} onOpenSettings={() => (showSettings = true)} />
@@ -154,8 +198,8 @@
 <ConnectDialog bind:open={showConnect} />
 <Settings bind:open={showSettings} />
 <Scratchpad />
-<ScriptEditor />
 <NickManager />
+{/if}
 
 <style>
   .app {
