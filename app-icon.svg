@@ -9,7 +9,7 @@
       <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
       <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="txt" x1="0" y1="300" x2="0" y2="640" gradientUnits="userSpaceOnUse">
+    <linearGradient id="txt" x1="0" y1="320" x2="0" y2="640" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#e0263a"/>
       <stop offset="1" stop-color="#9d0f1d"/>
     </linearGradient>
@@ -35,8 +35,8 @@
           fill="#ffffff"/>
   </g>
 
-  <!-- The letters "irc" -->
-  <text x="512" y="610" text-anchor="middle"
-        font-family="Helvetica, Arial, sans-serif" font-weight="bold"
-        font-size="300" letter-spacing="4" fill="url(#txt)">irc</text>
+  <!-- "IRC": bold, modern, techy monospace -->
+  <text x="550" y="568" text-anchor="middle"
+        font-family="'SF Mono','Menlo','Roboto Mono',monospace" font-weight="700"
+        font-size="250" letter-spacing="2" fill="url(#txt)">IRC</text>
 </svg>
