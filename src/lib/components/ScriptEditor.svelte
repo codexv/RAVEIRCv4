@@ -1,6 +1,6 @@
 <script lang="ts">
   import { irc } from "$lib/irc/store.svelte";
-  import { saveRaveConfig, type RaveConfig } from "$lib/irc/rave";
+  import { saveRaveConfig, DEFAULT_REMOTE, type RaveConfig } from "$lib/irc/rave";
 
   type Tab = "aliases" | "remote" | "variables";
   let tab = $state<Tab>("aliases");
@@ -49,6 +49,14 @@
     error = "";
   }
 
+  /** Replace the Remote script with the built-in RAVE whois art. */
+  function loadDefaultWhois() {
+    if (!config) return;
+    if (config.scripts.remote.trim() && !confirm("Replace the Remote script with the default RAVE whois art?")) return;
+    config.scripts.remote = DEFAULT_REMOTE;
+    tab = "remote";
+  }
+
   let pressedBackdrop = $state(false);
   function backdropDown(e: PointerEvent) {
     pressedBackdrop = e.target === e.currentTarget;
@@ -86,6 +94,9 @@
           </button>
           <button class="fz" onclick={() => bumpFont(-1)} title="Smaller font">A−</button>
           <button class="fz" onclick={() => bumpFont(1)} title="Larger font">A+</button>
+          {#if tab === "remote"}
+            <button class="fz" onclick={loadDefaultWhois} title="Replace Remote with the default RAVE whois art">↺ Whois</button>
+          {/if}
         </div>
       </div>
 

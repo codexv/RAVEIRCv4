@@ -16,6 +16,16 @@ describe("evalString", () => {
     expect(evalString("$0", ctx())).toBe("3");
   });
 
+  it("formats $asctime with mIRC tokens (TZ-independent)", () => {
+    const sec = 1717804800; // some fixed unix time
+    const out = evalString(`$asctime(${sec},dddd mmmm doo yyyy)`, ctx());
+    const d = new Date(sec * 1000);
+    expect(out).toContain(String(d.getFullYear()));
+    expect(out).not.toContain("yyyy");
+    expect(out).not.toContain("dddd");
+    expect(evalString("$asctime(0,yyyy)", ctx())).toBe("");
+  });
+
   it("substitutes %variables", () => {
     const c = ctx();
     c.vars.set("greeting", "hi there");

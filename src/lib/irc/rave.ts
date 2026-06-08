@@ -149,24 +149,35 @@ export interface AiStatus {
 }
 
 /** The built-in RAVE WHOIS reformat shipped in the Remote editor by default. */
-export const DEFAULT_REMOTE = `; ═══ RAVE WHOIS ═══  (reformatted whois — edit freely)
+export const DEFAULT_REMOTE = `; ═══ RAVE WHOIS ═══  (classic RAVE whois art — edit freely)
 raw 311:*:{
-  echo -a $chr(3) $+ 12 $+ ╭────────────────────────────────────────
-  echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 11 $+ $chr(2) $+ $2 $+ $chr(2) $chr(3) $+ 14 ( $+ $3 $+ @ $+ $4 $+ )
-  echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 10 Name     $chr(3) $+ 00 $6-
+  echo -a
+  echo -a $chr(3) $+ 15 ---------------$chr(3) $+ 15[ $chr(3) $+ 3 RAVE Whois Report $chr(3) $+ 15 ]---------------
+  echo -a $chr(2) $+ $chr(3) $+ 15 Whois On $+ $chr(2) $+ : $+ $chr(3) $+ 4 $2 $+ $chr(3) $+ 15 ( $+ $3 $+ @ $+ $4 $+ )
+  echo -a $chr(3) $+ 15 Real Name: $+ $chr(3) $+ 15 $6-
   haltdef
 }
-raw 319:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 10 Channels $chr(3) $+ 00 $3- | haltdef }
-raw 312:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 10 Server   $chr(3) $+ 00 $3 $chr(3) $+ 14 ( $+ $4- $+ ) | haltdef }
-raw 317:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 10 Idle     $chr(3) $+ 00 $duration($3) | haltdef }
-raw 307:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 09 ✔ Identified to services | haltdef }
-raw 330:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 10 Account  $chr(3) $+ 09 $3 | haltdef }
-raw 313:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 04 ★ IRC Operator | haltdef }
-raw 671:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 09 🔒 Secure connection (SSL) | haltdef }
-raw 275:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 09 🔒 Secure connection (SSL) | haltdef }
-raw 301:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 08 Away     $chr(3) $+ 00 $3- | haltdef }
-raw 320:*:{ echo -a $chr(3) $+ 12 $+ │ $chr(3) $+ 00 $3- | haltdef }
-raw 318:*:{ echo -a $chr(3) $+ 12 $+ ╰──────────────────────────────────────── | haltdef }
+raw 307:*:{ echo -a $chr(3) $+ 15 NickServ: $+ $chr(3) $+ 4 $2 $+ $chr(3) $+ 15 has identified for this nick | haltdef }
+raw 275:*:{ echo -a $chr(3) $+ 15 Connection: $+ $chr(3) $+ 14 Using a secure connection (SSL) | haltdef }
+raw 671:*:{ echo -a $chr(3) $+ 15 Connection: $+ $chr(3) $+ 14 Using a secure connection (SSL) | haltdef }
+raw 308:*:{ echo -a $chr(3) $+ 15 Service Agent: $+ $chr(3) $+ 4 $3- | haltdef }
+raw 319:*:{ echo -a $chr(3) $+ 15 Channels: $+ $chr(3) $+ 15 $3- | haltdef }
+raw 312:*:{ echo -a $chr(3) $+ 15 Server: $+ $chr(3) $+ 14 $3 - $4- | haltdef }
+raw 317:*:{
+  echo -a $chr(3) $+ 15 Idle Time: $+ $chr(3) $+ 14 $duration($3)
+  echo -a $chr(3) $+ 15 SignOn: $+ $chr(3) $+ 15 $asctime($4,dddd) $+ , $asctime($4,mmmm doo) $+ , $asctime($4,yyyy) at $asctime($4,h:nn TT)
+  haltdef
+}
+raw 330:*:{ echo -a $chr(3) $+ 15 Account: $+ $chr(3) $+ 4 $3 | haltdef }
+raw 313:*:{ echo -a $chr(3) $+ 15 IRC Oper: $+ $chr(3) $+ 4 Yes | haltdef }
+raw 378:*:{ echo -a $chr(3) $+ 15 Connecting from: $6- | haltdef }
+raw 379:*:{ echo -a $chr(3) $+ 15 Modes: $2- | haltdef }
+raw 301:*:{ echo -a $chr(3) $+ 15 Away: $+ $chr(3) $+ 7 $3- | haltdef }
+raw 318:*:{
+  echo -a $chr(3) $+ 15 ---------------$chr(3) $+ 15[ $chr(3) $+ 3 End of Whois Report $chr(3) $+ 15 ]---------------
+  echo -a
+  haltdef
+}
 `;
 
 /** Defaults mirroring the Rust \`RaveConfig::default()\` (used before load). */
