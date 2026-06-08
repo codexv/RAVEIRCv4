@@ -94,6 +94,16 @@ fn ghost_line(config: &ServerConfig) -> Option<String> {
     }
 }
 
+/// Does a NOTICE indicate our nick is being held by services (enforcer)?
+/// Used to trigger auto-release only when actually needed.
+fn is_held_notice(from: &str, text: &str) -> bool {
+    if !from.eq_ignore_ascii_case("NickServ") {
+        return false;
+    }
+    let t = text.to_ascii_lowercase();
+    t.contains("held") || t.contains("enforce") || t.contains("release it")
+}
+
 /// Build the NickServ RELEASE line to free a held nick, if possible.
 fn release_line(config: &ServerConfig) -> Option<String> {
     let pass = config.nickserv_password.as_ref()?;
@@ -264,6 +274,7 @@ async fn read_loop(
     let mut sasl_done = config.sasl_password.is_none();
     let mut alt_idx = 0usize; // index into the nick-fallback sequence
     let mut ghost_tried = false;
+    let mut release_tried = false;
 
     loop {
         buf.clear();
@@ -295,6 +306,21 @@ async fn read_loop(
                         let cfg = rave.read().ctcp.clone();
                         if let Some(payload) = ctcp::reply(&cfg, &query) {
                             let _ = out.send(ctcp::notice_line(nick, &payload));
+                        }
+                    }
+                }
+            }
+            "NOTICE" => {
+                // Auto-release ONLY when NickServ tells us the nick is held by an
+                // enforcer — not on every login.
+                if config.auto_release && !release_tried {
+                    if let (Some(text), Some(from)) = (msg.trailing(), msg.nick()) {
+                        if is_held_notice(from, text) {
+                            if let Some(r) = release_line(config) {
+                                release_tried = true;
+                                let _ = out.send(r);
+                                let _ = out.send(format!("NICK {}", config.nick));
+                            }
                         }
                     }
                 }
@@ -343,13 +369,6 @@ async fn read_loop(
                 if config.auto_identify {
                     if let Some(id) = identify_line(config) {
                         let _ = out.send(id);
-                    }
-                }
-                // Optionally free a held nick, then reclaim it.
-                if config.auto_release {
-                    if let Some(r) = release_line(config) {
-                        let _ = out.send(r);
-                        let _ = out.send(format!("NICK {}", config.nick));
                     }
                 }
                 for chan in &config.autojoin {
@@ -472,6 +491,17 @@ mod tests {
         let und = test_config("irc.undernet.org");
         assert_eq!(identify_line(&und).unwrap(), "PRIVMSG X@channels.undernet.org :login rave secret");
         assert!(ghost_line(&und).is_none()); // Undernet has no nick ownership
+    }
+
+    #[test]
+    fn held_notice_detection() {
+        // Held / enforcer notices from NickServ trigger release.
+        assert!(is_held_notice("NickServ", "This nickname is being held by services"));
+        assert!(is_held_notice("nickserv", "Services Enforcer has changed your nick"));
+        assert!(is_held_notice("NickServ", "If this is your nick, type RELEASE it now"));
+        // Ordinary notices / other senders do not.
+        assert!(!is_held_notice("NickServ", "This nickname is registered and protected"));
+        assert!(!is_held_notice("SomeUser", "held hostage lol"));
     }
 
     #[test]
