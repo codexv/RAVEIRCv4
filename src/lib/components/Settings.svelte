@@ -33,6 +33,12 @@
     appearance.accent = c;
     appearance.apply();
   }
+  function setChatBg(c: string) {
+    appearance.chatBg = c;
+    appearance.apply();
+  }
+  // Quick chat-background presets (any colour is still available via the picker).
+  const CHAT_BG_PRESETS = ["#000000", "#0d1117", "#11161c", "#1a1a2e", "#f6f8fa", "#fbf0d9"];
   let config = $state<RaveConfig | null>(null);
   let status = $state<AiStatus | null>(null);
   let checking = $state(false);
@@ -226,6 +232,28 @@
               value={appearance.accent}
               oninput={(e) => setAccent((e.currentTarget as HTMLInputElement).value)}
             />
+          </div>
+
+          <span class="group-label" style="margin-top:14px">Chat background</span>
+          <div class="swatches">
+            <input
+              class="color-input"
+              type="color"
+              value={appearance.chatBg || THEMES[appearance.theme].bg}
+              oninput={(e) => setChatBg((e.currentTarget as HTMLInputElement).value)}
+            />
+            {#each CHAT_BG_PRESETS as c (c)}
+              <button
+                class="swatch"
+                class:active={appearance.chatBg.toLowerCase() === c}
+                style="background:{c}"
+                aria-label={c}
+                onclick={() => setChatBg(c)}
+              ></button>
+            {/each}
+            <button class="follow-theme" class:active={!appearance.chatBg} onclick={() => setChatBg("")}>
+              Follow theme
+            </button>
           </div>
 
           <label style="margin-top:14px">Interface font
@@ -827,6 +855,20 @@
     border-radius: 6px;
     background: transparent;
     cursor: pointer;
+  }
+  .follow-theme {
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg-dim);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .follow-theme.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--fg);
   }
   .color-grid {
     display: grid;

@@ -215,7 +215,8 @@
     font-family: var(--mono);
     font-size: var(--msg-size, 13px);
     line-height: 1.5;
-    background: var(--bg);
+    /* User-overridable chat background, independent of the theme. */
+    background: var(--chat-bg, var(--bg));
   }
   .placeholder {
     height: 100%;

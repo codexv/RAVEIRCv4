@@ -112,6 +112,8 @@ export const EVENT_ROLES: { key: keyof EventColors; label: string }[] = [
 
 const DEFAULTS = {
   theme: "black" as ThemeId,
+  /** Custom chat-area background; "" = follow the theme's background. */
+  chatBg: "",
   accent: "#a61e4d",
   uiFont: UI_FONTS[0].value,
   monoFont: MONO_FONTS[0].value,
@@ -145,6 +147,9 @@ const DEFAULTS = {
 
 const KEY = "raveirc.appearance";
 
+/** Dark text palette used for neutral chat lines/nicks on a light background. */
+const NEUTRAL_LIGHTBG = { fg: "#1f2328", dim: "#57606a", faint: "#8c959f" };
+
 /** Relative luminance (0=black, 1=white) of a #rrggbb colour, for contrast checks. */
 function relLuminance(hex: string): number {
   const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
@@ -155,6 +160,7 @@ function relLuminance(hex: string): number {
 
 class Appearance {
   theme = $state<ThemeId>(DEFAULTS.theme);
+  chatBg = $state(DEFAULTS.chatBg);
   accent = $state(DEFAULTS.accent);
   uiFont = $state(DEFAULTS.uiFont);
   monoFont = $state(DEFAULTS.monoFont);
@@ -176,9 +182,10 @@ class Appearance {
         case "+": c = this.nickColors.voice; break;
         default: c = this.nickColors.normal;
       }
-    // On a light theme, swap near-white nick colours for dark text so they stay visible.
-    const t = THEMES[this.theme];
-    if (t.light && relLuminance(c) > 0.62) return t.fg;
+    // On a light chat background, swap near-white nick colours for dark text so
+    // they stay visible (keyed on the effective chat background, not the theme).
+    const chatLight = relLuminance(this.chatBg || THEMES[this.theme].bg) > 0.5;
+    if (chatLight && relLuminance(c) > 0.62) return NEUTRAL_LIGHTBG.fg;
     return c;
   }
 
@@ -189,6 +196,7 @@ class Appearance {
       if (raw) {
         const v = JSON.parse(raw);
         if (v.theme in THEMES) this.theme = v.theme;
+        if (typeof v.chatBg === "string") this.chatBg = v.chatBg;
         if (typeof v.accent === "string") this.accent = v.accent;
         if (typeof v.uiFont === "string") this.uiFont = v.uiFont;
         if (typeof v.monoFont === "string") this.monoFont = v.monoFont;
@@ -208,6 +216,8 @@ class Appearance {
     const r = document.documentElement.style;
     const t = THEMES[this.theme];
     r.setProperty("--bg", t.bg);
+    // Chat-area background overrides the theme bg when the user sets one.
+    r.setProperty("--chat-bg", this.chatBg || t.bg);
     r.setProperty("--panel", t.panel);
     r.setProperty("--border", t.border);
     r.setProperty("--hover", t.hover);
@@ -223,26 +233,29 @@ class Appearance {
     for (const [k, v] of Object.entries(this.eventColors)) {
       r.setProperty(`--line-${k}`, v);
     }
-    // On light themes the neutral line kinds (tuned for dark) must follow the
-    // theme's dark text instead, or they'd vanish on a pale background.
-    if (t.light) {
-      r.setProperty("--line-message", t.fg);
-      r.setProperty("--line-self", t.fgDim);
-      r.setProperty("--line-system", t.fgDim);
-      r.setProperty("--line-mode", t.fgFaint);
-      r.setProperty("--line-part", t.fgFaint);
-      r.setProperty("--line-quit", t.fgFaint);
+    // The neutral line kinds default to light-on-dark. If the *effective chat
+    // background* is light (a light theme, or a custom light chat colour on any
+    // theme), remap them to dark text so they stay readable — keyed on the chat
+    // background, not the theme, so a custom colour always reads correctly.
+    if (relLuminance(this.chatBg || t.bg) > 0.5) {
+      r.setProperty("--line-message", NEUTRAL_LIGHTBG.fg);
+      r.setProperty("--line-self", NEUTRAL_LIGHTBG.dim);
+      r.setProperty("--line-system", NEUTRAL_LIGHTBG.dim);
+      r.setProperty("--line-mode", NEUTRAL_LIGHTBG.faint);
+      r.setProperty("--line-part", NEUTRAL_LIGHTBG.faint);
+      r.setProperty("--line-quit", NEUTRAL_LIGHTBG.faint);
     }
     this.save();
   }
 
   private save() {
-    const { theme, accent, uiFont, monoFont, msgSize, soundOnHighlight, nickColors, eventColors } =
+    const { theme, chatBg, accent, uiFont, monoFont, msgSize, soundOnHighlight, nickColors, eventColors } =
       this;
     localStorage.setItem(
       KEY,
       JSON.stringify({
         theme,
+        chatBg,
         accent,
         uiFont,
         monoFont,
@@ -256,6 +269,7 @@ class Appearance {
 
   reset() {
     this.theme = DEFAULTS.theme;
+    this.chatBg = DEFAULTS.chatBg;
     this.accent = DEFAULTS.accent;
     this.uiFont = DEFAULTS.uiFont;
     this.monoFont = DEFAULTS.monoFont;
