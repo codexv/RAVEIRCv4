@@ -5,6 +5,7 @@
 
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+import { getVersion } from "@tauri-apps/api/app";
 
 import { parseInput, type CommandContext, type ServiceAction } from "./commands";
 import { stripMirc } from "./mirc";
@@ -77,6 +78,8 @@ export class IrcStore {
   buffers = $state<Buffer[]>([]);
   activeId = $state<string | null>(null);
   ready = $state(false);
+  /** App version (from tauri.conf.json), shown in the UI / help. */
+  appVersion = $state("");
   raveConfig = $state<RaveConfig>(defaultRaveConfig());
   scratchpadOpen = $state(false);
   scriptEditorOpen = $state(false);
@@ -145,6 +148,11 @@ export class IrcStore {
   /** Start listening to engine events. Call once at app start. */
   async init() {
     if (this.unlisten) return;
+    try {
+      this.appVersion = await getVersion();
+    } catch {
+      // not in a Tauri context (e.g. tests)
+    }
     this.unlisten = await listen<IrcEvent>("irc-event", (e) => this.onEvent(e.payload));
     await listen<SockEvent>("socket-event", (e) => this.sockets.onEvent(e.payload));
     try {
@@ -1557,6 +1565,7 @@ export class IrcStore {
         this.sendEncrypted(buf, arg ?? "");
         return;
       case "help":
+        this.add(buf, "system", `RAVEIRC v${this.appVersion || "?"} — mIRC-compatible operator client`);
         this.add(
           buf,
           "system",

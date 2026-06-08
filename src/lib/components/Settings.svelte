@@ -612,7 +612,7 @@
           </fieldset>
         {:else if section === "updates"}
           <h3>Updates</h3>
-          <p class="muted">RAVEIRC checks for new versions on startup and installs them with one click — no reinstall.</p>
+          <p class="muted">RAVEIRC <b>v{irc.appVersion || "?"}</b> — checks for new versions on startup and installs them with one click, no reinstall.</p>
           <button class="check-upd" onclick={() => updater.check(true)} disabled={updater.status === "checking" || updater.status === "downloading"}>
             {updater.status === "checking" ? "Checking…" : "Check for updates now"}
           </button>

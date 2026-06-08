@@ -129,6 +129,14 @@
     }
   });
 
+  // Reflect the version in the OS window title bar.
+  $effect(() => {
+    if (isScriptsWindow || !irc.appVersion) return;
+    import("@tauri-apps/api/window").then(({ getCurrentWindow }) => {
+      getCurrentWindow().setTitle(`RAVEIRC v${irc.appVersion}`).catch(() => {});
+    });
+  });
+
   const active = $derived(irc.active);
   const server = $derived(irc.servers.find((s) => s.id === active?.serverId) ?? null);
 
@@ -159,6 +167,7 @@
     <div class="topbar">
       <div class="title-block">
         <span class="title">{title()}</span>
+        {#if irc.appVersion}<span class="ver" title="RAVEIRC version">v{irc.appVersion}</span>{/if}
         {#if active?.kind === "channel" && active.topic}
           <span class="topic">{@html renderMirc(active.topic)}</span>
         {/if}
@@ -253,6 +262,12 @@
     font-weight: 700;
     color: var(--fg);
     flex-shrink: 0;
+  }
+  .ver {
+    font-size: 11px;
+    color: var(--fg-faint);
+    flex-shrink: 0;
+    font-family: var(--mono);
   }
   .topic {
     color: var(--fg-dim);
