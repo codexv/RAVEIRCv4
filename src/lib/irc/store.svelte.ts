@@ -79,8 +79,15 @@ export class IrcStore {
   private msl = new MslEngine();
   /** mIRC hash tables (/hadd, $hget, …), session-scoped. */
   private hash = new HashStore();
-  /** mIRC file & INI I/O ($read, /write, …). In-memory; persistence pending. */
-  private files = new FileStore();
+  /** mIRC file & INI I/O ($read, /write, …) — cached in memory, persisted to app-data. */
+  private files = new FileStore({
+    save: (name, content) => {
+      invoke("script_data_save", { name, content }).catch(() => {});
+    },
+    remove: (name) => {
+      invoke("script_data_remove", { name }).catch(() => {});
+    },
+  });
   /** /timer scheduler — fires commands in the window they were created in. */
   private timers = new TimerManager({
     fire: (command, ctx) => this.fireTimer(command, ctx),
@@ -110,6 +117,13 @@ export class IrcStore {
     }
     const sc = this.raveConfig.scripts;
     this.msl.load(sc.aliases, sc.remote, sc.variables);
+    // Preload persisted script-data files into the mSL FileStore cache.
+    try {
+      const data = await invoke<[string, string][]>("script_data_load");
+      this.files.preload(data);
+    } catch {
+      // no persisted files / backend unavailable
+    }
     this.ready = true;
   }
 

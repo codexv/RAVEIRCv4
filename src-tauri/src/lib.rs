@@ -106,6 +106,21 @@ async fn ai_analyze(
     rave::ai::analyze(&manager.rave_config().ai, &nick, &transcript).await
 }
 
+#[tauri::command]
+fn script_data_load(app: AppHandle) -> Vec<(String, String)> {
+    rave::persist::load_script_data(&app)
+}
+
+#[tauri::command]
+fn script_data_save(app: AppHandle, name: String, content: String) -> Result<(), String> {
+    rave::persist::save_script_file(&app, &name, &content)
+}
+
+#[tauri::command]
+fn script_data_remove(app: AppHandle, name: String) -> Result<(), String> {
+    rave::persist::remove_script_file(&app, &name)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Install the ring crypto provider for rustls before any TLS work.
@@ -133,6 +148,9 @@ pub fn run() {
             ai_moderate,
             ai_summarize,
             ai_analyze,
+            script_data_load,
+            script_data_save,
+            script_data_remove,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
