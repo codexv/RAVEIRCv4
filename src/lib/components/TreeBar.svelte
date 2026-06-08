@@ -6,6 +6,14 @@
     $props();
 
   let menu = $state<{ x: number; y: number; buf: Buffer } | null>(null);
+  // Servers whose channel list is collapsed (session state).
+  let collapsed = $state(new Set<number>());
+
+  function toggleCollapse(id: number) {
+    const next = new Set(collapsed);
+    next.has(id) ? next.delete(id) : next.add(id);
+    collapsed = next;
+  }
 
   function openMenu(e: MouseEvent, buf: Buffer) {
     e.preventDefault();
@@ -43,6 +51,7 @@
       {@const buffers = irc.serverBuffers(server.id)}
       <div class="server">
         {#each buffers as buf (buf.id)}
+          {#if buf.kind === "server" || !collapsed.has(server.id)}
           <button
             class="node"
             class:active={buf.id === irc.activeId}
@@ -55,6 +64,17 @@
             }}
           >
             {#if buf.kind === "server"}
+              <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+              <span
+                class="chevron"
+                role="button"
+                tabindex="-1"
+                title={collapsed.has(server.id) ? "Expand" : "Collapse"}
+                onclick={(e) => {
+                  e.stopPropagation();
+                  toggleCollapse(server.id);
+                }}
+              >{collapsed.has(server.id) ? "▸" : "▾"}</span>
               <span class="dot {statusDot(server.status)}"></span>
               <span class="label">{server.name}</span>
             {:else}
@@ -68,6 +88,7 @@
               <span class="badge" class:hl={buf.highlight}>{buf.unread}</span>
             {/if}
           </button>
+          {/if}
         {/each}
       </div>
     {/each}
@@ -238,6 +259,17 @@
   }
   .node:not(.server-node) {
     padding-left: 18px;
+  }
+  .chevron {
+    width: 12px;
+    flex-shrink: 0;
+    color: var(--fg-faint);
+    font-size: 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .chevron:hover {
+    color: var(--fg);
   }
   .kind-icon {
     color: var(--accent);
