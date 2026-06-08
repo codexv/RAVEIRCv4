@@ -142,8 +142,32 @@ export class IrcStore {
         this.add(b, "echo", text);
       },
       ident: (name, args, prop) => this.mslIdent(serverId, name, args, prop),
-      command: (name, rest) => this.hash.command(name, rest) || this.files.command(name, rest),
+      command: (name, rest) =>
+        this.hash.command(name, rest) ||
+        this.files.command(name, rest) ||
+        this.mslCommand(serverId, name, rest),
     };
+  }
+
+  /** Host-backed mSL commands that need live client state (channel list, …). */
+  private mslCommand(serverId: number, name: string, rest: string): boolean {
+    const chans = () => this.buffers.filter((b) => b.serverId === serverId && b.kind === "channel");
+    switch (name) {
+      case "amsg":
+        for (const b of chans()) {
+          this.raw(serverId, `PRIVMSG ${b.name} :${rest}`);
+          this.add(b, "self", rest, this.ownNick(serverId));
+        }
+        return true;
+      case "ame":
+        for (const b of chans()) {
+          this.raw(serverId, `PRIVMSG ${b.name} :\x01ACTION ${rest}\x01`);
+          this.add(b, "action", `${this.ownNick(serverId)} ${rest}`);
+        }
+        return true;
+      default:
+        return false;
+    }
   }
 
   /** Resolve a live (host-backed) mSL identifier against current client state. */
@@ -382,6 +406,7 @@ export class IrcStore {
         if (this.raveConfig.notify.length > 0) {
           this.raw(ev.serverId, `MONITOR + ${this.raveConfig.notify.join(",")}`);
         }
+        this.dispatchScript(ev.serverId, "CONNECT", {});
         break;
       }
       case "disconnected":
@@ -395,6 +420,7 @@ export class IrcStore {
         for (const b of this.buffers) {
           if (b.serverId === ev.serverId && b.kind === "channel") b.joined = false;
         }
+        this.dispatchScript(ev.serverId, "DISCONNECT", {});
         break;
       case "error":
         this.addServer(ev.serverId, "error", ev.message);

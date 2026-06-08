@@ -35,6 +35,12 @@ describe("evalString", () => {
     expect(evalString("$mask($fulladdress,0)", c)).toBe("*!~ident@host.example.com");
   });
 
+  it("$eval re-evaluates deferred content", () => {
+    const c = ctx();
+    c.vars.set("foo", "$me");
+    expect(evalString("$eval(%foo,2)", c)).toBe("rave");
+  });
+
   it("$regex sets $regml captures", () => {
     const c = ctx();
     expect(evalString("$regex(hello123world,/([a-z]+)(\\d+)/)", c)).toBe("1");
