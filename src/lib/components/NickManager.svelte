@@ -3,6 +3,9 @@
   import {
     loadProfiles,
     saveProfiles,
+    hydratePasswords,
+    commitPasswords,
+    deleteProfilePassword,
     newProfile,
     NETWORK_CHOICES,
     type NickProfile,
@@ -20,6 +23,8 @@
       profiles = loadProfiles();
       selId = profiles[0]?.id ?? null;
       loaded = true;
+      // Fill passwords from the OS keychain (in place → fields populate).
+      hydratePasswords(profiles);
     }
   });
 
@@ -36,9 +41,13 @@
   }
   function del() {
     if (!sel) return;
-    profiles = profiles.filter((p) => p.id !== sel.id);
+    const goneId = sel.id;
+    profiles = profiles.filter((p) => p.id !== goneId);
     selId = profiles[0]?.id ?? null;
+    deleteProfilePassword(goneId); // remove its keychain entry
+    persist();
   }
+  // Auto-save persists only non-secret fields (passwords go to the keychain on save/close).
   function persist() {
     saveProfiles($state.snapshot(profiles));
   }
@@ -46,12 +55,14 @@
   let savedTimer: ReturnType<typeof setTimeout> | null = null;
   function doSave() {
     persist();
+    commitPasswords($state.snapshot(profiles)); // write passwords to the OS keychain
     saved = true;
     if (savedTimer) clearTimeout(savedTimer);
     savedTimer = setTimeout(() => (saved = false), 1500);
   }
   function close() {
     persist();
+    commitPasswords($state.snapshot(profiles)); // don't lose a typed password on close
     irc.nickManagerOpen = false;
     loaded = false;
   }

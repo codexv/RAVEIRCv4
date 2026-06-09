@@ -1,5 +1,11 @@
 // Saved identity profiles (nick + full user details + which networks they suit).
-// Persisted in localStorage so they're editable offline and survive restarts.
+// Non-secret fields live in localStorage; the NickServ password is stored in the
+// OS keychain (macOS Keychain / Windows Credential Manager / Linux Secret
+// Service) via Tauri commands — never written to disk in plaintext.
+
+import { invoke } from "@tauri-apps/api/core";
+
+const SECRET_PREFIX = "profilepw:";
 
 export interface NickProfile {
   id: string;
@@ -36,13 +42,15 @@ function uid(): string {
   }
 }
 
+/** Load profiles from localStorage (passwords blank — fetch via hydratePasswords). */
 export function loadProfiles(): NickProfile[] {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const list = JSON.parse(raw) as NickProfile[];
-      // Backfill any fields missing from profiles saved before they existed.
-      return list.map((p) => ({ ...newProfile(), ...p }));
+      // Backfill any fields missing from profiles saved before they existed,
+      // and ensure no plaintext password lingers from older versions.
+      return list.map((p) => ({ ...newProfile(), ...p, nickservPassword: "" }));
     }
   } catch {
     /* ignore */
@@ -50,8 +58,75 @@ export function loadProfiles(): NickProfile[] {
   return [];
 }
 
+/** Fill each profile's NickServ password from the OS keychain (in place). */
+export async function hydratePasswords(list: NickProfile[]): Promise<void> {
+  await Promise.all(
+    list.map(async (p) => {
+      try {
+        const pw = await invoke<string | null>("secret_get", { key: SECRET_PREFIX + p.id });
+        if (pw) p.nickservPassword = pw;
+      } catch {
+        /* keychain unavailable — leave blank */
+      }
+    }),
+  );
+}
+
+/** Persist non-secret fields to localStorage (passwords never written here). */
 export function saveProfiles(list: NickProfile[]) {
-  localStorage.setItem(KEY, JSON.stringify(list));
+  const stripped = list.map((p) => ({ ...p, nickservPassword: "" }));
+  localStorage.setItem(KEY, JSON.stringify(stripped));
+}
+
+/** Write each profile's NickServ password to the OS keychain (or clear it). */
+export async function commitPasswords(list: NickProfile[]): Promise<void> {
+  await Promise.all(
+    list.map(async (p) => {
+      try {
+        if (p.nickservPassword) {
+          await invoke("secret_set", { key: SECRET_PREFIX + p.id, value: p.nickservPassword });
+        } else {
+          await invoke("secret_delete", { key: SECRET_PREFIX + p.id });
+        }
+      } catch {
+        /* keychain unavailable */
+      }
+    }),
+  );
+}
+
+/** One-time: move any plaintext passwords from older localStorage into the keychain. */
+export async function migrateLegacyPasswords(): Promise<void> {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    const list = JSON.parse(raw) as NickProfile[];
+    let changed = false;
+    for (const p of list) {
+      if (p.nickservPassword) {
+        try {
+          await invoke("secret_set", { key: SECRET_PREFIX + p.id, value: p.nickservPassword });
+        } catch {
+          /* keychain unavailable — leave as is */
+          continue;
+        }
+        p.nickservPassword = "";
+        changed = true;
+      }
+    }
+    if (changed) localStorage.setItem(KEY, JSON.stringify(list));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Remove a profile's stored password from the keychain. */
+export async function deleteProfilePassword(id: string): Promise<void> {
+  try {
+    await invoke("secret_delete", { key: SECRET_PREFIX + id });
+  } catch {
+    /* ignore */
+  }
 }
 
 export function newProfile(): NickProfile {

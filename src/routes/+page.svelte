@@ -65,6 +65,8 @@
     irc.init();
     appearance.init();
     updater.check(); // silent auto-check for a new version on startup
+    // Move any pre-keychain plaintext passwords into the OS keychain, once.
+    import("$lib/profiles").then(({ migrateLegacyPasswords }) => migrateLegacyPasswords());
     // The scripts window asks the main app to reload + recompile after saving.
     import("@tauri-apps/api/event").then(({ listen }) =>
       listen("scripts-applied", async () => {
