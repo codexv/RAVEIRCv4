@@ -2,6 +2,7 @@
   import { irc } from "$lib/irc/store.svelte";
   import { detectNetwork } from "$lib/irc/network";
   import { channelKey, saveRaveConfig, type ProtectionsConfig, type RaveConfig } from "$lib/irc/rave";
+  import { loadAutojoin, saveAutojoin } from "$lib/channels";
 
   let config = $state<RaveConfig | null>(null);
   let selectedKey = $state("");
@@ -13,6 +14,8 @@
   let addNet = $state("dalnet");
   // Channels the user manages (persisted), kept listed even when using global.
   let managed = $state<string[]>([]);
+  // Channels that auto-join on connect (persisted, by key).
+  let autojoin = $state<string[]>([]);
   const MKEY = "raveirc.managedChannels";
   function loadManaged(): string[] {
     try {
@@ -56,6 +59,7 @@
       config = structuredClone($state.snapshot(irc.raveConfig)) as RaveConfig;
       joinServer = irc.servers[0]?.id ?? null;
       managed = loadManaged();
+      autojoin = loadAutojoin();
     }
   });
 
@@ -98,12 +102,28 @@
     addChan = "";
   }
 
+  /** Toggle auto-join on connect for a channel (implies it's managed). */
+  function toggleAutojoin(key: string, on: boolean) {
+    if (on) {
+      if (!autojoin.includes(key)) autojoin = [...autojoin, key];
+      if (!managed.includes(key)) {
+        managed = [...managed, key];
+        persistManaged();
+      }
+    } else {
+      autojoin = autojoin.filter((k) => k !== key);
+    }
+    saveAutojoin($state.snapshot(autojoin));
+  }
+
   /** Remove a managed channel entirely (its override + the list entry). */
   function removeChannel(key: string) {
     if (!config) return;
     delete config.channelProtections[key];
     managed = managed.filter((k) => k !== key);
+    autojoin = autojoin.filter((k) => k !== key);
     persistManaged();
+    saveAutojoin($state.snapshot(autojoin));
     if (selectedKey === key) selectedKey = "";
   }
 
@@ -231,12 +251,19 @@
               <span class="tags">
                 {#if c.joined}<span class="tag j">joined</span>{/if}
                 {#if c.override}<span class="tag o">custom</span>{/if}
+                {#if autojoin.includes(c.key)}<span class="tag a">auto</span>{/if}
               </span>
             </button>
           {/each}
         </div>
 
         <div class="detail">
+          {#if selectedKey}
+            <label class="chk autojoin">
+              <input type="checkbox" checked={autojoin.includes(selectedKey)} onchange={(e) => toggleAutojoin(selectedKey, e.currentTarget.checked)} />
+              Auto-join this channel on connect
+            </label>
+          {/if}
           {#if !selectedKey}
             <p class="muted">Select a channel to set its protections.</p>
           {:else if !activeProt}
@@ -411,6 +438,15 @@
     background: var(--accent);
     color: #fff;
   }
+  .tag.a {
+    background: #1f5f8f;
+    color: #d7ecff;
+  }
+  .autojoin {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
   .empty,
   .muted {
     color: var(--fg-dim);
@@ -501,6 +537,13 @@
     color: var(--fg);
     font-size: 13px;
     outline: none;
+  }
+  select {
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e7681' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    background-size: 12px;
   }
   input:focus,
   select:focus {

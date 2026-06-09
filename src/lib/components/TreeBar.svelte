@@ -219,12 +219,12 @@
     flex-shrink: 0;
   }
   .logo {
-    font-weight: 900;
+    font-family: var(--ui);
+    font-weight: 800;
     letter-spacing: 0.5px;
     font-size: 15px;
     text-transform: uppercase;
     color: var(--fg);
-    font-feature-settings: "ss01";
   }
   .logo-irc {
     color: var(--accent);

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RAVEIRC — native IRC client with the RAVE operator toolkit</title>
+<meta name="description" content="RAVEIRC is a fast, native, cross-platform IRC client — a ground-up port of the classic RAVE mIRC operator script, with a real mSL scripting engine, channel protection, and built-in auto-updates." />
+<link rel="icon" href="/appicon.svg" type="image/svg+xml" />
+<meta property="og:title" content="RAVEIRC" />
+<meta property="og:description" content="A native cross-platform IRC client with the RAVE operator toolkit." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://raveirc.coders.ph/" />
+<meta property="og:image" content="https://raveirc.coders.ph/appicon.svg" />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #131313;
+    --panel: #181818;
+    --panel2: #1f1f1f;
+    --border: #2a2a2a;
+    --fg: #ececec;
+    --muted: #9a9a9a;
+    --accent: #e1241f;
+    --accent-soft: rgba(225, 36, 31, 0.14);
+    --radius: 16px;
+    --maxw: 1080px;
+    /* Bundled Inter first (matches the app's --ui), native fonts as fallback. */
+    --ui: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  /* Bundled Inter (matches the app) so the whole page — wordmark and body — renders
+     identically on every OS/browser instead of falling back to a system font. */
+  @font-face { font-family: "Inter"; src: url("/fonts/inter-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Inter"; src: url("/fonts/inter-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Inter"; src: url("/fonts/inter-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Inter"; src: url("/fonts/inter-800.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: swap; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--ui);
+    color: var(--fg);
+    background:
+      radial-gradient(1200px 600px at 50% -200px, #1c1c1c 0%, transparent 70%),
+      linear-gradient(180deg, #0e0e0e, var(--bg));
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(10px);
+    background: rgba(10, 10, 10, 0.7);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav { display: flex; align-items: center; gap: 14px; height: 64px; }
+
+  /* RAVEIRC wordmark — identical styling to the app (TreeBar .logo / placeholder h2):
+     system-ui, weight 900, uppercase, 0.5px tracking, "IRC" in accent with a glow. */
+  .brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .brand img { border-radius: 7px; flex-shrink: 0; }
+  .wordmark {
+    font-family: var(--ui);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--fg);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .wordmark .irc {
+    color: var(--accent);
+    text-shadow: 0 0 0.5em var(--accent);
+    margin-left: 1px;
+  }
+  /* Header instance */
+  .nav .brand img { width: 28px; height: 28px; }
+  .nav .wordmark { font-size: 18px; }
+  .nav .spacer { flex: 1; }
+  .nav a.link { color: var(--muted); font-weight: 600; font-size: 14px; padding: 8px 10px; border-radius: 8px; }
+  .nav a.link:hover { color: var(--fg); background: var(--panel); }
+  .ghbtn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border); padding: 8px 14px; border-radius: 10px;
+    font-weight: 700; font-size: 14px; color: var(--fg);
+  }
+  .ghbtn:hover { border-color: #444; background: var(--panel); }
+
+  /* Hero */
+  .hero { text-align: center; padding: 84px 0 56px; }
+  .hero .icon { width: 116px; height: 116px; border-radius: 28px; box-shadow: 0 24px 60px rgba(0,0,0,.55); }
+  .hero h1.wordmark {
+    font-size: clamp(40px, 7vw, 76px); margin: 26px 0 8px;
+  }
+  .tagline { font-size: clamp(17px, 2.4vw, 22px); color: var(--muted); max-width: 620px; margin: 0 auto; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+    font-size: 13px; color: var(--muted); border: 1px solid var(--border);
+    padding: 5px 12px; border-radius: 999px; background: var(--panel);
+  }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #2faf5b; }
+
+  .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 24px; border-radius: 12px; font-weight: 800; font-size: 15px;
+    border: 1px solid transparent; cursor: pointer; transition: transform .06s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--accent); color: #fff; box-shadow: 0 10px 30px var(--accent-soft); }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { background: var(--panel); color: var(--fg); border-color: var(--border); }
+  .btn.ghost:hover { border-color: #444; }
+  .btn svg { width: 18px; height: 18px; }
+  .sub-os { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.7); margin-top: 2px; }
+
+  /* Sections */
+  section { padding: 56px 0; }
+  .section-title { text-align: center; font-size: clamp(26px, 4vw, 36px); font-weight: 900; letter-spacing: 1px; margin: 0 0 8px; }
+  .section-sub { text-align: center; color: var(--muted); margin: 0 auto 40px; max-width: 560px; }
+
+  /* Features */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: linear-gradient(180deg, var(--panel), var(--bg2));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 24px;
+  }
+  .card .ico { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); display: grid; place-items: center; margin-bottom: 14px; }
+  .card .ico svg { width: 22px; height: 22px; stroke: var(--accent); }
+  .card h3 { margin: 0 0 6px; font-size: 17px; font-weight: 800; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  /* Downloads */
+  #download { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .dl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; } }
+  .dl {
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 26px; text-align: center;
+  }
+  .dl .platform { font-size: 19px; font-weight: 800; margin: 10px 0 4px; }
+  .dl .os-ico { width: 46px; height: 46px; margin: 0 auto; opacity: .92; }
+  .dl .os-ico svg { width: 46px; height: 46px; fill: var(--fg); }
+  .dl-links { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .dl-links a {
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    font-weight: 700; font-size: 14px; color: var(--fg); background: var(--bg2);
+  }
+  .dl-links a:hover { border-color: var(--accent); color: #fff; }
+  .dl-links a.muted { color: var(--muted); font-weight: 600; font-size: 13px; border-style: dashed; }
+  .dl-note { text-align: center; color: var(--muted); font-size: 13px; margin-top: 28px; }
+
+  /* Footer */
+  footer { padding: 40px 0; color: var(--muted); font-size: 13px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .foot .brand img { width: 24px; height: 24px; }
+  .foot .wordmark { font-size: 16px; }
+  .foot a { color: var(--muted); }
+  .foot a:hover { color: var(--fg); }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <span class="brand"><img src="/appicon.svg" alt="RAVEIRC" /><span class="wordmark">RAVE<span class="irc">IRC</span></span></span>
+    <span class="spacer"></span>
+    <a class="link" href="#features">Features</a>
+    <a class="link" href="#download">Download</a>
+    <a class="ghbtn" href="https://github.com/codexv/RAVEIRCv4" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <img class="icon" src="/appicon.svg" alt="RAVEIRC icon" />
+    <h1 class="wordmark">RAVE<span class="irc">IRC</span></h1>
+    <p class="tagline">A fast, native IRC client with the classic RAVE operator toolkit — reborn for macOS, Windows, and Linux.</p>
+    <span class="badge" id="version-badge"><span class="dot"></span> <span id="version-text">Latest release</span></span>
+    <div class="cta">
+      <a class="btn primary" id="primary-dl" href="https://github.com/codexv/RAVEIRCv4/releases/latest" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+        <span>Download<span class="sub-os" id="primary-os">for your platform</span></span>
+      </a>
+      <a class="btn ghost" href="#download">All downloads</a>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <h2 class="section-title">Built for operators</h2>
+      <p class="section-sub">Everything the original RAVE script did, rebuilt natively — plus a real scripting engine under the hood.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg></div>
+          <h3>Channel protection</h3>
+          <p>Per-channel protections you can configure offline — flood, ban, and kick handling straight from the Channel Manager.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/></svg></div>
+          <h3>Real mSL scripting</h3>
+          <p>A built-in mIRC-compatible scripting engine — aliases, events, identifiers, hash tables, timers, and a script editor in its own window.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg></div>
+          <h3>Cross-platform &amp; native</h3>
+          <p>One codebase, native builds for macOS (universal), Windows, and Linux — light on memory, instant to launch.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.2-8.5M21 4v5h-5"/></svg></div>
+          <h3>Auto-updates</h3>
+          <p>Updates download and apply in-app — no reinstalling. Signed release artifacts verified before they're applied.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div>
+          <h3>Keychain security</h3>
+          <p>NickServ passwords are stored in your OS keychain — encrypted at rest on every platform, never in plaintext.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3zM3 9h18M7 13h6"/></svg></div>
+          <h3>Stays connected</h3>
+          <p>Keepalive and auto-reconnect with backoff keep you online — without ever resetting your whois idle streak.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="download">
+    <div class="wrap">
+      <h2 class="section-title">Download RAVEIRC</h2>
+      <p class="section-sub" id="dl-version-sub">Pick your platform. Links always point to the latest release.</p>
+      <div class="dl-grid">
+        <div class="dl">
+          <div class="os-ico"><svg viewBox="0 0 24 24"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7s-1.6-.7-2.6-.7c-1.3 0-2.6.8-3.3 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.4-.6 2.6-.6s1.5.6 2.6.6 1.8-1 2.4-2c.8-1.1 1.1-2.2 1.1-2.3 0 0-2.1-.8-2.1-3.2zM14.7 6c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.8-.4 2.3-1.1z"/></svg></div>
+          <div class="platform">macOS</div>
+          <div class="dl-links" data-os="mac"></div>
+        </div>
+        <div class="dl">
+          <div class="os-ico"><svg viewBox="0 0 24 24"><path d="M3 5.5l8-1.1v7.2H3V5.5zM12 4.2L21 3v8.6h-9V4.2zM3 12.4h8v7.2l-8-1.1v-6.1zM12 12.4h9V21l-9-1.2v-7.4z"/></svg></div>
+          <div class="platform">Windows</div>
+          <div class="dl-links" data-os="win"></div>
+        </div>
+        <div class="dl">
+          <div class="os-ico"><svg viewBox="0 0 24 24"><path d="M12 2c-1.6 0-2.6 1.6-2.5 3.4.1 1.3-.2 2-.7 2.8-.6.9-1.8 2-2.3 3.8-.3 1-.2 2 .1 2.8-.3.3-.5.7-.5 1.2 0 .4-.3.6-.8 1-.4.3-.6.7-.4 1.2.1.4 0 .7-.1 1.1-.2.7.3 1.3 1 1.3.6 0 1.2-.2 1.9-.2.6 0 1 .3 1.7.3.5 0 .9-.3 1.1-.8.5.1 1 .1 1.5 0 .2.5.6.8 1.1.8.7 0 1.1-.3 1.7-.3.7 0 1.3.2 1.9.2.7 0 1.2-.6 1-1.3-.1-.4-.2-.7-.1-1.1.2-.5 0-.9-.4-1.2-.5-.4-.8-.6-.8-1 0-.5-.2-.9-.5-1.2.3-.8.4-1.8.1-2.8-.5-1.8-1.7-2.9-2.3-3.8-.5-.8-.8-1.5-.7-2.8C14.6 3.6 13.6 2 12 2z"/></svg></div>
+          <div class="platform">Linux</div>
+          <div class="dl-links" data-os="linux"></div>
+        </div>
+      </div>
+      <p class="dl-note">All builds are open and signed. Browse every file or older versions on the
+        <a href="https://github.com/codexv/RAVEIRCv4/releases" target="_blank" rel="noopener" style="color:var(--accent)">GitHub releases page</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span class="brand"><img src="/appicon.svg" alt="" /><span class="wordmark">RAVE<span class="irc">IRC</span></span></span>
+    <span>A native port of the classic RAVE mIRC operator script.</span>
+    <span><a href="https://github.com/codexv/RAVEIRCv4" target="_blank" rel="noopener">Source on GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+  const REPO = "codexv/RAVEIRCv4";
+  const RELEASES = "https://github.com/" + REPO + "/releases";
+
+  // Matchers: each OS maps a label to a filename test, in display order.
+  const PLATFORMS = {
+    mac:   [{ label: "Download .dmg (Universal)", test: n => n.endsWith(".dmg") }],
+    win:   [{ label: "Download installer (.msi)", test: n => n.endsWith(".msi") },
+             { label: "Download setup (.exe)",     test: n => n.endsWith("-setup.exe") }],
+    linux: [{ label: "Download .AppImage", test: n => n.endsWith(".AppImage") },
+             { label: "Download .deb (Debian/Ubuntu)", test: n => n.endsWith(".deb") },
+             { label: "Download .rpm (Fedora/RHEL)",   test: n => n.endsWith(".rpm") }],
+  };
+
+  function detectOS() {
+    const p = (navigator.userAgentData?.platform || navigator.platform || navigator.userAgent).toLowerCase();
+    if (p.includes("mac") || p.includes("iphone") || p.includes("ipad")) return "mac";
+    if (p.includes("win")) return "win";
+    if (p.includes("linux") || p.includes("android") || p.includes("x11")) return "linux";
+    return "mac";
+  }
+
+  // assets: array of { name, url }
+  function fillLinks(assets) {
+    for (const [os, matchers] of Object.entries(PLATFORMS)) {
+      const box = document.querySelector('.dl-links[data-os="' + os + '"]');
+      if (!box) continue;
+      box.innerHTML = "";
+      let any = false;
+      for (const m of matchers) {
+        const asset = assets.find(a => m.test(a.name));
+        const a = document.createElement("a");
+        if (asset) {
+          a.href = asset.url; a.textContent = m.label; any = true;
+        } else {
+          a.href = RELEASES + "/latest"; a.textContent = m.label; a.className = "muted";
+        }
+        a.target = "_blank"; a.rel = "noopener";
+        box.appendChild(a);
+      }
+      if (!any) {
+        const a = document.createElement("a");
+        a.href = RELEASES + "/latest"; a.textContent = "View latest release"; a.className = "muted";
+        a.target = "_blank"; a.rel = "noopener"; box.appendChild(a);
+      }
+    }
+  }
+
+  function setPrimary(os, version) {
+    const labels = { mac: "for macOS", win: "for Windows", linux: "for Linux" };
+    document.getElementById("primary-os").textContent =
+      (labels[os] || "for your platform") + (version ? " · " + version : "");
+    const first = document.querySelector('.dl-links[data-os="' + os + '"] a');
+    if (first) document.getElementById("primary-dl").href = first.href;
+  }
+
+  // Render fallbacks immediately so the page is useful even if the API call fails.
+  fillLinks([]);
+  const myOS = detectOS();
+  setPrimary(myOS, "");
+
+  fetch("https://api.github.com/repos/" + REPO + "/releases/latest")
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(rel => {
+      const assets = (rel.assets || [])
+        .filter(a => !a.name.endsWith(".sig") && !a.name.endsWith(".json"))
+        .map(a => ({ name: a.name, url: a.browser_download_url }));
+      fillLinks(assets);
+      const v = rel.tag_name || rel.name || "";
+      if (v) {
+        document.getElementById("version-text").textContent = "Latest: " + v;
+        document.getElementById("dl-version-sub").textContent =
+          "Pick your platform — " + v + ". Links always point to the latest release.";
+      }
+      setPrimary(myOS, v);
+    })
+    .catch(() => { /* fallbacks already rendered */ });
+</script>
+</body>
+</html>

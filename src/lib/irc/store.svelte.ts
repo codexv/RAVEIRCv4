@@ -17,6 +17,7 @@ import { MslEngine, type EventData } from "../msl/engine";
 import type { MslHost } from "../msl/exec";
 import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
+import { loadAutojoin } from "../channels";
 import { FileStore } from "../msl/files";
 import { SocketStore, type SockEvent } from "../msl/sockets";
 import {
@@ -574,6 +575,16 @@ export class IrcStore {
         // Notify/watch list: ask the server to MONITOR these nicks.
         if (this.raveConfig.notify.length > 0) {
           this.raw(ev.serverId, `MONITOR + ${this.raveConfig.notify.join(",")}`);
+        }
+        // Auto-join the Channel Manager's flagged channels for this network.
+        if (s) {
+          const net = detectNetwork(s);
+          for (const key of loadAutojoin()) {
+            const slash = key.indexOf("/");
+            if (slash > 0 && key.slice(0, slash) === net) {
+              this.joinChannel(ev.serverId, key.slice(slash + 1));
+            }
+          }
         }
         this.dispatchScript(ev.serverId, "CONNECT", {});
         break;

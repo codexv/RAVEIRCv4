@@ -242,8 +242,9 @@
     color: var(--fg-dim);
   }
   .placeholder h2 {
+    font-family: var(--ui);
     font-size: 52px;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: 1px;
     text-transform: uppercase;
     margin: 0;
