@@ -67,6 +67,13 @@
     pinned = true;
   });
 
+  // The speaker's current channel mode prefix (@ op, + voice, …) — so you can
+  // tell at a glance whether they're an operator.
+  function prefixFor(nick: string): string {
+    if (!buffer || buffer.kind !== "channel") return "";
+    return buffer.users.find((u) => u.nick === nick)?.prefix ?? "";
+  }
+
   function nickColor(nick: string): string {
     let h = 0;
     for (let i = 0; i < nick.length; i++) h = (h * 31 + nick.charCodeAt(i)) % 360;
@@ -113,7 +120,7 @@
         <span class="ts">{fmtTime(line.ts)}</span>
         {#if line.kind === "message" || line.kind === "self"}
           <span class="nick" style="color:{line.kind === 'self' ? 'var(--accent)' : nickColor(line.from ?? '')}">
-            &lt;{line.from}&gt;
+            &lt;{#if prefixFor(line.from ?? '')}<span class="uprefix">{prefixFor(line.from ?? '')}</span>{/if}{line.from}&gt;
           </span>
           <span class="text">{@html renderMirc(line.text)}</span>
         {:else if line.kind === "notice"}
@@ -260,6 +267,10 @@
   .nick {
     flex-shrink: 0;
     font-weight: 600;
+  }
+  .uprefix {
+    color: var(--accent);
+    font-weight: 800;
   }
   .notice-nick {
     color: var(--line-notice, #d29922);
