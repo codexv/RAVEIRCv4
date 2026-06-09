@@ -7,6 +7,12 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [sveltekit()],
 
+  // True only for the web/PWA build (`build:web` sets BASE_PATH). Selects the
+  // IRC transport (Rust backend vs WebSocket gateway) at build time.
+  define: {
+    __WEB_BUILD__: JSON.stringify(!!process.env.BASE_PATH),
+  },
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors

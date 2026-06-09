@@ -19,6 +19,8 @@ import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
 import { loadAutojoin } from "../channels";
 import { loadBufferFonts, saveBufferFonts, type BufferFont } from "../fonts";
+import { isTauri } from "../platform";
+import { subscribeIrc, connectServer, sendRaw, sendMessage, disconnectIrc } from "./transport";
 import { FileStore } from "../msl/files";
 import { SocketStore, type SockEvent } from "../msl/sockets";
 import {
@@ -163,8 +165,11 @@ export class IrcStore {
     } catch {
       // not in a Tauri context (e.g. tests)
     }
-    this.unlisten = await listen<IrcEvent>("irc-event", (e) => this.onEvent(e.payload));
-    await listen<SockEvent>("socket-event", (e) => this.sockets.onEvent(e.payload));
+    this.unlisten = await subscribeIrc((ev) => this.onEvent(ev));
+    // mSL raw sockets ($sock) are a desktop-only (Rust) feature.
+    if (isTauri()) {
+      await listen<SockEvent>("socket-event", (e) => this.sockets.onEvent(e.payload));
+    }
     try {
       const cfg = await loadRaveConfig();
       if (cfg) this.raveConfig = cfg;
@@ -1281,8 +1286,7 @@ export class IrcStore {
   // ---- actions (called by UI) ----------------------------------------------
 
   async connect(config: ServerConfig): Promise<number> {
-    const id = await invoke<number>("irc_connect", { config });
-    return id;
+    return connectServer(config);
   }
 
   async sendInput(text: string, override?: Buffer): Promise<void> {
@@ -1350,11 +1354,7 @@ export class IrcStore {
         for (const line of result.lines) await this.raw(buf.serverId, line);
         return;
       case "message": {
-        await invoke("irc_send_message", {
-          serverId: buf.serverId,
-          target: result.target,
-          text: result.text,
-        });
+        await sendMessage(buf.serverId, result.target, result.text);
         const dest = this.ensureBuffer(
           buf.serverId,
           result.target,
@@ -1546,7 +1546,7 @@ export class IrcStore {
 
   private async raw(serverId: number, line: string) {
     try {
-      await invoke("irc_send_raw", { serverId, line });
+      await sendRaw(serverId, line);
     } catch (e) {
       this.addServer(serverId, "error", String(e));
     }
@@ -1750,7 +1750,7 @@ export class IrcStore {
       return this.add(buf, "error", "Usage: /enc <text>  (in a channel or query)");
     }
     const blob = await encryptText(this.encKey, text);
-    await invoke("irc_send_message", { serverId: buf.serverId, target: buf.name, text: blob });
+    await sendMessage(buf.serverId, buf.name, blob);
     this.add(buf, "self", `🔒 ${text}`, this.ownNick(buf.serverId));
   }
 
@@ -1845,7 +1845,7 @@ export class IrcStore {
   }
 
   disconnectServer(serverId: number) {
-    invoke("irc_disconnect", { serverId, quitMessage: "RAVEIRC" }).catch(() => {});
+    disconnectIrc(serverId, "RAVEIRC");
   }
 
   /** Clear a buffer's scrollback by id. */

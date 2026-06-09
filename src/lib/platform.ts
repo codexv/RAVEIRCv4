@@ -3,17 +3,21 @@
 // to IRC through the Rust backend (invoke/listen); the web build talks to the
 // WebSocket↔IRC gateway instead.
 
-/** True when running inside a Tauri webview (desktop or, later, native mobile). */
-export function isTauri(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    ("__TAURI_INTERNALS__" in window || "__TAURI__" in window || "isTauri" in window)
-  );
-}
+// Whether this bundle was built for the web/PWA target. Injected by Vite's
+// `define` (true only when BASE_PATH is set, i.e. `npm run build:web`). It's a
+// build-time decision — not runtime — so unit tests (jsdom, no Tauri) still use
+// the desktop/Tauri code path and its mocked invoke/listen.
+declare const __WEB_BUILD__: boolean | undefined;
+const WEB_BUILD: boolean = typeof __WEB_BUILD__ !== "undefined" ? !!__WEB_BUILD__ : false;
 
 /** True for the plain-browser web/PWA build (no Rust backend available). */
 export function isWeb(): boolean {
-  return !isTauri();
+  return WEB_BUILD;
+}
+
+/** True for the native (Tauri) build — desktop now, mobile later. */
+export function isTauri(): boolean {
+  return !WEB_BUILD;
 }
 
 /**
