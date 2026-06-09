@@ -39,7 +39,20 @@
 
 <div class="treebar">
   <div class="tb-head">
-    <span class="logo">RAVE<span class="logo-irc">IRC</span></span>
+    <div class="brand">
+      <svg class="app-icon" viewBox="0 0 1024 1024" aria-hidden="true">
+        <rect width="1024" height="1024" rx="230" fill="#181818" />
+        <path
+          d="M 220 210 H 640 A 70 70 0 0 1 710 280 V 480 A 70 70 0 0 1 640 550 H 390 L 300 645 L 300 550 H 220 A 70 70 0 0 1 150 480 V 280 A 70 70 0 0 1 220 210 Z"
+          fill="#ffffff"
+        />
+        <path
+          d="M 400 360 H 800 A 70 70 0 0 1 870 430 V 620 A 70 70 0 0 1 800 690 H 560 L 470 785 L 470 690 H 400 A 70 70 0 0 1 330 620 V 430 A 70 70 0 0 1 400 360 Z"
+          fill="var(--accent)"
+        />
+      </svg>
+      <span class="logo">RAVE<span class="logo-irc">IRC</span></span>
+    </div>
     <div class="head-btns">
       <button class="add" title="Settings" onclick={onOpenSettings}>⚙</button>
       <button class="add" title="Add server" onclick={onAddServer}>+</button>
@@ -192,6 +205,18 @@
     justify-content: space-between;
     padding: 10px 12px;
     border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .app-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    flex-shrink: 0;
   }
   .logo {
     font-weight: 900;
