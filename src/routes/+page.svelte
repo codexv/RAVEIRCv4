@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { irc } from "$lib/irc/store.svelte";
   import { appearance } from "$lib/appearance.svelte";
   import { renderMirc } from "$lib/irc/mirc";
@@ -32,6 +32,27 @@
   let showSettings = $state(false);
   let sidebarWidth = $state(220);
   let nicklistWidth = $state(170);
+  // Mobile: the sidebar (tree) becomes a slide-in drawer.
+  let isMobile = $state(false);
+  let mobileNav = $state(false);
+
+  $effect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(max-width: 768px)");
+    const update = () => (isMobile = mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  });
+
+  // Close the drawer once a buffer is picked from the tree (only react to the
+  // buffer change, not to mobileNav itself).
+  $effect(() => {
+    void irc.active?.id;
+    untrack(() => {
+      if (isMobile && mobileNav) mobileNav = false;
+    });
+  });
 
   /** Open (or focus) the Scripts editor as its own OS window, floating over the app. */
   async function openScriptsWindow() {
@@ -168,9 +189,13 @@
   <ScriptsWindow />
 {:else}
 <div class="app">
-  <div class="sidebar" style="width:{sidebarWidth}px">
+  <div class="sidebar" class:open={mobileNav} style={isMobile ? "" : `width:${sidebarWidth}px`}>
     <TreeBar onAddServer={() => (showConnect = true)} onOpenSettings={() => (showSettings = true)} />
   </div>
+  {#if mobileNav}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="mnav-backdrop" role="presentation" onclick={() => (mobileNav = false)}></div>
+  {/if}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     class="resizer"
@@ -183,6 +208,7 @@
   <div class="main">
     <div class="topbar">
       <div class="title-block">
+        <button class="hamburger" onclick={() => (mobileNav = !mobileNav)} aria-label="Toggle navigation">☰</button>
         <span class="title">{title()}</span>
         {#if irc.appVersion}<span class="ver" title="RAVEIRC version">v{irc.appVersion}</span>{/if}
       </div>
@@ -352,5 +378,65 @@
     flex-shrink: 0;
     height: 100%;
     overflow: hidden;
+  }
+
+  /* Mobile drawer toggle — hidden on desktop. */
+  .hamburger {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 8px 2px 0;
+    flex-shrink: 0;
+  }
+  .mnav-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
+
+  /* Phones / narrow windows: tree becomes a slide-in drawer, nicklist hidden. */
+  @media (max-width: 768px) {
+    .hamburger {
+      display: inline-flex;
+    }
+    .resizer {
+      display: none;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 80vw;
+      max-width: 300px;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar.open {
+      transform: none;
+      box-shadow: 6px 0 30px rgba(0, 0, 0, 0.6);
+    }
+    .nicklist-wrap {
+      display: none;
+    }
+    .top-actions {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .top-actions::-webkit-scrollbar {
+      display: none;
+    }
+    .opt-btn {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
   }
 </style>
