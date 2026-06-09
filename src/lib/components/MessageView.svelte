@@ -244,7 +244,7 @@
   .placeholder h2 {
     font-size: 52px;
     font-weight: 900;
-    letter-spacing: 6px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     margin: 0;
     color: var(--fg);

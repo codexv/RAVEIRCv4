@@ -220,7 +220,7 @@
   }
   .logo {
     font-weight: 900;
-    letter-spacing: 3px;
+    letter-spacing: 0.5px;
     font-size: 15px;
     text-transform: uppercase;
     color: var(--fg);
