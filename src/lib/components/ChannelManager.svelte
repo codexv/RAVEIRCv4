@@ -140,6 +140,12 @@
   function resetGlobal() {
     if (!config || !selectedKey) return;
     delete config.channelProtections[selectedKey];
+    // Keep the channel listed (now using global) — remember it as managed,
+    // even if it only existed via an override (e.g. configured pre-managed-list).
+    if (!managed.includes(selectedKey)) {
+      managed = [...managed, selectedKey];
+      persistManaged();
+    }
   }
 
   function doJoin() {
