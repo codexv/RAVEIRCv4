@@ -24,7 +24,8 @@ export type CommandResult =
         | "editor"
         | "topicart"
         | "setkey"
-        | "enc";
+        | "enc"
+        | "font";
       arg?: string;
     }
   | { type: "service"; action: ServiceAction; args: string[] }
@@ -212,6 +213,9 @@ export function parseInput(input: string, ctx: CommandContext): CommandResult {
     case "enc":
     case "encrypt":
       return needConn() ?? { type: "client", action: "enc", arg: rest };
+
+    case "font":
+      return { type: "client", action: "font", arg: rest };
 
     case "clear":
       return { type: "client", action: "clear" };

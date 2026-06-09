@@ -104,6 +104,8 @@ export interface Buffer {
   joined: boolean;
   /** Peak user count seen this session (channel stats). */
   peak?: number;
+  /** Per-window font override set with /font (family/size). */
+  font?: import("../fonts").BufferFont;
 }
 
 export interface Server {

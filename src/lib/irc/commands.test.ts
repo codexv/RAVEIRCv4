@@ -77,4 +77,13 @@ describe("parseInput", () => {
       arg: "bob",
     });
   });
+
+  it("returns a font client action carrying its raw args", () => {
+    expect(parseInput("/font 15 Courier New", ctx())).toEqual({
+      type: "client",
+      action: "font",
+      arg: "15 Courier New",
+    });
+    expect(parseInput("/font", ctx())).toEqual({ type: "client", action: "font", arg: "" });
+  });
 });

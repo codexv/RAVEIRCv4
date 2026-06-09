@@ -18,6 +18,7 @@ import type { MslHost } from "../msl/exec";
 import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
 import { loadAutojoin } from "../channels";
+import { loadBufferFonts, saveBufferFonts, type BufferFont } from "../fonts";
 import { FileStore } from "../msl/files";
 import { SocketStore, type SockEvent } from "../msl/sockets";
 import {
@@ -97,6 +98,8 @@ export class IrcStore {
 
   /** Session encryption passphrase (in-memory only). */
   private encKey = "";
+  /** Per-window font overrides (/font), keyed by channelKey, persisted. */
+  private bufferFonts: Record<string, BufferFont> = loadBufferFonts();
   /** mIRC-compatible scripting engine (aliases / on-events / variables). */
   private msl = new MslEngine();
   /** mIRC hash tables (/hadd, $hget, …), session-scoped. */
@@ -492,9 +495,19 @@ export class IrcStore {
         highlight: false,
         joined: kind === "server",
       };
+      if (kind === "channel" || kind === "query") {
+        const f = this.bufferFonts[this.fontKey(serverId, name)];
+        if (f) buf.font = f;
+      }
       this.buffers.push(buf);
     }
     return buf;
+  }
+
+  /** Storage key for a buffer's /font override ("network/name"). */
+  private fontKey(serverId: number, name: string): string {
+    const s = this.server(serverId);
+    return channelKey(s ? detectNetwork(s) : "generic", name);
   }
 
   private add(buf: Buffer, kind: LineKind, text: string, from?: string) {
@@ -1536,6 +1549,52 @@ export class IrcStore {
     }
   }
 
+  /** /font [size] [name] — set this window's chat font; /font reset clears it. */
+  private setFont(buf: Buffer, arg: string) {
+    if (buf.kind !== "channel" && buf.kind !== "query") {
+      return this.add(buf, "error", "/font only works in a channel or query window.");
+    }
+    const a = arg.trim();
+    if (!a) {
+      const c = buf.font;
+      const desc =
+        c && (c.family || c.size)
+          ? `Current font for ${buf.name}: ${c.family ?? "default"}${c.size ? ` ${c.size}px` : ""}.`
+          : `${buf.name} uses the default chat font.`;
+      this.add(buf, "system", desc);
+      this.add(buf, "system", "Usage: /font [size] [font name]  ·  e.g. /font 15 Courier New  ·  /font reset");
+      return;
+    }
+    if (/^(reset|default|off)$/i.test(a)) {
+      buf.font = undefined;
+      this.persistFont(buf);
+      this.add(buf, "system", `Font reset to default for ${buf.name}.`);
+      return;
+    }
+    const toks = a.split(/\s+/);
+    const font: BufferFont = { ...(buf.font ?? {}) };
+    if (/^\d{1,3}$/.test(toks[0])) {
+      font.size = Math.min(72, Math.max(6, parseInt(toks[0], 10)));
+      toks.shift();
+    }
+    if (toks.length) font.family = toks.join(" ");
+    buf.font = font;
+    this.persistFont(buf);
+    this.add(
+      buf,
+      "system",
+      `Font for ${buf.name}: ${font.family ?? "default"}${font.size ? ` ${font.size}px` : ""}.`,
+    );
+  }
+
+  /** Persist (or clear) a buffer's /font override to localStorage. */
+  private persistFont(buf: Buffer) {
+    const key = this.fontKey(buf.serverId, buf.name);
+    if (buf.font && (buf.font.family || buf.font.size)) this.bufferFonts[key] = buf.font;
+    else delete this.bufferFonts[key];
+    saveBufferFonts(this.bufferFonts);
+  }
+
   private clientCommand(action: string, arg: string | undefined, buf: Buffer) {
     switch (action) {
       case "clear":
@@ -1580,6 +1639,8 @@ export class IrcStore {
         );
         return;
       }
+      case "font":
+        return this.setFont(buf, arg ?? "");
       case "scratchpad":
         this.scratchpadOpen = true;
         return;
@@ -1602,7 +1663,7 @@ export class IrcStore {
           "system",
           "Commands: /join /part /msg /me /nick /topic /kick /mode /whois /query /clear /close /raw /quit · " +
             "Services: /op /deop /voice /devoice /invite /unban /akick /identify /cs /ns /ms · " +
-            "Tools: /scanip /memo /memos /uptime /acronym /chanstats /scratchpad /editor · " +
+            "Tools: /scanip /memo /memos /uptime /acronym /chanstats /scratchpad /editor /font · " +
             "Timers: /timer[name] [-mo] <reps> <interval> <cmd> · /timers · /timer<name> off · " +
             "Topic art: /topicart list · /topicart <id> <text> · " +
             "Scripting: aliases-as-$id, hash (/hadd $hget), files ($read /write), sockets (/sockopen $sock) · " +

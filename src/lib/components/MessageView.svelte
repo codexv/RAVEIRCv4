@@ -4,6 +4,7 @@
   import { renderMirc } from "$lib/irc/mirc";
   import { irc } from "$lib/irc/store.svelte";
   import { focusInput } from "$lib/focus";
+  import { fontStyle } from "$lib/fonts";
 
   let { buffer }: { buffer: Buffer | null } = $props();
 
@@ -108,7 +109,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="messages" bind:this={viewport} onscroll={onScroll} oncontextmenu={openMenu} onclick={() => focusInput()} ondblclick={onDblClick}>
+<div class="messages" bind:this={viewport} style={fontStyle(buffer?.font)} onscroll={onScroll} oncontextmenu={openMenu} onclick={() => focusInput()} ondblclick={onDblClick}>
   {#if !buffer}
     <div class="placeholder">
       <h2>RAVE<span>IRC</span></h2>
