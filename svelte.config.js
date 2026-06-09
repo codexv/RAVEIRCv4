@@ -5,6 +5,10 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
+// Desktop (Tauri) builds at the root; the web/PWA build is served under a
+// subpath — set BASE_PATH=/chat for the hosted mobile app.
+const base = process.env.BASE_PATH || "";
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   preprocess: vitePreprocess(),
@@ -12,6 +16,7 @@ const config = {
     adapter: adapter({
       fallback: "index.html",
     }),
+    paths: { base },
   },
 };
 
