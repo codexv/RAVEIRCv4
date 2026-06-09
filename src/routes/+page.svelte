@@ -184,9 +184,6 @@
       <div class="title-block">
         <span class="title">{title()}</span>
         {#if irc.appVersion}<span class="ver" title="RAVEIRC version">v{irc.appVersion}</span>{/if}
-        {#if active?.kind === "channel" && active.topic}
-          <span class="topic">{@html renderMirc(active.topic)}</span>
-        {/if}
       </div>
       <div class="top-actions">
         {#if active}
@@ -207,6 +204,10 @@
         <HelpMenu />
       </div>
     </div>
+
+    {#if active?.kind === "channel" && active.topic}
+      <div class="topicbar" title={active.topic}>{@html renderMirc(active.topic)}</div>
+    {/if}
 
     <div class="body">
       <MessageView buffer={active} />
@@ -293,12 +294,17 @@
     flex-shrink: 0;
     font-family: var(--mono);
   }
-  .topic {
+  .topicbar {
+    padding: 5px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
     color: var(--fg-dim);
     font-size: 12px;
+    line-height: 1.5;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .top-actions {
     display: flex;
