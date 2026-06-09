@@ -1265,6 +1265,12 @@ export class IrcStore {
     const connected = server?.status === "registered" || server?.status === "connected";
     const target = buf.kind === "server" ? undefined : buf.name;
 
+    // Don't send a plain message into a channel you've left — warn in-window.
+    if (!text.startsWith("/") && buf.kind === "channel" && !buf.joined) {
+      this.add(buf, "error", `You're not in ${buf.name} — /join ${buf.name} to rejoin.`);
+      return;
+    }
+
     // mIRC `//cmd`: evaluate $identifiers/%variables, then run as a command.
     // (Single `/cmd` is sent literally, as in mIRC.)
     if (text.startsWith("//")) {

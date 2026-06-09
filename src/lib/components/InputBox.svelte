@@ -132,7 +132,11 @@
     bind:this={input}
     bind:value
     onkeydown={onKey}
-    placeholder={buffer ? `Message ${buffer.kind === "server" ? "server" : buffer.name}…` : "Not connected"}
+    placeholder={!buffer
+      ? "Not connected"
+      : buffer.kind === "channel" && !buffer.joined
+        ? `You've left ${buffer.name} — /join to rejoin`
+        : `Message ${buffer.kind === "server" ? "server" : buffer.name}…`}
     spellcheck="false"
     autocomplete="off"
   />
