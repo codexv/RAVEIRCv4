@@ -6,6 +6,7 @@
     hydratePasswords,
     commitPasswords,
     deleteProfilePassword,
+    migrateLegacyPasswords,
     newProfile,
     NETWORK_CHOICES,
     type NickProfile,
@@ -23,8 +24,9 @@
       profiles = loadProfiles();
       selId = profiles[0]?.id ?? null;
       loaded = true;
-      // Fill passwords from the OS keychain (in place → fields populate).
-      hydratePasswords(profiles);
+      // Keychain access happens here (the credentials screen): migrate any legacy
+      // plaintext passwords, then fill fields from the OS keychain.
+      migrateLegacyPasswords().then(() => hydratePasswords(profiles));
     }
   });
 

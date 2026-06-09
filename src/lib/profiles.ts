@@ -58,6 +58,16 @@ export function loadProfiles(): NickProfile[] {
   return [];
 }
 
+/** Fetch a single profile's NickServ password from the keychain (lazy). */
+export async function loadProfilePassword(id: string): Promise<string> {
+  try {
+    const pw = await invoke<string | null>("secret_get", { key: SECRET_PREFIX + id });
+    return pw ?? "";
+  } catch {
+    return "";
+  }
+}
+
 /** Fill each profile's NickServ password from the OS keychain (in place). */
 export async function hydratePasswords(list: NickProfile[]): Promise<void> {
   await Promise.all(

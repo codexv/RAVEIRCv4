@@ -1,6 +1,6 @@
 <script lang="ts">
   import { irc } from "$lib/irc/store.svelte";
-  import { loadProfiles, hydratePasswords, profileMatchesHost, type NickProfile } from "$lib/profiles";
+  import { loadProfiles, loadProfilePassword, profileMatchesHost, type NickProfile } from "$lib/profiles";
   import type { ServerConfig } from "$lib/irc/types";
 
   let { open = $bindable() }: { open: boolean } = $props();
@@ -60,10 +60,7 @@
   const matchingProfiles = $derived(allProfiles.filter((p) => profileMatchesHost(p, host)));
 
   $effect(() => {
-    if (open) {
-      allProfiles = loadProfiles();
-      hydratePasswords(allProfiles); // pull NickServ passwords from the keychain
-    }
+    if (open) allProfiles = loadProfiles(); // passwords fetched lazily on profile select
   });
 
   function applyProfile(id: string) {
@@ -73,7 +70,11 @@
     nick = p.nick || nick;
     username = p.username || username;
     realname = p.realname || realname;
-    nickservPassword = p.nickservPassword;
+    // Fetch this profile's password from the keychain only now (explicit choice).
+    nickservPassword = "";
+    loadProfilePassword(p.id).then((pw) => {
+      if (profileId === id) nickservPassword = pw;
+    });
     autoIdentify = p.autoIdentify;
     autoGhost = p.autoGhost;
     autoRelease = p.autoRelease;
