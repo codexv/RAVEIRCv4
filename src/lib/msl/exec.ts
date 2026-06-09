@@ -1,7 +1,7 @@
 // mSL command executor: parses an alias/event body into statements and runs
 // them — control flow (if/elseif/else, while), conditions, and leaf commands.
 
-import { evalString, wildMatch, type EvalCtx } from "./eval";
+import { evalString, evalBrackets, wildMatch, type EvalCtx } from "./eval";
 
 /** Side-effect host the interpreter drives (wired to the IRC store). */
 export interface MslHost {
@@ -198,20 +198,24 @@ export function runCommand(rawLine: string, ctx: EvalCtx, host: MslHost): Signal
   if (cmd.startsWith("/")) cmd = cmd.slice(1);
   if (cmd.startsWith(".")) cmd = cmd.slice(1); // silent prefix
 
-  // Variable commands keep the var NAME unevaluated; only the value is evaluated.
+  // Variable commands: the var NAME is only [ ]-evaluated (for dynamic names like
+  // `%u. [ $+ [ $nick ] ]`), not fully evaluated; the value is fully evaluated.
   switch (cmd) {
     case "set": {
-      const m = /^%(\S+)\s*(.*)$/.exec(rawRest);
+      const r = rawRest.includes("[") ? evalBrackets(rawRest, ctx) : rawRest;
+      const m = /^%(\S+)\s*(.*)$/.exec(r);
       if (m) ctx.vars.set(m[1].toLowerCase(), evalString(m[2], ctx));
       return "normal";
     }
     case "var": {
-      const m = /^%(\S+)\s*=?\s*(.*)$/.exec(rawRest);
+      const r = rawRest.includes("[") ? evalBrackets(rawRest, ctx) : rawRest;
+      const m = /^%(\S+)\s*=?\s*(.*)$/.exec(r);
       if (m) ctx.local.set(m[1].toLowerCase(), evalString(m[2], ctx));
       return "normal";
     }
     case "unset": {
-      const m = /^%(\S+)/.exec(rawRest);
+      const r = rawRest.includes("[") ? evalBrackets(rawRest, ctx) : rawRest;
+      const m = /^%(\S+)/.exec(r);
       if (m) {
         ctx.vars.delete(m[1].toLowerCase());
         ctx.local.delete(m[1].toLowerCase());
@@ -220,7 +224,8 @@ export function runCommand(rawLine: string, ctx: EvalCtx, host: MslHost): Signal
     }
     case "inc":
     case "dec": {
-      const m = /^%(\S+)\s*(.*)$/.exec(rawRest);
+      const r = rawRest.includes("[") ? evalBrackets(rawRest, ctx) : rawRest;
+      const m = /^%(\S+)\s*(.*)$/.exec(r);
       if (m) {
         const name = m[1].toLowerCase();
         const by = parseFloat(evalString(m[2], ctx) || "1") || 1;

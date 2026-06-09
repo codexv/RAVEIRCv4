@@ -41,6 +41,25 @@ describe("evalString", () => {
     expect(evalString("$eval(%foo,2)", c)).toBe("rave");
   });
 
+  it("[ ] evaluation brackets build a dynamic variable name", () => {
+    const c = ctx();
+    c.vars.set("pass.bob", "secret"); // nick is "bob" in ctx()
+    expect(evalString("%pass. [ $+ [ $nick ] ]", c)).toBe("secret");
+  });
+
+  it("leaves literal/regex brackets untouched (no $/% inside)", () => {
+    expect(evalString("match [a-z]+ here", ctx())).toBe("match [a-z]+ here");
+  });
+
+  it("whois frame brackets survive (via $chr) under [ ] evaluation", () => {
+    const line =
+      "$chr(3) $+ 15 ---------------$chr(3) $+ 15$chr(91) $chr(3) $+ 3 RAVE Whois Report $chr(3) $+ 15 $chr(93)---------------";
+    const out = evalString(line, ctx());
+    expect(out).toContain("[");
+    expect(out).toContain("]");
+    expect(out).toContain("RAVE Whois Report");
+  });
+
   it("$regex sets $regml captures", () => {
     const c = ctx();
     expect(evalString("$regex(hello123world,/([a-z]+)(\\d+)/)", c)).toBe("1");

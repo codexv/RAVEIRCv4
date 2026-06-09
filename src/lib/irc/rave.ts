@@ -152,7 +152,7 @@ export interface AiStatus {
 export const DEFAULT_REMOTE = `; ═══ RAVE WHOIS ═══  (classic RAVE whois art — edit freely)
 raw 311:*:{
   echo -a
-  echo -a $chr(3) $+ 15 ---------------$chr(3) $+ 15[ $chr(3) $+ 3 RAVE Whois Report $chr(3) $+ 15 ]---------------
+  echo -a $chr(3) $+ 15 ---------------$chr(3) $+ 15$chr(91) $chr(3) $+ 3 RAVE Whois Report $chr(3) $+ 15 $chr(93)---------------
   echo -a $chr(2) $+ $chr(3) $+ 15 Whois On $+ $chr(2) $+ : $+ $chr(3) $+ 4 $2 $+ $chr(3) $+ 15 ( $+ $3 $+ @ $+ $4 $+ )
   echo -a $chr(3) $+ 15 Real Name: $+ $chr(3) $+ 15 $6-
   haltdef
@@ -175,7 +175,7 @@ raw 378:*:{ echo -a $chr(3) $+ 15 Connecting from: $6- | haltdef }
 raw 379:*:{ echo -a $chr(3) $+ 15 Modes: $2- | haltdef }
 raw 301:*:{ echo -a $chr(3) $+ 15 Away: $+ $chr(3) $+ 7 $3- | haltdef }
 raw 318:*:{
-  echo -a $chr(3) $+ 15 ---------------$chr(3) $+ 15[ $chr(3) $+ 3 End of Whois Report $chr(3) $+ 15 ]---------------
+  echo -a $chr(3) $+ 15 ---------------$chr(3) $+ 15$chr(91) $chr(3) $+ 3 End of Whois Report $chr(3) $+ 15 $chr(93)---------------
   echo -a
   haltdef
 }

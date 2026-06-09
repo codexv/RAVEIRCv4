@@ -74,13 +74,22 @@ describe("MslEngine aliases", () => {
   it("alias-as-identifier passes args and composes; unknown stays empty", () => {
     const e = new MslEngine();
     e.load(
-      "alias greet return Hello $1 from $me\nalias g /echo -a [ $greet(bob) ] [ $nope(x) ]",
+      "alias greet return Hello $1 from $me\nalias g /echo -a ( $greet(bob) ) ( $nope(x) )",
       "",
       "",
     );
     const { echoed, host } = harness();
     e.runAlias("g", "", data(), host);
-    expect(echoed).toContain("[ Hello bob from rave ] [  ]");
+    expect(echoed).toContain("( Hello bob from rave ) (  )");
+  });
+
+  it("[ ] brackets build dynamic variable names in /set and reads", () => {
+    const e = new MslEngine();
+    // %u. [ $+ [ $nick ] ] → %u.bob ; set it then echo it back
+    e.load("alias t { set %u. [ $+ [ $nick ] ] hi | echo -a got %u. [ $+ [ $nick ] ] }", "", "");
+    const { echoed, host } = harness();
+    e.runAlias("t", "", data(), host);
+    expect(echoed).toContain("got hi");
   });
 
   it("runs a block alias with if/else", () => {
