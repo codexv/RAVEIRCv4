@@ -19,6 +19,7 @@
   import About from "$lib/components/About.svelte";
   import ChannelManager from "$lib/components/ChannelManager.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
+  import FontPicker from "$lib/components/FontPicker.svelte";
   import { updater } from "$lib/update.svelte";
 
   // This page boots in two modes: the main app, or the standalone scripts window
@@ -237,6 +238,7 @@
 <BugReport />
 <About />
 <ChannelManager />
+<FontPicker />
 {/if}
 
 <style>

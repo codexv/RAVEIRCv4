@@ -89,6 +89,9 @@ export class IrcStore {
   bugReportOpen = $state(false);
   aboutOpen = $state(false);
   channelManagerOpen = $state(false);
+  /** /font picker dialog; fontTargetId is the buffer it applies to. */
+  fontPickerOpen = $state(false);
+  fontTargetId = $state<string | null>(null);
   /** Open script-defined dialogs (rendered by DialogHost). */
   dialogsOpen = $state<OpenDialog[]>([]);
   private dialogDefs = new Map<string, DialogDef>();
@@ -1556,13 +1559,9 @@ export class IrcStore {
     }
     const a = arg.trim();
     if (!a) {
-      const c = buf.font;
-      const desc =
-        c && (c.family || c.size)
-          ? `Current font for ${buf.name}: ${c.family ?? "default"}${c.size ? ` ${c.size}px` : ""}.`
-          : `${buf.name} uses the default chat font.`;
-      this.add(buf, "system", desc);
-      this.add(buf, "system", "Usage: /font [size] [font name]  ·  e.g. /font 15 Courier New  ·  /font reset");
+      // No args → open the font face/size picker for this window.
+      this.fontTargetId = buf.id;
+      this.fontPickerOpen = true;
       return;
     }
     if (/^(reset|default|off)$/i.test(a)) {
@@ -1593,6 +1592,22 @@ export class IrcStore {
     if (buf.font && (buf.font.family || buf.font.size)) this.bufferFonts[key] = buf.font;
     else delete this.bufferFonts[key];
     saveBufferFonts(this.bufferFonts);
+  }
+
+  /** The buffer the /font picker is editing (null if none / closed). */
+  get fontTarget(): Buffer | null {
+    return this.buffers.find((b) => b.id === this.fontTargetId) ?? null;
+  }
+
+  /** Apply a font chosen in the picker to the target window (empty family = default). */
+  applyPickedFont(family: string, size: number | undefined) {
+    const buf = this.fontTarget;
+    if (!buf) return;
+    const font: BufferFont = {};
+    if (family.trim()) font.family = family.trim();
+    if (size) font.size = size;
+    buf.font = font.family || font.size ? font : undefined;
+    this.persistFont(buf);
   }
 
   private clientCommand(action: string, arg: string | undefined, buf: Buffer) {
