@@ -66,10 +66,21 @@
     b: 2, // bold
     u: 31, // underline
     i: 29, // italic
-    k: 3, // colour (then type fg[,bg])
     r: 22, // reverse
     o: 15, // reset
   };
+
+  // The 16 mIRC palette colours; clicking inserts a colour code (Ctrl+K).
+  const MIRC_COLORS = [
+    "#FFFFFF", "#000000", "#00007F", "#009300", "#FF0000", "#7F0000",
+    "#9C009C", "#FC7F00", "#FFFF00", "#00FC00", "#009393", "#00FFFF",
+    "#0000FC", "#FF00FF", "#7F7F7F", "#D2D2D2",
+  ];
+  let colorOpen = $state(false);
+  function pickColor(n: number) {
+    colorOpen = false;
+    insertCode(String.fromCharCode(3) + String(n).padStart(2, "0"));
+  }
 
   function insertCode(code: string) {
     const el = input;
@@ -88,14 +99,24 @@
   }
 
   function onKey(e: KeyboardEvent) {
-    // Ctrl/Cmd formatting codes (mIRC: Ctrl+B/U/I/K/R/O).
+    // Ctrl/Cmd formatting codes (mIRC: Ctrl+B/U/I/R/O); Ctrl+K opens the palette.
     if ((e.ctrlKey || e.metaKey) && !e.altKey) {
+      if (e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        colorOpen = !colorOpen;
+        return;
+      }
       const cc = FORMAT_CODES[e.key.toLowerCase()];
       if (cc) {
         e.preventDefault();
         insertCode(String.fromCharCode(cc));
         return;
       }
+    }
+    if (e.key === "Escape" && colorOpen) {
+      e.preventDefault();
+      colorOpen = false;
+      return;
     }
     if (e.key === "Enter") {
       e.preventDefault();
@@ -127,7 +148,20 @@
 </script>
 
 <div class="inputbar">
+  {#if colorOpen}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="cp-backdrop" role="presentation" onclick={() => (colorOpen = false)}></div>
+    <div class="color-pop">
+      <div class="cp-grid">
+        {#each MIRC_COLORS as c, i (i)}
+          <button class="sw" style="background:{c}" title="Colour {i}" aria-label="Colour {i}" onclick={() => pickColor(i)}></button>
+        {/each}
+      </div>
+      <button class="cp-reset" title="Reset formatting (Ctrl+O)" onclick={() => { colorOpen = false; insertCode(String.fromCharCode(15)); }}>Reset</button>
+    </div>
+  {/if}
   <button class="nick-tag" title="Nick manager" onclick={() => (irc.nickManagerOpen = true)}>{nick || "—"}</button>
+  <button class="fmt-btn" class:active={colorOpen} title="Text colour (Ctrl+K)" onclick={() => (colorOpen = !colorOpen)}>🎨</button>
   <input
     bind:this={input}
     bind:value
@@ -144,12 +178,77 @@
 
 <style>
   .inputbar {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
     border-top: 1px solid var(--border);
     background: var(--panel);
+  }
+  .fmt-btn {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 4px;
+    border-radius: 5px;
+    opacity: 0.7;
+  }
+  .fmt-btn:hover,
+  .fmt-btn.active {
+    opacity: 1;
+    background: var(--hover);
+  }
+  .cp-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+  }
+  .color-pop {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 12px;
+    z-index: 61;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .cp-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 18px);
+    gap: 4px;
+  }
+  .sw {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+  }
+  .sw:hover {
+    outline: 2px solid var(--accent);
+  }
+  .cp-reset {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg-dim);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .cp-reset:hover {
+    border-color: var(--accent);
+    color: var(--fg);
   }
   .nick-tag {
     color: var(--accent);
