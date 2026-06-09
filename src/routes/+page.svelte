@@ -21,6 +21,7 @@
   import NickManager from "$lib/components/NickManager.svelte";
   import FontPicker from "$lib/components/FontPicker.svelte";
   import { updater } from "$lib/update.svelte";
+  import { isTauri } from "$lib/platform";
 
   // This page boots in two modes: the main app, or the standalone scripts window
   // (a separate OS window opened with ?view=scripts).
@@ -34,6 +35,7 @@
 
   /** Open (or focus) the Scripts editor as its own OS window, floating over the app. */
   async function openScriptsWindow() {
+    if (!isTauri()) return; // web/PWA: no separate OS windows
     const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
     const existing = await WebviewWindow.getByLabel("scripts");
     if (existing) {
@@ -65,7 +67,7 @@
     if (isScriptsWindow) return; // standalone editor view: no IRC init
     irc.init();
     appearance.init();
-    updater.check(); // silent auto-check for a new version on startup
+    if (isTauri()) updater.check(); // desktop only — mobile/web updates via the host
     // The scripts window asks the main app to reload + recompile after saving.
     import("@tauri-apps/api/event").then(({ listen }) =>
       listen("scripts-applied", async () => {
