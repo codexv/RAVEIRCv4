@@ -1,6 +1,15 @@
 <script lang="ts">
   import { irc } from "$lib/irc/store.svelte";
   import { loadProfiles, loadProfilePassword, profileMatchesHost, type NickProfile } from "$lib/profiles";
+  import {
+    loadServers,
+    saveServers,
+    loadServerPassword,
+    saveServerPassword,
+    deleteServerPassword,
+    newServer,
+    type SavedServer,
+  } from "$lib/servers";
   import type { ServerConfig } from "$lib/irc/types";
 
   let { open = $bindable() }: { open: boolean } = $props();
@@ -29,6 +38,7 @@
   let realname = $state("RAVEIRC user");
   let autojoin = $state("");
   let saslPassword = $state("");
+  let serverPassword = $state("");
   let nickservPassword = $state("");
   let autoIdentify = $state(true);
   let autoGhost = $state(true);
@@ -44,12 +54,54 @@
 
   function applyPreset(name: string) {
     presetName = name;
+    selectedServerId = "";
     const p = presets.find((x) => x.name === name);
     if (p && p.name !== "Custom") {
       host = p.host;
       port = p.port;
       tls = p.tls;
     }
+  }
+
+  // ---- Saved custom servers (host/port/tls + keychain server password) -------
+  let savedServers = $state<SavedServer[]>(loadServers());
+  let selectedServerId = $state("");
+  let saveName = $state("");
+
+  function applySavedServer(id: string) {
+    const s = savedServers.find((x) => x.id === id);
+    if (!s) return;
+    selectedServerId = id;
+    presetName = "Custom";
+    host = s.host;
+    port = s.port;
+    tls = s.tls;
+    serverPassword = "";
+    loadServerPassword(id).then((pw) => {
+      if (selectedServerId === id) serverPassword = pw;
+    });
+  }
+
+  function saveCurrentServer() {
+    if (!host) return;
+    const name = (saveName.trim() || host).trim();
+    const srv = newServer();
+    srv.name = name;
+    srv.host = host;
+    srv.port = port;
+    srv.tls = tls;
+    savedServers = [...savedServers, srv];
+    saveServers(savedServers);
+    saveServerPassword(srv.id, serverPassword);
+    selectedServerId = srv.id;
+    saveName = "";
+  }
+
+  function deleteSavedServer(id: string) {
+    savedServers = savedServers.filter((s) => s.id !== id);
+    saveServers(savedServers);
+    deleteServerPassword(id);
+    if (selectedServerId === id) selectedServerId = "";
   }
 
   // Saved identity profiles, filtered to those that suit the chosen server.
@@ -60,7 +112,10 @@
   const matchingProfiles = $derived(allProfiles.filter((p) => profileMatchesHost(p, host)));
 
   $effect(() => {
-    if (open) allProfiles = loadProfiles(); // passwords fetched lazily on profile select
+    if (open) {
+      allProfiles = loadProfiles(); // passwords fetched lazily on profile select
+      savedServers = loadServers();
+    }
   });
 
   function applyProfile(id: string) {
@@ -115,6 +170,7 @@
       nick,
       username: username || nick,
       realname: realname || "RAVEIRC user",
+      password: serverPassword || undefined,
       saslPassword: saslPassword || undefined,
       saslAccount: saslPassword ? nick : undefined,
       nickservPassword: nickservPassword || undefined,
@@ -154,6 +210,17 @@
         {/each}
       </div>
 
+      {#if savedServers.length}
+        <div class="saved">
+          {#each savedServers as s (s.id)}
+            <span class="srv" class:active={selectedServerId === s.id}>
+              <button class="pick" title={`${s.host}:${s.port}${s.tls ? " (TLS)" : ""}`} onclick={() => applySavedServer(s.id)}>{s.name}</button>
+              <button class="del" title="Delete saved server" onclick={() => deleteSavedServer(s.id)}>✕</button>
+            </span>
+          {/each}
+        </div>
+      {/if}
+
       {#if allProfiles.length}
         <label class="profile-row">Identity profile
           <select value={profileId} onchange={(e) => applyProfile(e.currentTarget.value)}>
@@ -177,6 +244,11 @@
         <label class="wide">Real name<input bind:value={realname} /></label>
         <label class="wide">Alt nicks (comma separated)<input bind:value={altNicks} placeholder="RAVE_, RAVE__" /></label>
         <label class="wide">Auto-join (comma separated)<input bind:value={autojoin} placeholder="#channel, #another" /></label>
+        <label class="wide">Server password (ZNC: <code>user/network:password</code>)<input type="password" bind:value={serverPassword} placeholder="for ZNC / bouncers — sent as PASS" /></label>
+        <div class="wide save-row">
+          <input bind:value={saveName} placeholder="Save this server as… (name)" />
+          <button class="save-btn" onclick={saveCurrentServer} disabled={!host} title="Save host/port/TLS + server password as a custom server">＋ Save server</button>
+        </div>
         <label class="wide">SASL password (optional)<input type="password" bind:value={saslPassword} /></label>
         <label class="wide">NickServ password<input type="password" bind:value={nickservPassword} /></label>
         <label class="check-line"><input type="checkbox" bind:checked={autoIdentify} /> Auto-identify to NickServ on connect</label>
@@ -204,6 +276,8 @@
   }
   .dialog {
     width: 440px;
+    max-height: 88vh;
+    overflow-y: auto;
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -232,6 +306,77 @@
   .presets button.active {
     border-color: var(--accent);
     background: var(--accent-soft);
+    color: var(--fg);
+  }
+  .saved {
+    display: flex;
+    gap: 6px;
+    margin: -8px 0 16px;
+    flex-wrap: wrap;
+  }
+  .saved .srv {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .saved .srv.active {
+    border-color: var(--accent);
+  }
+  .saved .pick {
+    border: none;
+    background: var(--bg);
+    color: var(--fg-dim);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 8px 5px 10px;
+  }
+  .saved .srv.active .pick {
+    background: var(--accent-soft);
+    color: var(--fg);
+  }
+  .saved .del {
+    border: none;
+    border-left: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg-faint);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 0 7px;
+  }
+  .saved .del:hover {
+    color: var(--accent);
+  }
+  .save-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .save-row input {
+    flex: 1;
+  }
+  .save-btn {
+    white-space: nowrap;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg-dim);
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .save-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+  .save-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 11px;
     color: var(--fg);
   }
   .profile-row {
