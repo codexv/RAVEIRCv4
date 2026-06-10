@@ -59,8 +59,10 @@ function athemeStyle(
     id,
     label,
     hasServices: true,
-    identify: (account, password) =>
-      [privmsg(t.ns, `IDENTIFY ${account} ${password}`.trim())],
+    // Use the raw NICKSERV server alias (like mIRC's /ns) rather than a PRIVMSG
+    // to NickServ — the ircd routes it to services WITHOUT resetting your idle
+    // time (important through a ZNC bouncer).
+    identify: (account, password) => [`NICKSERV IDENTIFY ${account} ${password}`.trim()],
     op: (c, n) => [privmsg(t.cs, `OP ${c} ${n}`)],
     deop: (c, n) => [privmsg(t.cs, `DEOP ${c} ${n}`)],
     voice: (c, n) => [privmsg(t.cs, `VOICE ${c} ${n}`)],
@@ -72,7 +74,8 @@ function athemeStyle(
     akickList: (c) => [privmsg(t.cs, `AKICK ${c} LIST`)],
     info: (c) => [privmsg(t.cs, `INFO ${c}`)],
     cs: (args) => [privmsg(t.cs, args)],
-    ns: (args) => [privmsg(t.ns, args)],
+    // /ns goes through the raw NICKSERV alias too (idle-safe, mIRC-style).
+    ns: (args) => [`NICKSERV ${args}`],
     ms: (args) => [privmsg(t.ms, args ?? "READ")],
   };
 }

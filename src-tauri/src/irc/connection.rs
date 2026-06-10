@@ -77,10 +77,12 @@ fn network_of(host: &str) -> &'static str {
 fn identify_line(config: &ServerConfig) -> Option<String> {
     let pass = config.nickserv_password.as_ref()?;
     let account = config.sasl_account.clone().unwrap_or_else(|| config.nick.clone());
+    // Use the raw NICKSERV server alias (mIRC /ns style) for services networks
+    // so auto-identify doesn't reset idle time (matters through a ZNC bouncer).
+    // Undernet has no NickServ — X login is only reachable via PRIVMSG.
     Some(match network_of(&config.host) {
-        "dalnet" => format!("PRIVMSG NickServ@services.dal.net :IDENTIFY {pass}"),
         "undernet" => format!("PRIVMSG X@channels.undernet.org :login {account} {pass}"),
-        _ => format!("PRIVMSG NickServ :IDENTIFY {pass}"),
+        _ => format!("NICKSERV IDENTIFY {pass}"),
     })
 }
 

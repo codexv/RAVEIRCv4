@@ -218,9 +218,10 @@ describe("IrcStore event handling", () => {
 
     await irc.sendInput("/identify hunter2");
 
+    // Raw NICKSERV alias (idle-safe), not a PRIVMSG to NickServ.
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
       serverId: 1,
-      line: "PRIVMSG NickServ@services.dal.net :IDENTIFY rave hunter2",
+      line: "NICKSERV IDENTIFY rave hunter2",
     });
   });
 

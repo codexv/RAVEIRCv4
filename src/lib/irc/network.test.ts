@@ -84,7 +84,8 @@ describe("service profiles", () => {
     const p = serviceProfile(srv("irc.rizon.net", "Rizon"));
     expect(p.hasServices).toBe(true);
     expect(p.op("#x", "bob")).toEqual(["PRIVMSG ChanServ :OP #x bob"]);
-    expect(p.identify("me", "pw")).toEqual(["PRIVMSG NickServ :IDENTIFY me pw"]);
+    // identify uses the raw NICKSERV alias (idle-safe), not a PRIVMSG.
+    expect(p.identify("me", "pw")).toEqual(["NICKSERV IDENTIFY me pw"]);
   });
 
   it("QuakeNet routes through the Q bot and auths with AUTH", () => {

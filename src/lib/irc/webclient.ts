@@ -162,7 +162,8 @@ export class WebIrcClient {
 
   private afterRegister(c: Conn) {
     if (c.config.autoIdentify && c.config.nickservPassword) {
-      this.send(c, `PRIVMSG NickServ :IDENTIFY ${c.config.nickservPassword}`);
+      // Raw NICKSERV alias (mIRC /ns style) — doesn't reset idle like a PRIVMSG.
+      this.send(c, `NICKSERV IDENTIFY ${c.config.nickservPassword}`);
     }
     for (const ch of c.config.autojoin ?? []) {
       const chan = ch.startsWith("#") || ch.startsWith("&") ? ch : `#${ch}`;
