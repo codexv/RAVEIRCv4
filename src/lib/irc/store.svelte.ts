@@ -567,6 +567,9 @@ export class IrcStore {
   // ---- event dispatch ------------------------------------------------------
 
   private onEvent(ev: IrcEvent) {
+    // Ignore late events for a server window the user has closed (e.g. the
+    // delayed "disconnected" after closeServer) so it can't be resurrected.
+    if (ev.kind !== "connecting" && !this.server(ev.serverId)) return;
     switch (ev.kind) {
       case "connecting": {
         let s = this.server(ev.serverId);
@@ -1846,6 +1849,18 @@ export class IrcStore {
 
   disconnectServer(serverId: number) {
     disconnectIrc(serverId, "RAVEIRC");
+  }
+
+  /** Close a server window entirely: disconnect, then drop it and all its buffers. */
+  closeServer(serverId: number) {
+    const s = this.server(serverId);
+    if (s && s.status !== "disconnected") disconnectIrc(serverId, "RAVEIRC");
+    const wasActiveServer = this.active?.serverId === serverId;
+    this.buffers = this.buffers.filter((b) => b.serverId !== serverId);
+    this.servers = this.servers.filter((sv) => sv.id !== serverId);
+    if (wasActiveServer || !this.buffers.some((b) => b.id === this.activeId)) {
+      this.activeId = this.buffers[0]?.id ?? null;
+    }
   }
 
   /** Clear a buffer's scrollback by id. */

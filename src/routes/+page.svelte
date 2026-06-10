@@ -215,7 +215,9 @@
       <div class="top-actions">
         {#if active}
           <ServicesMenu buffer={active} {server} />
-          {#if active.kind !== "server"}
+          {#if active.kind === "server"}
+            <button class="ghost" onclick={() => irc.closeServer(active.serverId)} title="Close server window">✕</button>
+          {:else}
             <button class="ghost" onclick={() => irc.closeBuffer(active.id)} title="Close buffer">✕</button>
           {/if}
         {/if}

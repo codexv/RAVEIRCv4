@@ -30,6 +30,8 @@
   ];
 
   let tab = $state<"server" | "identity">("server");
+  // Connect into the current server window by default; tick to add another.
+  let newWindow = $state(false);
   let presetName = $state("DALnet");
   let host = $state("irc.dal.net");
   let port = $state(6697);
@@ -187,6 +189,12 @@
         .map((c) => c.trim())
         .filter(Boolean),
     };
+    // Default: reuse the current server window (close it first). With "New
+    // server window" ticked, leave existing connections and open another.
+    if (!newWindow) {
+      const target = irc.active?.serverId ?? irc.servers[0]?.id;
+      if (target != null) irc.closeServer(target);
+    }
     await irc.connect(config);
     open = false;
   }
@@ -269,6 +277,10 @@
       {/if}
 
       <div class="actions">
+        <label class="newwin" title="Open this connection in an additional server window instead of reusing the current one">
+          <input type="checkbox" bind:checked={newWindow} /> New server window
+        </label>
+        <span class="sp"></span>
         <button class="cancel" onclick={() => (open = false)}>Cancel</button>
         <button class="go" onclick={connect}>Connect</button>
       </div>
@@ -497,9 +509,25 @@
   }
   .actions {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
     gap: 8px;
     margin-top: 20px;
+  }
+  .actions .sp {
+    flex: 1;
+  }
+  .newwin {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fg-dim);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .newwin input {
+    width: auto;
   }
   .actions button {
     padding: 8px 18px;

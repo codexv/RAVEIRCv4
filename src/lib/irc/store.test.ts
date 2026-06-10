@@ -577,4 +577,21 @@ describe("IrcStore event handling", () => {
     chan = irc.buffers.find((b) => b.name === "#makati")!;
     expect(chan.users.find((u) => u.nick === "bob")).toBeUndefined();
   });
+
+  it("closeServer drops the server + its buffers and ignores late events", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    expect(irc.servers).toHaveLength(1);
+    expect(irc.buffers.some((b) => b.name === "#makati")).toBe(true);
+
+    irc.closeServer(1);
+    expect(irc.servers).toHaveLength(0);
+    expect(irc.buffers.filter((b) => b.serverId === 1)).toHaveLength(0);
+
+    // A late "disconnected" must not resurrect the closed window.
+    emit({ kind: "disconnected", serverId: 1, reason: "ping timeout" });
+    expect(irc.servers).toHaveLength(0);
+    expect(irc.buffers.filter((b) => b.serverId === 1)).toHaveLength(0);
+  });
 });

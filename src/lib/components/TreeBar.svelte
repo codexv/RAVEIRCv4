@@ -135,6 +135,7 @@
     {#if b.kind === "server"}
       <div class="cm-sep"></div>
       <button class="danger" onclick={() => act(() => irc.disconnectServer(b.serverId))}>Disconnect</button>
+      <button class="danger" onclick={() => act(() => irc.closeServer(b.serverId))}>Close server window</button>
     {:else}
       <button class="danger" onclick={() => act(() => irc.closeBuffer(b.id))}>Close window</button>
     {/if}
