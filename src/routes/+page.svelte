@@ -23,10 +23,13 @@
   import { updater } from "$lib/update.svelte";
   import { isTauri } from "$lib/platform";
 
-  // This page boots in two modes: the main app, or the standalone scripts window
-  // (a separate OS window opened with ?view=scripts).
-  const isScriptsWindow =
-    typeof location !== "undefined" && new URLSearchParams(location.search).get("view") === "scripts";
+  // This page boots either as the main app or as a standalone secondary window
+  // (?view=scripts / ?view=scratchpad), which renders just that component.
+  const view =
+    typeof location !== "undefined" ? new URLSearchParams(location.search).get("view") : null;
+  const isScriptsWindow = view === "scripts";
+  const isNotesWindow = view === "scratchpad";
+  const isSecondaryWindow = !!view;
 
   let showConnect = $state(false);
   let showSettings = $state(false);
@@ -86,6 +89,26 @@
     });
   }
 
+  /** Open (or focus) Quick Notes as its own resizable OS window. */
+  async function openScratchpadWindow() {
+    if (!isTauri()) return; // web/PWA: no separate OS windows (modal instead)
+    const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
+    const existing = await WebviewWindow.getByLabel("scratchpad");
+    if (existing) {
+      await existing.setFocus();
+      return;
+    }
+    new WebviewWindow("scratchpad", {
+      url: "/?view=scratchpad",
+      title: "RAVEIRC — Quick Notes",
+      width: 560,
+      height: 520,
+      minWidth: 320,
+      minHeight: 240,
+      resizable: true,
+    });
+  }
+
   onMount(() => {
     // Suppress the webview's default right-click menu (Reload/Inspect) everywhere
     // except text fields, where native copy/paste is useful. Applies to both
@@ -97,7 +120,10 @@
     };
     window.addEventListener("contextmenu", noCtx);
 
-    if (isScriptsWindow) return; // standalone editor view: no IRC init
+    if (isSecondaryWindow) {
+      appearance.init(); // theme the standalone window; no IRC init here
+      return;
+    }
     irc.init();
     appearance.init();
     if (isTauri()) updater.check(); // desktop only — mobile/web updates via the host
@@ -179,9 +205,17 @@
     }
   });
 
+  // Quick Notes: own OS window on desktop; on the web build it stays a modal.
+  $effect(() => {
+    if (!isSecondaryWindow && isTauri() && irc.scratchpadOpen) {
+      irc.scratchpadOpen = false;
+      openScratchpadWindow();
+    }
+  });
+
   // Reflect the version in the OS window title bar.
   $effect(() => {
-    if (isScriptsWindow || !irc.appVersion) return;
+    if (isSecondaryWindow || !irc.appVersion) return;
     import("@tauri-apps/api/window").then(({ getCurrentWindow }) => {
       getCurrentWindow().setTitle(`RAVEIRC v${irc.appVersion}`).catch(() => {});
     });
@@ -199,6 +233,8 @@
 
 {#if isScriptsWindow}
   <ScriptsWindow />
+{:else if isNotesWindow}
+  <Scratchpad windowed />
 {:else}
 <div class="app">
   <div class="sidebar" class:open={mobileNav} style={isMobile ? "" : `width:${sidebarWidth}px`}>
