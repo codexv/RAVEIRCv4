@@ -47,6 +47,16 @@ export interface ServiceProfile {
   ms(args: string | null): string[];
 }
 
+// Idle-time awareness (researched per ircd): a client's idle only resets on a
+// PRIVMSG/NOTICE to a user or channel. So auto-identify uses the route that
+// avoids that, per network:
+//   • SASL (when configured) is always idle-safe — it runs before you're online.
+//   • bahamut (DALnet), solanum/charybdis (Libera, OFTC), atheme (Rizon),
+//     UnrealIRCd: NICKSERV/NS is a real *server command/alias* → idle-safe.
+//   • InspIRCd: its NS alias expands to a literal PRIVMSG NickServ → NOT idle-safe
+//     (only reachable via the generic profile; still identifies, just resets idle).
+//   • Undernet (X) / QuakeNet (Q): bot pseudo-users reachable only by PRIVMSG —
+//     no idle-safe path exists, so we keep PRIVMSG there.
 const privmsg = (target: string, body: string): string => `PRIVMSG ${target} :${body}`;
 
 /** ChanServ/atheme-style profile, parameterized by service targets. */
