@@ -82,10 +82,14 @@
             class:active={buf.id === irc.activeId}
             class:server-node={buf.kind === "server"}
             class:highlight={buf.highlight}
-            title={buf.kind === "server" ? "Shift+click to close this server window" : undefined}
+            title={buf.kind === "server"
+              ? "Shift+click to close this server window"
+              : "Shift+click (or middle-click) to close"}
             onclick={(e) => {
-              if (e.shiftKey && buf.kind === "server") closeServerConfirmed(buf.serverId);
-              else irc.select(buf.id);
+              if (e.shiftKey) {
+                if (buf.kind === "server") closeServerConfirmed(buf.serverId);
+                else irc.closeBuffer(buf.id);
+              } else irc.select(buf.id);
             }}
             oncontextmenu={(e) => openMenu(e, buf)}
             onauxclick={(e) => {
