@@ -1185,7 +1185,7 @@ export class IrcStore {
 
   /** Recent auto-identifies, keyed by "serverId|nick", to avoid re-spamming. */
   private identifyCooldown = new Map<string, number>();
-  /** Connect-time identity (in-memory) so auto-identify works without a keychain (web). */
+  /** Connect-time identity (in-memory) — auto-identify fallback for the connect nick. */
   private connectIdentity = new Map<number, { nick: string; password: string }>();
 
   private rememberIdentity(serverId: number, config: ServerConfig) {
@@ -1210,7 +1210,7 @@ export class IrcStore {
   /**
    * Auto-identify to services when `nick` matches a saved profile that has
    * auto-identify on (mIRC-style on-nick / on-NickServ-request). The password
-   * comes from the OS keychain, so this is effective on desktop.
+   * comes from RAVE's encrypted secret store, or the connect-time password.
    */
   private async maybeAutoIdentify(serverId: number, nick: string) {
     const s = this.server(serverId);
@@ -1218,8 +1218,8 @@ export class IrcStore {
     const key = `${serverId}|${nick.toLowerCase()}`;
     if (Date.now() - (this.identifyCooldown.get(key) ?? 0) < 15000) return;
 
-    // Prefer a saved profile (password from the OS keychain on desktop); fall
-    // back to the connect-time password held in memory (works on the web build).
+    // Prefer a saved profile (password from the encrypted secret store); fall
+    // back to the connect-time password held in memory.
     let password = "";
     const prof = loadProfiles().find(
       (p) => p.autoIdentify && p.nick.toLowerCase() === nick.toLowerCase(),

@@ -138,33 +138,8 @@ fn sock_close(sockets: State<SocketManager>, name: String) {
     sockets.close(&name);
 }
 
-// ---- OS keychain: encrypted-at-rest credential storage ---------------------
-const KEYCHAIN_SERVICE: &str = "RAVEIRC";
-
-#[tauri::command]
-fn secret_set(key: String, value: String) -> Result<(), String> {
-    let entry = keyring::Entry::new(KEYCHAIN_SERVICE, &key).map_err(|e| e.to_string())?;
-    entry.set_password(&value).map_err(|e| e.to_string())
-}
-
-#[tauri::command]
-fn secret_get(key: String) -> Result<Option<String>, String> {
-    let entry = keyring::Entry::new(KEYCHAIN_SERVICE, &key).map_err(|e| e.to_string())?;
-    match entry.get_password() {
-        Ok(p) => Ok(Some(p)),
-        Err(keyring::Error::NoEntry) => Ok(None),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn secret_delete(key: String) -> Result<(), String> {
-    let entry = keyring::Entry::new(KEYCHAIN_SERVICE, &key).map_err(|e| e.to_string())?;
-    match entry.delete_credential() {
-        Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
-        Err(e) => Err(e.to_string()),
-    }
-}
+// Credentials are now encrypted by RAVE's self-contained secret store on the
+// frontend (src/lib/secrets.ts) and kept with the app — no OS keychain.
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -202,9 +177,6 @@ pub fn run() {
             sock_open,
             sock_write,
             sock_close,
-            secret_set,
-            secret_get,
-            secret_delete,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

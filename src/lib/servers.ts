@@ -1,9 +1,9 @@
 // Saved custom servers for the Connect dialog. Non-secret fields (name, host,
 // port, tls) live in localStorage; the server password (IRC PASS — used for ZNC
-// and other bouncers, format "user/network:password") is stored in the OS
-// keychain via Tauri commands, mirroring profiles.ts — never in plaintext.
+// and other bouncers, format "user/network:password") is encrypted by RAVE's
+// self-contained secret store (secrets.ts), mirroring profiles.ts — not plaintext.
 
-import { invoke } from "@tauri-apps/api/core";
+import { secretGet, secretSet, secretDelete } from "./secrets";
 
 const SECRET_PREFIX = "serverpw:";
 const KEY = "raveirc.savedServers";
@@ -14,7 +14,7 @@ export interface SavedServer {
   host: string;
   port: number;
   tls: boolean;
-  /** IRC server password (PASS). Blank in memory until fetched from the keychain. */
+  /** IRC server password (PASS). Blank until fetched from the secret store. */
   serverPassword: string;
 }
 
@@ -52,31 +52,17 @@ export function saveServers(list: SavedServer[]) {
   localStorage.setItem(KEY, JSON.stringify(stripped));
 }
 
-/** Fetch a single saved server's password from the keychain (lazy). */
+/** Fetch a single saved server's password from the secret store (lazy). */
 export async function loadServerPassword(id: string): Promise<string> {
-  try {
-    const pw = await invoke<string | null>("secret_get", { key: SECRET_PREFIX + id });
-    return pw ?? "";
-  } catch {
-    return "";
-  }
+  return (await secretGet(SECRET_PREFIX + id)) ?? "";
 }
 
-/** Write (or clear) a saved server's password in the OS keychain. */
+/** Write (or clear) a saved server's password in the secret store. */
 export async function saveServerPassword(id: string, password: string): Promise<void> {
-  try {
-    if (password) await invoke("secret_set", { key: SECRET_PREFIX + id, value: password });
-    else await invoke("secret_delete", { key: SECRET_PREFIX + id });
-  } catch {
-    /* keychain unavailable */
-  }
+  await secretSet(SECRET_PREFIX + id, password);
 }
 
-/** Remove a saved server's stored password from the keychain. */
+/** Remove a saved server's stored password from the secret store. */
 export async function deleteServerPassword(id: string): Promise<void> {
-  try {
-    await invoke("secret_delete", { key: SECRET_PREFIX + id });
-  } catch {
-    /* ignore */
-  }
+  await secretDelete(SECRET_PREFIX + id);
 }

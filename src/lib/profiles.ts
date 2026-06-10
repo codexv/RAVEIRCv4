@@ -1,9 +1,9 @@
 // Saved identity profiles (nick + full user details + which networks they suit).
-// Non-secret fields live in localStorage; the NickServ password is stored in the
-// OS keychain (macOS Keychain / Windows Credential Manager / Linux Secret
-// Service) via Tauri commands — never written to disk in plaintext.
+// Non-secret fields live in localStorage; the NickServ password is encrypted by
+// RAVE's self-contained secret store (see secrets.ts) and kept with the app —
+// never written in plaintext.
 
-import { invoke } from "@tauri-apps/api/core";
+import { secretGet, secretSet, secretDelete } from "./secrets";
 
 const SECRET_PREFIX = "profilepw:";
 
@@ -58,26 +58,17 @@ export function loadProfiles(): NickProfile[] {
   return [];
 }
 
-/** Fetch a single profile's NickServ password from the keychain (lazy). */
+/** Fetch a single profile's NickServ password from the secret store (lazy). */
 export async function loadProfilePassword(id: string): Promise<string> {
-  try {
-    const pw = await invoke<string | null>("secret_get", { key: SECRET_PREFIX + id });
-    return pw ?? "";
-  } catch {
-    return "";
-  }
+  return (await secretGet(SECRET_PREFIX + id)) ?? "";
 }
 
-/** Fill each profile's NickServ password from the OS keychain (in place). */
+/** Fill each profile's NickServ password from the secret store (in place). */
 export async function hydratePasswords(list: NickProfile[]): Promise<void> {
   await Promise.all(
     list.map(async (p) => {
-      try {
-        const pw = await invoke<string | null>("secret_get", { key: SECRET_PREFIX + p.id });
-        if (pw) p.nickservPassword = pw;
-      } catch {
-        /* keychain unavailable — leave blank */
-      }
+      const pw = await secretGet(SECRET_PREFIX + p.id);
+      if (pw) p.nickservPassword = pw;
     }),
   );
 }
@@ -88,24 +79,12 @@ export function saveProfiles(list: NickProfile[]) {
   localStorage.setItem(KEY, JSON.stringify(stripped));
 }
 
-/** Write each profile's NickServ password to the OS keychain (or clear it). */
+/** Write each profile's NickServ password to the secret store (or clear it). */
 export async function commitPasswords(list: NickProfile[]): Promise<void> {
-  await Promise.all(
-    list.map(async (p) => {
-      try {
-        if (p.nickservPassword) {
-          await invoke("secret_set", { key: SECRET_PREFIX + p.id, value: p.nickservPassword });
-        } else {
-          await invoke("secret_delete", { key: SECRET_PREFIX + p.id });
-        }
-      } catch {
-        /* keychain unavailable */
-      }
-    }),
-  );
+  await Promise.all(list.map((p) => secretSet(SECRET_PREFIX + p.id, p.nickservPassword)));
 }
 
-/** One-time: move any plaintext passwords from older localStorage into the keychain. */
+/** One-time: move any plaintext passwords from older localStorage into the secret store. */
 export async function migrateLegacyPasswords(): Promise<void> {
   try {
     const raw = localStorage.getItem(KEY);
@@ -114,12 +93,7 @@ export async function migrateLegacyPasswords(): Promise<void> {
     let changed = false;
     for (const p of list) {
       if (p.nickservPassword) {
-        try {
-          await invoke("secret_set", { key: SECRET_PREFIX + p.id, value: p.nickservPassword });
-        } catch {
-          /* keychain unavailable — leave as is */
-          continue;
-        }
+        await secretSet(SECRET_PREFIX + p.id, p.nickservPassword);
         p.nickservPassword = "";
         changed = true;
       }
@@ -130,13 +104,9 @@ export async function migrateLegacyPasswords(): Promise<void> {
   }
 }
 
-/** Remove a profile's stored password from the keychain. */
+/** Remove a profile's stored password from the secret store. */
 export async function deleteProfilePassword(id: string): Promise<void> {
-  try {
-    await invoke("secret_delete", { key: SECRET_PREFIX + id });
-  } catch {
-    /* ignore */
-  }
+  await secretDelete(SECRET_PREFIX + id);
 }
 
 export function newProfile(): NickProfile {
