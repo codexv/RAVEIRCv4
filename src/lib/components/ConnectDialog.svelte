@@ -393,6 +393,7 @@
   }
   .save-row input {
     flex: 1;
+    min-width: 0;
   }
   .save-btn {
     white-space: nowrap;
@@ -454,7 +455,7 @@
     font-size: 12px;
     color: var(--fg-dim);
   }
-  label.wide {
+  .wide {
     grid-column: 1 / -1;
   }
   label.small {

@@ -225,7 +225,9 @@
         <button class="opt-btn" onclick={() => (showConnect = true)} title="Add server">＋ Connect</button>
         <button class="opt-btn" onclick={() => (irc.nickManagerOpen = true)} title="Nick manager">🪪 Nick</button>
         <button class="opt-btn" onclick={() => (irc.channelManagerOpen = true)} title="Channel manager">＃ Channels</button>
-        <button class="opt-btn" onclick={() => (irc.scriptEditorOpen = true)} title="Scripts editor">{"</>"}</button>
+        {#if isTauri()}
+          <button class="opt-btn" onclick={() => (irc.scriptEditorOpen = true)} title="Scripts editor">{"</>"}</button>
+        {/if}
         <button class="opt-btn" onclick={() => (irc.scratchpadOpen = true)} title="Scratchpad">📝</button>
         <button class="opt-btn" onclick={() => (showSettings = true)} title="Settings">⚙ Settings</button>
         <HelpMenu />

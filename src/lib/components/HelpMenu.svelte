@@ -1,6 +1,7 @@
 <script lang="ts">
   import { irc } from "$lib/irc/store.svelte";
   import { updater } from "$lib/update.svelte";
+  import { isTauri } from "$lib/platform";
 
   let open = $state(false);
   function pick(fn: () => void) {
@@ -18,7 +19,9 @@
       <div class="ver">RAVEIRC v{irc.appVersion || "?"}</div>
       <button onclick={() => pick(() => (irc.aboutOpen = true))}>About RAVEIRC</button>
       <button onclick={() => pick(() => (irc.bugReportOpen = true))}>🐞 Report a bug…</button>
-      <button onclick={() => pick(() => updater.check(true))}>Check for updates</button>
+      {#if isTauri()}
+        <button onclick={() => pick(() => updater.check(true))}>Check for updates</button>
+      {/if}
       <div class="sep"></div>
       <button onclick={() => pick(() => irc.sendInput("/help"))}>Command reference</button>
     </div>
