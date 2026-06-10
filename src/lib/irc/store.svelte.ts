@@ -18,6 +18,7 @@ import type { MslHost } from "../msl/exec";
 import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
 import { loadAutojoin } from "../channels";
+import { loadProfiles, loadProfilePassword } from "../profiles";
 import { loadBufferFonts, saveBufferFonts, type BufferFont } from "../fonts";
 import { isTauri, isWeb } from "../platform";
 import { subscribeIrc, connectServer, sendRaw, sendMessage, disconnectIrc } from "./transport";
@@ -783,6 +784,8 @@ export class IrcStore {
       const dest = this.active ?? this.ensureBuffer(serverId, "(server)", "server");
       this.add(dest, "notice", text, from);
       this.flag(dest, text, me);
+      // NickServ asking us to identify → auto-identify if this nick is saved.
+      if (this.isIdentifyRequest(from, text)) void this.maybeAutoIdentify(serverId, me);
       return;
     }
 
@@ -1158,9 +1161,15 @@ export class IrcStore {
 
   private handleNick(serverId: number, msg: IrcMessage, from: string) {
     const newNick = msg.params[0] ?? msg.params[0] ?? "";
-    if (from === this.ownNick(serverId)) {
+    const isSelf = from === this.ownNick(serverId);
+    if (isSelf) {
       const s = this.server(serverId);
       if (s) s.nick = newNick;
+      // Always surface your own nick change (don't suppress it), even when you
+      // aren't in a shared channel — it lands in the server console.
+      this.addServer(serverId, "nick", `You are now known as ${newNick}`);
+      // Re-identify if the new nick is a saved auto-identify nick.
+      void this.maybeAutoIdentify(serverId, newNick);
     }
     for (const buf of this.buffers) {
       if (buf.serverId !== serverId || buf.kind !== "channel") continue;
@@ -1172,6 +1181,59 @@ export class IrcStore {
       }
     }
     this.dispatchScript(serverId, "NICK", { nick: from, newnick: newNick });
+  }
+
+  /** Recent auto-identifies, keyed by "serverId|nick", to avoid re-spamming. */
+  private identifyCooldown = new Map<string, number>();
+  /** Connect-time identity (in-memory) so auto-identify works without a keychain (web). */
+  private connectIdentity = new Map<number, { nick: string; password: string }>();
+
+  private rememberIdentity(serverId: number, config: ServerConfig) {
+    if (config.nickservPassword && config.autoIdentify !== false) {
+      this.connectIdentity.set(serverId, { nick: config.nick, password: config.nickservPassword });
+    } else {
+      this.connectIdentity.delete(serverId);
+    }
+  }
+
+  /** True if a services notice is asking us to identify our (registered) nick. */
+  private isIdentifyRequest(from: string, text: string): boolean {
+    if (!/nickserv|nickserv@services|^services\./i.test(from)) return false;
+    const t = text.toLowerCase();
+    return (
+      t.includes("identify") ||
+      t.includes("this nickname is registered") ||
+      (t.includes("registered") && (t.includes("nick") || t.includes("password")))
+    );
+  }
+
+  /**
+   * Auto-identify to services when `nick` matches a saved profile that has
+   * auto-identify on (mIRC-style on-nick / on-NickServ-request). The password
+   * comes from the OS keychain, so this is effective on desktop.
+   */
+  private async maybeAutoIdentify(serverId: number, nick: string) {
+    const s = this.server(serverId);
+    if (!s) return;
+    const key = `${serverId}|${nick.toLowerCase()}`;
+    if (Date.now() - (this.identifyCooldown.get(key) ?? 0) < 15000) return;
+
+    // Prefer a saved profile (password from the OS keychain on desktop); fall
+    // back to the connect-time password held in memory (works on the web build).
+    let password = "";
+    const prof = loadProfiles().find(
+      (p) => p.autoIdentify && p.nick.toLowerCase() === nick.toLowerCase(),
+    );
+    if (prof) password = await loadProfilePassword(prof.id);
+    if (!password) {
+      const ci = this.connectIdentity.get(serverId);
+      if (ci && ci.nick.toLowerCase() === nick.toLowerCase()) password = ci.password;
+    }
+    if (!password) return;
+
+    this.identifyCooldown.set(key, Date.now());
+    for (const line of serviceProfile(s).identify(nick, password)) this.raw(serverId, line);
+    this.addServer(serverId, "system", `Auto-identifying ${nick} to services…`);
   }
 
   private handleKick(serverId: number, msg: IrcMessage, from: string) {
@@ -1289,7 +1351,9 @@ export class IrcStore {
   // ---- actions (called by UI) ----------------------------------------------
 
   async connect(config: ServerConfig): Promise<number> {
-    return connectServer(config);
+    const id = await connectServer(config);
+    this.rememberIdentity(id, config);
+    return id;
   }
 
   /**
@@ -1298,9 +1362,15 @@ export class IrcStore {
    * assigns ids, so we replace the window in place.
    */
   async reconnect(serverId: number, config: ServerConfig): Promise<number> {
-    if (isWeb()) return connectServer(config, serverId);
+    if (isWeb()) {
+      const id = await connectServer(config, serverId);
+      this.rememberIdentity(id, config);
+      return id;
+    }
     this.closeServer(serverId);
-    return connectServer(config);
+    const id = await connectServer(config);
+    this.rememberIdentity(id, config);
+    return id;
   }
 
   async sendInput(text: string, override?: Buffer): Promise<void> {

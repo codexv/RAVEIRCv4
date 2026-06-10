@@ -578,6 +578,14 @@ describe("IrcStore event handling", () => {
     expect(chan.users.find((u) => u.nick === "bob")).toBeUndefined();
   });
 
+  it("shows your own nick change in the server console (not suppressed)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("NICK", ["rave2"], "rave") });
+    const srv = irc.buffers.find((b) => b.kind === "server")!;
+    expect(srv.lines.some((l) => l.text.includes("You are now known as rave2"))).toBe(true);
+  });
+
   it("closeServer drops the server + its buffers and ignores late events", () => {
     emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
     emit({ kind: "registered", serverId: 1, nick: "rave" });
