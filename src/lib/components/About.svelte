@@ -46,12 +46,14 @@
         </div>
       </div>
       <p class="tag">
-        A cross-platform IRC client with the native RAVE operator toolkit and a
-        mIRC-compatible scripting engine.
+        A combination of simplicity, efficiency, and elegance — a cross-platform
+        IRC client with the native RAVE operator toolkit and a mIRC-compatible
+        scripting engine.
       </p>
       <p class="credit">
-        A from-scratch native port of the <b>RAVE IRC v4</b> mIRC operator script by
-        <b>acronix</b> (DALnet). Built with Tauri + Svelte.
+        A from-scratch native port of <b>RAVE</b>, the classic DALnet
+        channel-protection script by <b>sneakers @ DALnet</b> (first released 2006).
+        Built with Tauri + Svelte.
       </p>
       <div class="links">
         <button onclick={() => link(REPO)}>GitHub</button>
