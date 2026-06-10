@@ -54,6 +54,18 @@
     });
   });
 
+  /** Close a server window, warning first if it's still connected (mIRC-style). */
+  function closeServerConfirmed(serverId: number) {
+    const s = irc.servers.find((x) => x.id === serverId);
+    if (
+      s &&
+      s.status !== "disconnected" &&
+      !window.confirm(`Close "${s.name}"? This disconnects the server and closes its windows.`)
+    )
+      return;
+    irc.closeServer(serverId);
+  }
+
   /** Open (or focus) the Scripts editor as its own OS window, floating over the app. */
   async function openScriptsWindow() {
     if (!isTauri()) return; // web/PWA: no separate OS windows
@@ -216,7 +228,7 @@
         {#if active}
           <ServicesMenu buffer={active} {server} />
           {#if active.kind === "server"}
-            <button class="ghost" onclick={() => irc.closeServer(active.serverId)} title="Close server window">✕</button>
+            <button class="ghost" onclick={() => closeServerConfirmed(active.serverId)} title="Close server window">✕</button>
           {:else}
             <button class="ghost" onclick={() => irc.closeBuffer(active.id)} title="Close buffer">✕</button>
           {/if}

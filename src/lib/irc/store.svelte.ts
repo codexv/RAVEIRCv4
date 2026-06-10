@@ -1862,16 +1862,19 @@ export class IrcStore {
     disconnectIrc(serverId, "RAVEIRC");
   }
 
-  /** Close a server window entirely: disconnect, then drop it and all its buffers. */
+  /** Close a server window entirely: drop it and all its buffers, then disconnect. */
   closeServer(serverId: number) {
     const s = this.server(serverId);
-    if (s && s.status !== "disconnected") disconnectIrc(serverId, "RAVEIRC");
+    const live = !!s && s.status !== "disconnected";
     const wasActiveServer = this.active?.serverId === serverId;
+    // Remove from the UI FIRST so the synchronous (web) "disconnected" event is
+    // ignored by onEvent's stale-server guard and can't re-create the window.
     this.buffers = this.buffers.filter((b) => b.serverId !== serverId);
     this.servers = this.servers.filter((sv) => sv.id !== serverId);
     if (wasActiveServer || !this.buffers.some((b) => b.id === this.activeId)) {
       this.activeId = this.buffers[0]?.id ?? null;
     }
+    if (live) disconnectIrc(serverId, "RAVEIRC");
   }
 
   /** Clear a buffer's scrollback by id. */

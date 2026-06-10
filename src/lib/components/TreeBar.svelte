@@ -24,6 +24,18 @@
     fn();
   }
 
+  /** Close a server window, warning first if it's still connected. */
+  function closeServerConfirmed(serverId: number) {
+    const s = irc.servers.find((x) => x.id === serverId);
+    if (
+      s &&
+      s.status !== "disconnected" &&
+      !window.confirm(`Close "${s.name}"? This disconnects the server and closes its windows.`)
+    )
+      return;
+    irc.closeServer(serverId);
+  }
+
   function statusDot(status: string): string {
     switch (status) {
       case "registered":
@@ -70,7 +82,11 @@
             class:active={buf.id === irc.activeId}
             class:server-node={buf.kind === "server"}
             class:highlight={buf.highlight}
-            onclick={() => irc.select(buf.id)}
+            title={buf.kind === "server" ? "Shift+click to close this server window" : undefined}
+            onclick={(e) => {
+              if (e.shiftKey && buf.kind === "server") closeServerConfirmed(buf.serverId);
+              else irc.select(buf.id);
+            }}
             oncontextmenu={(e) => openMenu(e, buf)}
             onauxclick={(e) => {
               if (e.button === 1 && buf.kind !== "server") irc.closeBuffer(buf.id);
@@ -135,7 +151,7 @@
     {#if b.kind === "server"}
       <div class="cm-sep"></div>
       <button class="danger" onclick={() => act(() => irc.disconnectServer(b.serverId))}>Disconnect</button>
-      <button class="danger" onclick={() => act(() => irc.closeServer(b.serverId))}>Close server window</button>
+      <button class="danger" onclick={() => act(() => closeServerConfirmed(b.serverId))}>Close server window</button>
     {:else}
       <button class="danger" onclick={() => act(() => irc.closeBuffer(b.id))}>Close window</button>
     {/if}
