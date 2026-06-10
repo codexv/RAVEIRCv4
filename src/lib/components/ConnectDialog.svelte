@@ -29,6 +29,7 @@
     { name: "Custom", host: "", port: 6697, tls: true },
   ];
 
+  let tab = $state<"server" | "identity">("server");
   let presetName = $state("DALnet");
   let host = $state("irc.dal.net");
   let port = $state(6697);
@@ -202,59 +203,70 @@
     <div class="dialog" onclick={(e) => e.stopPropagation()} role="dialog" tabindex="-1">
       <h3>Connect to Server</h3>
 
-      <div class="presets">
-        {#each presets as p (p.name)}
-          <button class:active={presetName === p.name} onclick={() => applyPreset(p.name)}>
-            {p.name}
-          </button>
-        {/each}
+      <div class="tabs">
+        <button class:active={tab === "server"} onclick={() => (tab = "server")}>Server</button>
+        <button class:active={tab === "identity"} onclick={() => (tab = "identity")}>Identity</button>
       </div>
 
-      {#if savedServers.length}
-        <div class="saved">
-          {#each savedServers as s (s.id)}
-            <span class="srv" class:active={selectedServerId === s.id}>
-              <button class="pick" title={`${s.host}:${s.port}${s.tls ? " (TLS)" : ""}`} onclick={() => applySavedServer(s.id)}>{s.name}</button>
-              <button class="del" title="Delete saved server" onclick={() => deleteSavedServer(s.id)}>✕</button>
-            </span>
+      {#if tab === "server"}
+        <div class="presets">
+          {#each presets as p (p.name)}
+            <button class:active={presetName === p.name} onclick={() => applyPreset(p.name)}>
+              {p.name}
+            </button>
           {/each}
         </div>
-      {/if}
 
-      {#if allProfiles.length}
-        <label class="profile-row">Identity profile
-          <select value={profileId} onchange={(e) => applyProfile(e.currentTarget.value)}>
-            <option value="">— Custom —</option>
-            {#each matchingProfiles as p (p.id)}
-              <option value={p.id}>{p.label} ({p.nick})</option>
+        {#if savedServers.length}
+          <div class="saved">
+            {#each savedServers as s (s.id)}
+              <span class="srv" class:active={selectedServerId === s.id}>
+                <button class="pick" title={`${s.host}:${s.port}${s.tls ? " (TLS)" : ""}`} onclick={() => applySavedServer(s.id)}>{s.name}</button>
+                <button class="del" title="Delete saved server" onclick={() => deleteSavedServer(s.id)}>✕</button>
+              </span>
             {/each}
-          </select>
-        </label>
-      {/if}
+          </div>
+        {/if}
 
-      <div class="grid">
-        <label>Server<input bind:value={host} placeholder="irc.example.net" /></label>
-        <label class="small">Port<input type="number" bind:value={port} /></label>
-        <label class="check">
-          <input type="checkbox" bind:checked={tls} /> TLS/SSL
-        </label>
+        <div class="grid">
+          <label>Server<input bind:value={host} placeholder="irc.example.net" /></label>
+          <label class="small">Port<input type="number" bind:value={port} /></label>
+          <label class="check">
+            <input type="checkbox" bind:checked={tls} /> TLS/SSL
+          </label>
 
-        <label>Nick<input bind:value={nick} /></label>
-        <label>Username<input bind:value={username} /></label>
-        <label class="wide">Real name<input bind:value={realname} /></label>
-        <label class="wide">Alt nicks (comma separated)<input bind:value={altNicks} placeholder="RAVE_, RAVE__" /></label>
-        <label class="wide">Auto-join (comma separated)<input bind:value={autojoin} placeholder="#channel, #another" /></label>
-        <label class="wide">Server password (ZNC: <code>user/network:password</code>)<input type="password" bind:value={serverPassword} placeholder="for ZNC / bouncers — sent as PASS" /></label>
-        <div class="wide save-row">
-          <input bind:value={saveName} placeholder="Save this server as… (name)" />
-          <button class="save-btn" onclick={saveCurrentServer} disabled={!host} title="Save host/port/TLS + server password as a custom server">＋ Save server</button>
+          <label class="wide">Server password<input type="password" bind:value={serverPassword} placeholder="for ZNC / bouncers — sent as PASS" /></label>
+          <p class="hint wide">ZNC format: <code>user/network:password</code></p>
+          <div class="wide save-row">
+            <input bind:value={saveName} placeholder="Save this server as… (name)" />
+            <button class="save-btn" onclick={saveCurrentServer} disabled={!host} title="Save host/port/TLS + server password as a custom server">＋ Save server</button>
+          </div>
+          <label class="wide">Auto-join (comma separated)<input bind:value={autojoin} placeholder="#channel, #another" /></label>
         </div>
-        <label class="wide">SASL password (optional)<input type="password" bind:value={saslPassword} /></label>
-        <label class="wide">NickServ password<input type="password" bind:value={nickservPassword} /></label>
-        <label class="check-line"><input type="checkbox" bind:checked={autoIdentify} /> Auto-identify to NickServ on connect</label>
-        <label class="check-line"><input type="checkbox" bind:checked={autoGhost} /> Auto-ghost / regain my nick if in use</label>
-        <label class="check-line"><input type="checkbox" bind:checked={autoRelease} /> Auto-release my nick if held</label>
-      </div>
+      {:else}
+        {#if allProfiles.length}
+          <label class="profile-row">Identity profile
+            <select value={profileId} onchange={(e) => applyProfile(e.currentTarget.value)}>
+              <option value="">— Custom —</option>
+              {#each matchingProfiles as p (p.id)}
+                <option value={p.id}>{p.label} ({p.nick})</option>
+              {/each}
+            </select>
+          </label>
+        {/if}
+
+        <div class="grid">
+          <label>Nick<input bind:value={nick} /></label>
+          <label>Username<input bind:value={username} /></label>
+          <label class="wide">Real name<input bind:value={realname} /></label>
+          <label class="wide">Alt nicks (comma separated)<input bind:value={altNicks} placeholder="RAVE_, RAVE__" /></label>
+          <label class="wide">SASL password (optional)<input type="password" bind:value={saslPassword} /></label>
+          <label class="wide">NickServ password<input type="password" bind:value={nickservPassword} /></label>
+          <label class="check-line"><input type="checkbox" bind:checked={autoIdentify} /> Auto-identify to NickServ on connect</label>
+          <label class="check-line"><input type="checkbox" bind:checked={autoGhost} /> Auto-ghost / regain my nick if in use</label>
+          <label class="check-line"><input type="checkbox" bind:checked={autoRelease} /> Auto-release my nick if held</label>
+        </div>
+      {/if}
 
       <div class="actions">
         <button class="cancel" onclick={() => (open = false)}>Cancel</button>
@@ -287,6 +299,32 @@
   h3 {
     margin: 0 0 14px;
     color: var(--fg);
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tabs button {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--fg-dim);
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: -1px;
+  }
+  .tabs button.active {
+    color: var(--fg);
+    border-bottom-color: var(--accent);
+  }
+  .hint {
+    margin: -6px 0 2px;
+    font-size: 11px;
+    color: var(--fg-faint);
   }
   .presets {
     display: flex;
