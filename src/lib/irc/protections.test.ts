@@ -64,8 +64,15 @@ describe("advertHit", () => {
   it("flags www. domains", () => {
     expect(advertHit("go to www.evil.example now", cfg)).toBe(true);
   });
-  it("flags channel-join adverts", () => {
+  it("flags channel-join adverts (hotlink to another channel)", () => {
     expect(advertHit("join #freestuff for prizes", cfg)).toBe(true);
+    expect(advertHit("join #other now", cfg, "#makati")).toBe(true);
+  });
+  it("intelligent kick: does NOT flag a join invite to the current channel", () => {
+    expect(advertHit("everyone join #makati !", cfg, "#makati")).toBe(false);
+    expect(advertHit("join #makati", cfg, "#makati")).toBe(false);
+    // a real URL is still an advert regardless of channel
+    expect(advertHit("join #makati http://spam.example/x", cfg, "#makati")).toBe(true);
   });
   it("ignores normal chat", () => {
     expect(advertHit("hello how are you", cfg)).toBe(false);

@@ -1041,7 +1041,7 @@ export class IrcStore {
       return this.enforce(serverId, chan, nick, { ban: p.length.ban, reason: p.length.reason });
     }
 
-    if (advertHit(text, a)) {
+    if (advertHit(text, a, chan)) {
       return this.enforce(serverId, chan, nick, { ban: a.ban, reason: a.reason });
     }
 

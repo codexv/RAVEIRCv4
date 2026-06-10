@@ -61,17 +61,31 @@ export function badwordHit(text: string, cfg: BadwordConfig): string | null {
   return null;
 }
 
-/** Does a message look like an advert/spam (URL or channel/server invite)? */
-export function advertHit(text: string, cfg: AntiSpamConfig): boolean {
+/**
+ * Does a message look like an advert/spam (URL or channel hotlink)?
+ *
+ * `currentChannel` enables RAVE's "intelligent kick": a `join #chan` invite only
+ * counts as an advert when it hotlinks to a DIFFERENT channel — inviting people
+ * to the very channel you're in is not spam (trailing punctuation is tolerated).
+ */
+export function advertHit(text: string, cfg: AntiSpamConfig, currentChannel?: string): boolean {
   if (!cfg.enabled || !cfg.blockAdverts) return false;
   const t = stripMirc(text);
-  return (
+  if (
     /\bhttps?:\/\//i.test(t) ||
     /\bwww\.[a-z0-9-]+\.[a-z]{2,}/i.test(t) ||
     /\birc:\/\//i.test(t) ||
-    /\b[a-z0-9-]+\.[a-z]{2,}\/\S+/i.test(t) ||
-    /\bjoin\s+#\S+/i.test(t)
-  );
+    /\b[a-z0-9-]+\.[a-z]{2,}\/\S+/i.test(t)
+  ) {
+    return true;
+  }
+  const m = /\bjoin\s+(#\S+)/i.exec(t);
+  if (m) {
+    const chan = m[1].replace(/[^#a-z0-9_-]+$/i, "").toLowerCase(); // strip trailing ?!,. etc.
+    const cur = (currentChannel ?? "").toLowerCase();
+    if (!cur || chan !== cur) return true; // hotlink to another channel
+  }
+  return false;
 }
 
 /** Clone violation: more than `limit` connections from one host. */
