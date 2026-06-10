@@ -579,6 +579,22 @@ describe("IrcStore event handling", () => {
     expect(chan.users.find((u) => u.nick === "bob")).toBeUndefined();
   });
 
+  it("intelligent ban: bans the trigger word + kicks an offensive nick on join", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    irc.raveConfig.protections.offensiveNick = { enabled: true, words: ["4hire"], reason: "no ads" };
+    joinAsOp("#makati");
+    h.invokeMock.mockClear();
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("JOIN", ["#makati"], "girl4hire", { user: "ad", host: "h.com" }),
+    });
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +b *4hire*!*@*" });
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "KICK #makati girl4hire :no ads" });
+  });
+
   it("shows your own nick change in the server console (not suppressed)", () => {
     emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
     emit({ kind: "registered", serverId: 1, nick: "rave" });

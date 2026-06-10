@@ -151,6 +151,7 @@ impl Default for AiConfig {
 #[serde(rename_all = "camelCase", default)]
 pub struct ProtectionsConfig {
     pub badword: BadwordConfig,
+    pub offensive_nick: OffensiveNickConfig,
     pub clone: CloneConfig,
     pub flood: FloodConfig,
     /// Nicks or hostmasks exempt from all protections.
@@ -270,6 +271,25 @@ impl Default for BadwordConfig {
             words: vec![],
             ban: false,
             reason: "Watch your language".to_string(),
+        }
+    }
+}
+
+/// RAVE "Intelligent Bans": ban a join whose nick/ident contains a trigger word.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct OffensiveNickConfig {
+    pub enabled: bool,
+    pub words: Vec<String>,
+    pub reason: String,
+}
+
+impl Default for OffensiveNickConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            words: vec![],
+            reason: "Offensive nick/ident".to_string(),
         }
     }
 }

@@ -50,6 +50,7 @@ import {
   lengthHit,
   trickHit,
   isCloneViolation,
+  offensiveNickHit,
   isExempt,
   maskToRegex,
   FloodTracker,
@@ -970,6 +971,18 @@ export class IrcStore {
       return;
     }
     if (!this.amOp(serverId, chan)) return;
+
+    // RAVE "Intelligent Bans": offensive nick/ident → ban the trigger word.
+    const on = cfg.offensiveNick;
+    if (on?.enabled && on.words.length) {
+      const word = offensiveNickHit(nick, user, on.words);
+      if (word) {
+        const mask = `*${word}*!*@*`;
+        this.raw(serverId, `MODE ${chan} +b ${mask}`);
+        this.raw(serverId, `KICK ${chan} ${nick} :${on.reason || "Offensive nick/ident"}`);
+        return;
+      }
+    }
 
     if (host) {
       const count = this.usersByHost(serverId, chan, host).length;

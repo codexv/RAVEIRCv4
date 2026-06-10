@@ -395,6 +395,23 @@
               </fieldset>
             </div>
 
+            {#if activeProt.offensiveNick}
+              <div class="block">
+                <label class="toggle"><input type="checkbox" bind:checked={activeProt.offensiveNick.enabled} /> <b>Intelligent bans (offensive nick/ident)</b></label>
+                <fieldset disabled={!activeProt.offensiveNick.enabled}>
+                  <label>Trigger words (one per line) — bans <code>*word*!*@*</code> on join
+                    <textarea
+                      rows="3"
+                      value={activeProt.offensiveNick.words.join("\n")}
+                      onchange={(e) => activeProt && (activeProt.offensiveNick.words = toLines(e.currentTarget.value))}
+                      placeholder="4hire&#10;spammer"
+                    ></textarea>
+                  </label>
+                  <label>Kick reason<input bind:value={activeProt.offensiveNick.reason} /></label>
+                </fieldset>
+              </div>
+            {/if}
+
             <div class="block">
               <label class="toggle"><input type="checkbox" bind:checked={activeProt.clone.enabled} /> <b>Anti-clone</b></label>
               <fieldset disabled={!activeProt.clone.enabled}>

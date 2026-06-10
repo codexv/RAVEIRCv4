@@ -6,6 +6,7 @@ import {
   lengthHit,
   trickHit,
   isCloneViolation,
+  offensiveNickHit,
   isExempt,
   maskToRegex,
   FloodTracker,
@@ -31,6 +32,22 @@ describe("isExempt", () => {
   });
   it("does not exempt a stranger", () => {
     expect(isExempt("stranger", "stranger!u@bad.host", friends)).toBe(false);
+  });
+});
+
+describe("offensiveNickHit", () => {
+  const words = ["4hire", "spammer"];
+  it("matches a trigger as a substring of the nick", () => {
+    expect(offensiveNickHit("girl4hire", "user", words)).toBe("4hire");
+  });
+  it("matches a trigger in the ident, not just the nick", () => {
+    expect(offensiveNickHit("alice", "spammerbot", words)).toBe("spammer");
+  });
+  it("returns null for a clean user", () => {
+    expect(offensiveNickHit("alice", "user", words)).toBeNull();
+  });
+  it("returns null when no trigger words configured", () => {
+    expect(offensiveNickHit("girl4hire", "user", [])).toBeNull();
   });
 });
 

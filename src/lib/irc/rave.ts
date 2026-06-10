@@ -20,6 +20,13 @@ export interface BadwordConfig {
   reason: string;
 }
 
+/** RAVE "Intelligent Bans": ban a join whose nick/ident contains a trigger word. */
+export interface OffensiveNickConfig {
+  enabled: boolean;
+  words: string[];
+  reason: string;
+}
+
 export interface CloneConfig {
   enabled: boolean;
   limit: number;
@@ -70,6 +77,7 @@ export interface TricksConfig {
 
 export interface ProtectionsConfig {
   badword: BadwordConfig;
+  offensiveNick: OffensiveNickConfig;
   clone: CloneConfig;
   flood: FloodConfig;
   friends: string[];
@@ -196,6 +204,7 @@ export function defaultRaveConfig(): RaveConfig {
     },
     protections: {
       badword: { enabled: false, words: [], ban: false, reason: "Watch your language" },
+      offensiveNick: { enabled: false, words: [], reason: "Offensive nick/ident" },
       clone: { enabled: false, limit: 3, ban: false, reason: "Too many clones" },
       flood: { enabled: false, lines: 5, seconds: 3, ban: false, reason: "Stop flooding" },
       friends: [],

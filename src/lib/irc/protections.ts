@@ -88,6 +88,25 @@ export function advertHit(text: string, cfg: AntiSpamConfig, currentChannel?: st
   return false;
 }
 
+/**
+ * RAVE "Intelligent Bans": return the trigger word found in a joining user's
+ * nick or ident (case-insensitive substring — it need not be the exact nick),
+ * or null. The caller bans the *word* (e.g. `*4hire*!*@*`) so a rename without
+ * the word lets them back in.
+ */
+export function offensiveNickHit(
+  nick: string,
+  ident: string | undefined,
+  words: string[],
+): string | null {
+  const hay = `${nick} ${ident ?? ""}`.toLowerCase();
+  for (const w of words) {
+    const word = w.trim().toLowerCase();
+    if (word && hay.includes(word)) return w.trim();
+  }
+  return null;
+}
+
 /** Clone violation: more than `limit` connections from one host. */
 export function isCloneViolation(sameHostCount: number, cfg: CloneConfig): boolean {
   return cfg.enabled && sameHostCount > cfg.limit;

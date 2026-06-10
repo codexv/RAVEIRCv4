@@ -13,6 +13,7 @@ import {
   FloodTracker,
   RepeatTracker,
   isExempt,
+  offensiveNickHit,
 } from "../src/lib/irc/protections";
 import { parseInput } from "../src/lib/irc/commands";
 
@@ -49,7 +50,7 @@ class Conn {
   async register() {
     this.send(`NICK ${this.nick}`);
     this.send(`USER ${this.nick} 0 * :RAVE QA`);
-    await this.waitFor((l) => l.includes(" 001 "), 10000);
+    return this.waitFor((l) => l.includes(" 001 "), 10000);
   }
   waitFor(pred: (l: string) => boolean, ms = 6000): Promise<string | null> {
     return new Promise((res) => {
@@ -90,9 +91,23 @@ async function main() {
 
   // The bot enforces using RAVEIRC's real detection on each offender PRIVMSG.
   let lastReason = "";
+  const offensiveWords = ["4hire"];
   bot.onLine = (raw) => {
     const m = parseIrcLine(raw);
-    if (m.command.toUpperCase() !== "PRIVMSG") return;
+    const cmd = m.command.toUpperCase();
+    // Intelligent ban: scan joining nick/ident for a trigger word.
+    if (cmd === "JOIN") {
+      const jn = m.prefix?.nick ?? "";
+      if (jn && jn !== "RAVEbot") {
+        const word = offensiveNickHit(jn, m.prefix?.user ?? "", offensiveWords);
+        if (word) {
+          bot.send(`MODE ${CHAN} +b *${word}*!*@*`);
+          bot.send(`KICK ${CHAN} ${jn} :offensive nick`);
+        }
+      }
+      return;
+    }
+    if (cmd !== "PRIVMSG") return;
     const from = m.prefix?.nick ?? "";
     const target = m.params[0];
     const text = m.params[1] ?? "";
@@ -127,6 +142,14 @@ async function main() {
   await trigger("mIRC trick/exploit", ["$decode(aGFoYQ==,m)"]);
   await trigger("repeat flood", ["spam line", "spam line", "spam line", "spam line"]);
   await trigger("text flood", ["a", "b", "c", "d", "e", "f"]);
+
+  // Intelligent ban: a join with an offensive nick is banned + kicked on sight.
+  const evil = new Conn("ad4hire"); // short nick (ngircd MaxNickLength=9), contains a trigger
+  await evil.register();
+  evil.send(`JOIN ${CHAN}`);
+  const ekick = await evil.waitFor((l) => l.toUpperCase().includes("KICK") && l.includes("ad4hire"), 4000);
+  check("intelligent ban: offensive nick on join", !!ekick, ekick ? "banned + kicked" : "NOT kicked");
+  evil.sock.destroy();
 
   // Friend exemption is pure logic — verify a friend is exempt.
   const friendCheck = isExempt("Offender", "Offender!~off@host", ["Offender"]);
