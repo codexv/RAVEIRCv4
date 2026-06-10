@@ -111,7 +111,7 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: "RAVEIRC ${{ github.ref_name }}"
-          releaseBody: "Download the installer for your platform below. Existing installs update automatically."
+          releaseBody: "Download the installer for your platform below. Existing installs update automatically. — What's new: https://raveirc.coders.ph/changelog.html"
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
