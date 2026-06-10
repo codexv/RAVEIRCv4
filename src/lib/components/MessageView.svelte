@@ -117,12 +117,18 @@
     </div>
   {:else}
     {#each buffer.lines as line (line.id)}
+      {@const svc = (line.from ?? "").startsWith("*")}
       <div class={lineClass(line)}>
         <span class="ts">{fmtTime(line.ts)}</span>
-        {#if line.kind === "message" || line.kind === "self"}
+        {#if (line.kind === "message" || line.kind === "self") && svc}
+          <!-- ZNC virtual user (e.g. *status): show text without the <*status> wrapper -->
+          <span class="text">{@html renderMirc(line.text)}</span>
+        {:else if line.kind === "message" || line.kind === "self"}
           <span class="nick" style="color:{line.kind === 'self' ? 'var(--accent)' : nickColor(line.from ?? '')}">
             &lt;{#if prefixFor(line.from ?? '')}<span class="uprefix">{prefixFor(line.from ?? '')}</span>{/if}{line.from}&gt;
           </span>
+          <span class="text">{@html renderMirc(line.text)}</span>
+        {:else if line.kind === "notice" && svc}
           <span class="text">{@html renderMirc(line.text)}</span>
         {:else if line.kind === "notice"}
           <span class="nick notice-nick">-{line.from}-</span>
