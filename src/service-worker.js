@@ -9,7 +9,14 @@ const CACHE = `raveirc-${version}`;
 const ASSETS = [...build, ...files];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  // Precache the new shell but wait — the app activates it via "Check for
+  // updates" (SKIP_WAITING) so a refresh isn't forced mid-session.
+  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
+});
+
+// The page tells us to take over when the user chooses to update.
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {

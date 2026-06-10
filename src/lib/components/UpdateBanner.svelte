@@ -5,11 +5,19 @@
 {#if updater.status !== "idle" && updater.status !== "checking"}
   <div class="banner" class:err={updater.status === "error"}>
     {#if updater.status === "available"}
-      <span class="msg">🚀 Update available — <b>v{updater.version}</b></span>
-      <div class="actions">
-        <button class="go" onclick={() => updater.installAndRestart()}>Install &amp; restart</button>
-        <button class="later" onclick={() => updater.dismiss()}>Later</button>
-      </div>
+      {#if updater.web}
+        <span class="msg">🚀 A new version is available</span>
+        <div class="actions">
+          <button class="go" onclick={() => updater.installAndRestart()}>Update now</button>
+          <button class="later" onclick={() => updater.dismiss()}>Later</button>
+        </div>
+      {:else}
+        <span class="msg">🚀 Update available — <b>v{updater.version}</b></span>
+        <div class="actions">
+          <button class="go" onclick={() => updater.installAndRestart()}>Install &amp; restart</button>
+          <button class="later" onclick={() => updater.dismiss()}>Later</button>
+        </div>
+      {/if}
     {:else if updater.status === "downloading"}
       <span class="msg">Downloading update… {updater.progress}%</span>
       <div class="bar"><div class="fill" style="width:{updater.progress}%"></div></div>
