@@ -19,7 +19,7 @@ import { TimerManager, parseTimerSpec, type TimerCtx } from "../msl/timers";
 import { HashStore } from "../msl/hash";
 import { loadAutojoin } from "../channels";
 import { loadBufferFonts, saveBufferFonts, type BufferFont } from "../fonts";
-import { isTauri } from "../platform";
+import { isTauri, isWeb } from "../platform";
 import { subscribeIrc, connectServer, sendRaw, sendMessage, disconnectIrc } from "./transport";
 import { FileStore } from "../msl/files";
 import { SocketStore, type SockEvent } from "../msl/sockets";
@@ -1289,6 +1289,17 @@ export class IrcStore {
   // ---- actions (called by UI) ----------------------------------------------
 
   async connect(config: ServerConfig): Promise<number> {
+    return connectServer(config);
+  }
+
+  /**
+   * Reconnect an existing server window to `config` (mIRC: /server in the current
+   * status window). On web the window persists (same id); on desktop the backend
+   * assigns ids, so we replace the window in place.
+   */
+  async reconnect(serverId: number, config: ServerConfig): Promise<number> {
+    if (isWeb()) return connectServer(config, serverId);
+    this.closeServer(serverId);
     return connectServer(config);
   }
 

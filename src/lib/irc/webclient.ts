@@ -37,8 +37,23 @@ export class WebIrcClient {
     this.cb(ev);
   }
 
-  connect(config: ServerConfig): number {
-    const id = this.nextId++;
+  connect(config: ServerConfig, reuseId?: number): number {
+    // reuseId reconnects an existing window in place (mIRC-style): tear down the
+    // old socket without removing the window, then connect under the same id.
+    const id = reuseId ?? this.nextId++;
+    if (reuseId != null) {
+      this.nextId = Math.max(this.nextId, reuseId + 1);
+      const old = this.conns.get(reuseId);
+      if (old) {
+        old.closed = true; // suppress the old socket's "disconnected" event
+        try {
+          old.ws.close();
+        } catch {
+          /* ignore */
+        }
+        this.conns.delete(reuseId);
+      }
+    }
     this.emit({ kind: "connecting", serverId: id, host: config.host, port: config.port });
     const url = `${gatewayUrl()}?host=${encodeURIComponent(config.host)}&port=${config.port}&tls=${config.tls ? 1 : 0}`;
     let ws: WebSocket;

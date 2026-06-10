@@ -189,13 +189,11 @@
         .map((c) => c.trim())
         .filter(Boolean),
     };
-    // Default: reuse the current server window (close it first). With "New
-    // server window" ticked, leave existing connections and open another.
-    if (!newWindow) {
-      const target = irc.active?.serverId ?? irc.servers[0]?.id;
-      if (target != null) irc.closeServer(target);
-    }
-    await irc.connect(config);
+    // Default: reconnect the current server window in place (mIRC /server).
+    // With "New server window" ticked, open an additional connection (/server -m).
+    const target = newWindow ? undefined : (irc.active?.serverId ?? irc.servers[0]?.id);
+    if (target != null) await irc.reconnect(target, config);
+    else await irc.connect(config);
     open = false;
   }
 </script>

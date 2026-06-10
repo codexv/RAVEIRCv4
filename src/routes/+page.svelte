@@ -222,16 +222,16 @@
           {/if}
         {/if}
         {#if server && (server.status === "registered" || server.status === "connected" || server.status === "connecting")}
-          <button class="opt-btn danger" onclick={() => irc.disconnectServer(server.id)} title="Disconnect from {server.name}">⏻ Disconnect</button>
+          <button class="opt-btn icon danger" onclick={() => irc.disconnectServer(server.id)} title="Disconnect from {server.name}" aria-label="Disconnect">⏻</button>
         {/if}
-        <button class="opt-btn" onclick={() => (showConnect = true)} title="Add server">＋ Connect</button>
-        <button class="opt-btn" onclick={() => (irc.nickManagerOpen = true)} title="Nick manager">🪪 Nick</button>
-        <button class="opt-btn" onclick={() => (irc.channelManagerOpen = true)} title="Channel manager">＃ Channels</button>
+        <button class="opt-btn icon" onclick={() => (showConnect = true)} title="Connect to a server" aria-label="Connect">🔌</button>
+        <button class="opt-btn icon" onclick={() => (irc.nickManagerOpen = true)} title="Nick manager" aria-label="Nick manager">🪪</button>
+        <button class="opt-btn icon" onclick={() => (irc.channelManagerOpen = true)} title="Channel manager" aria-label="Channel manager">＃</button>
         {#if isTauri()}
-          <button class="opt-btn" onclick={() => (irc.scriptEditorOpen = true)} title="Scripts editor">{"</>"}</button>
+          <button class="opt-btn icon" onclick={() => (irc.scriptEditorOpen = true)} title="Scripts editor" aria-label="Scripts editor">{"</>"}</button>
         {/if}
-        <button class="opt-btn" onclick={() => (irc.scratchpadOpen = true)} title="Scratchpad">📝</button>
-        <button class="opt-btn" onclick={() => (showSettings = true)} title="Settings">⚙ Settings</button>
+        <button class="opt-btn icon" onclick={() => (irc.scratchpadOpen = true)} title="Scratchpad" aria-label="Scratchpad">📝</button>
+        <button class="opt-btn icon" onclick={() => (showSettings = true)} title="Settings" aria-label="Settings">⚙</button>
         <HelpMenu />
       </div>
     </div>
@@ -351,6 +351,14 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
+  }
+  /* Compact icon-only toolbar buttons. */
+  .opt-btn.icon {
+    padding: 5px 7px;
+    font-size: 14px;
+    line-height: 1;
+    min-width: 30px;
+    text-align: center;
   }
   .opt-btn:hover {
     border-color: var(--accent);

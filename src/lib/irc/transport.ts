@@ -23,8 +23,8 @@ export async function subscribeIrc(cb: (ev: IrcEvent) => void): Promise<() => vo
   return listen<IrcEvent>("irc-event", (e) => cb(e.payload));
 }
 
-export async function connectServer(config: ServerConfig): Promise<number> {
-  if (isWeb()) return webClient().connect(config);
+export async function connectServer(config: ServerConfig, reuseId?: number): Promise<number> {
+  if (isWeb()) return webClient().connect(config, reuseId);
   return invoke<number>("irc_connect", { config });
 }
 

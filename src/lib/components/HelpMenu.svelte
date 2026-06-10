@@ -10,7 +10,7 @@
 </script>
 
 <div class="help">
-  <button class="opt-btn" class:active={open} onclick={() => (open = !open)} title="Help">? Help</button>
+  <button class="opt-btn icon" class:active={open} onclick={() => (open = !open)} title="Help" aria-label="Help">?</button>
   {#if open}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div class="backdrop" role="presentation" onclick={() => (open = false)}></div>
@@ -37,6 +37,13 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
+  }
+  .opt-btn.icon {
+    padding: 5px 9px;
+    font-size: 14px;
+    line-height: 1;
+    min-width: 30px;
+    text-align: center;
   }
   .opt-btn:hover,
   .opt-btn.active {
