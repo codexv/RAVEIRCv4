@@ -8,10 +8,16 @@ is in public beta (pre-1.0); expect frequent releases.
 
 ## [Unreleased]
 
-- About dialog + website now carry the authentic RAVE heritage and credit
-  (*sneakers @ DALnet*, since 2006).
+_Nothing yet._
+
+## [0.1.16] — 2026-06-10
+
+- About dialog now carries the authentic RAVE heritage and credit
+  (*sneakers @ DALnet*, since 2006), with the original tagline.
+- Project now keeps a changelog, published at
+  [raveirc.coders.ph/changelog.html](https://raveirc.coders.ph/changelog.html);
+  release notes link to it.
 - Website shows a public-beta notice.
-- This changelog, also published on the website.
 
 ## [0.1.15] — 2026-06-10
 
