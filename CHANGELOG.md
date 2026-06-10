@@ -10,6 +10,20 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.17] — 2026-06-11
+
+- **Intelligent Bans** — offensive nick/ident triggers: a join whose nick or
+  ident contains a configured word is banned (`+b *word*!*@*`) and kicked, so a
+  rename without the word lets them back (per the original RAVE spec).
+- **Intelligent kick** now matches RAVE: a `join #channel` invite to the channel
+  you're already in is no longer treated as an advert (only hotlinks to other
+  channels are).
+- Connect dialog: **edit a saved server** and keep the changes (💾 Save changes),
+  separate from “Save new”.
+- Cleaner status window: **ZNC virtual users** (`*status`, `*controlpanel`, …)
+  render without the `<*status>` wrapper.
+- The WebSocket gateway tears down the upstream socket immediately on disconnect.
+
 ## [0.1.16] — 2026-06-10
 
 - About dialog now carries the authentic RAVE heritage and credit
