@@ -95,12 +95,25 @@
     font-size: clamp(40px, 7vw, 76px); margin: 26px 0 8px;
   }
   .tagline { font-size: clamp(17px, 2.4vw, 22px); color: var(--muted); max-width: 620px; margin: 0 auto; }
+  .hero-badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
   .badge {
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+    display: inline-flex; align-items: center; gap: 8px;
     font-size: 13px; color: var(--muted); border: 1px solid var(--border);
     padding: 5px 12px; border-radius: 999px; background: var(--panel);
   }
   .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #2faf5b; }
+  .beta-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.4px;
+    color: #f0b429; border: 1px solid rgba(240, 180, 41, 0.5);
+    background: rgba(240, 180, 41, 0.12);
+    padding: 5px 12px; border-radius: 999px;
+  }
+  .beta-note {
+    margin: 14px auto 0; max-width: 520px;
+    font-size: 13px; color: var(--muted);
+  }
+  .beta-note a { color: var(--accent); }
 
   .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
   .btn {
@@ -182,7 +195,11 @@
     <img class="icon" src="/appicon.svg" alt="RAVEIRC icon" />
     <h1 class="wordmark">RAVE<span class="irc">IRC</span></h1>
     <p class="tagline">A fast, native IRC client with the classic RAVE operator toolkit — reborn for macOS, Windows, and Linux.</p>
-    <span class="badge" id="version-badge"><span class="dot"></span> <span id="version-text">Latest release</span></span>
+    <div class="hero-badges">
+      <span class="beta-badge">● BETA — under active testing</span>
+      <span class="badge" id="version-badge"><span class="dot"></span> <span id="version-text">Latest release</span></span>
+    </div>
+    <p class="beta-note">RAVEIRC is in public beta — usable day-to-day, but it updates often and you may hit the occasional rough edge. <a href="https://github.com/codexv/RAVEIRCv4/issues" target="_blank" rel="noopener">Report a problem →</a></p>
     <div class="cta">
       <a class="btn primary" id="primary-dl" href="https://github.com/codexv/RAVEIRCv4/releases/latest" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
