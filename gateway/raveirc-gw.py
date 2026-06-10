@@ -128,7 +128,24 @@ async def handle(ws, path=None):
             except Exception:
                 pass
 
-    await asyncio.gather(tcp_to_ws(), ws_to_tcp())
+    # Either side ending (e.g. the browser disconnecting) must tear down the
+    # other immediately, so the upstream IRC/ZNC socket doesn't linger.
+    t1 = asyncio.create_task(tcp_to_ws())
+    t2 = asyncio.create_task(ws_to_tcp())
+    try:
+        await asyncio.wait({t1, t2}, return_when=asyncio.FIRST_COMPLETED)
+    finally:
+        for t in (t1, t2):
+            if not t.done():
+                t.cancel()
+        try:
+            writer.close()
+        except Exception:
+            pass
+        try:
+            await ws.close()
+        except Exception:
+            pass
 
 
 async def main():

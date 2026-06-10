@@ -100,6 +100,18 @@
     saveName = "";
   }
 
+  /** Save edits (host/port/TLS/password, optional rename) to the selected server. */
+  function updateSavedServer() {
+    const i = savedServers.findIndex((s) => s.id === selectedServerId);
+    if (i < 0) return;
+    const name = (saveName.trim() || savedServers[i].name || host).trim();
+    savedServers[i] = { ...savedServers[i], name, host, port, tls, serverPassword: "" };
+    savedServers = [...savedServers];
+    saveServers(savedServers);
+    saveServerPassword(selectedServerId, serverPassword);
+    saveName = "";
+  }
+
   function deleteSavedServer(id: string) {
     savedServers = savedServers.filter((s) => s.id !== id);
     saveServers(savedServers);
@@ -244,8 +256,11 @@
           <label class="wide">Server password<input type="password" bind:value={serverPassword} placeholder="for ZNC / bouncers — sent as PASS" /></label>
           <p class="hint wide">ZNC format: <code>user/network:password</code></p>
           <div class="wide save-row">
-            <input bind:value={saveName} placeholder="Save this server as… (name)" />
-            <button class="save-btn" onclick={saveCurrentServer} disabled={!host} title="Save host/port/TLS + server password as a custom server">＋ Save server</button>
+            <input bind:value={saveName} placeholder={selectedServerId ? "Rename… (optional)" : "Save this server as… (name)"} />
+            {#if selectedServerId}
+              <button class="save-btn primary" onclick={updateSavedServer} disabled={!host} title="Save your edits to the selected server">💾 Save changes</button>
+            {/if}
+            <button class="save-btn" onclick={saveCurrentServer} disabled={!host} title="Save as a new custom server">＋ Save{selectedServerId ? " new" : " server"}</button>
           </div>
           <label class="wide">Auto-join (comma separated)<input bind:value={autojoin} placeholder="#channel, #another" /></label>
         </div>
@@ -422,6 +437,13 @@
   .save-btn:disabled {
     opacity: 0.5;
     cursor: default;
+  }
+  .save-btn.primary {
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+  .save-btn.primary:hover:not(:disabled) {
+    background: var(--accent-soft);
   }
   code {
     font-family: var(--mono);
