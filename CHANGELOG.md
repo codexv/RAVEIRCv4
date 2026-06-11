@@ -10,6 +10,19 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.18] — 2026-06-11
+
+- **Disconnect** now tears down immediately even when the server (e.g. a ZNC
+  bouncer) doesn't close the socket after QUIT — the button is no longer a no-op.
+- The server window in the tree shows a **friendly name** (saved-server name, or
+  the network preset) instead of the raw host address.
+- **`/font`** (and its picker) works in **every** window now, including the
+  status/server window; each window's font persists.
+- **Readable light theme** — nick roles and event lines use a legible
+  light-background palette instead of washing out.
+- **More font choices** in Settings → Appearance (UI and monospace).
+- PWA auto-updates on load (no more stale-cache after a deploy).
+
 ## [0.1.17] — 2026-06-11
 
 - **Intelligent Bans** — offensive nick/ident triggers: a join whose nick or
