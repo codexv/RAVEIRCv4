@@ -25,7 +25,10 @@
       value = "";
       return;
     }
-    irc.sendInput(text);
+    // Never let a command-handling error wedge the input box.
+    Promise.resolve()
+      .then(() => irc.sendInput(text))
+      .catch((e) => console.error("sendInput failed:", e));
     history = [text, ...history].slice(0, 100);
     histIdx = -1;
     value = "";

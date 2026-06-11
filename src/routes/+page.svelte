@@ -42,7 +42,12 @@
   $effect(() => {
     if (typeof window === "undefined" || !window.matchMedia) return;
     const mq = window.matchMedia("(max-width: 768px)");
-    const update = () => (isMobile = mq.matches);
+    const update = () => {
+      isMobile = mq.matches;
+      // Never leave the drawer/backdrop stuck open when not in mobile width
+      // (a leftover full-screen backdrop would block all clicks).
+      if (!mq.matches) mobileNav = false;
+    };
     update();
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
@@ -255,7 +260,7 @@
   <div class="sidebar" class:open={mobileNav} style={isMobile ? "" : `width:${sidebarWidth}px`}>
     <TreeBar onAddServer={() => (showConnect = true)} onOpenSettings={() => (showSettings = true)} />
   </div>
-  {#if mobileNav}
+  {#if mobileNav && isMobile}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div class="mnav-backdrop" role="presentation" onclick={() => (mobileNav = false)}></div>
   {/if}
