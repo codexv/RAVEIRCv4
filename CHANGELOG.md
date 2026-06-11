@@ -10,6 +10,13 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.22] — 2026-06-12
+
+- **Hardened every saved list against a duplicate-id crash.** Saved servers,
+  identity profiles, and Quick Notes are now de-duplicated by id when loaded, so
+  a corrupted entry from older storage can't crash the dialog that lists them
+  (the same `each_key_duplicate` class fixed for the channel nicklist in 0.1.21).
+
 ## [0.1.21] — 2026-06-12
 
 - **Fixed a crash from a duplicated nick in the user list.** When the same nick

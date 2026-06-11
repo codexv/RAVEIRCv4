@@ -1,6 +1,8 @@
 // Persistence for the Quick Notes editor: multiple note "tabs" plus the chosen
 // font face/size, auto-saved to local storage (works on desktop and the PWA).
 
+import { dedupeById } from "./util";
+
 export interface Note {
   id: string;
   title: string;
@@ -36,9 +38,10 @@ export function loadNotes(): NotesState {
     if (raw) {
       const s = JSON.parse(raw) as Partial<NotesState>;
       if (s && Array.isArray(s.notes) && s.notes.length) {
+        const notes = dedupeById(s.notes as Note[], uid);
         return {
-          notes: s.notes as Note[],
-          activeId: s.activeId && s.notes.some((n) => n.id === s.activeId) ? s.activeId : s.notes[0].id,
+          notes,
+          activeId: s.activeId && notes.some((n) => n.id === s.activeId) ? s.activeId : notes[0].id,
           font: typeof s.font === "string" ? s.font : "",
           size: typeof s.size === "number" ? s.size : 13,
         };

@@ -148,3 +148,19 @@ export function beep() {
 export function deepClone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
+
+/** Drop entries with a duplicate (or missing) `id`, keeping the first.
+ *  Persisted lists are rendered with `id` as a keyed-each key, so a duplicate
+ *  id — from corrupted storage or an old save bug — would crash the render with
+ *  Svelte's each_key_duplicate. `mint` supplies an id for any blank one. */
+export function dedupeById<T extends { id: string }>(list: T[], mint: () => string): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const item of list) {
+    let id = item.id;
+    if (!id || seen.has(id)) id = mint();
+    seen.add(id);
+    out.push(id === item.id ? item : { ...item, id });
+  }
+  return out;
+}

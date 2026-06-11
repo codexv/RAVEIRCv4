@@ -4,6 +4,7 @@
 // self-contained secret store (secrets.ts), mirroring profiles.ts — not plaintext.
 
 import { secretGet, secretSet, secretDelete } from "./secrets";
+import { dedupeById } from "./util";
 
 const SECRET_PREFIX = "serverpw:";
 const KEY = "raveirc.savedServers";
@@ -37,7 +38,10 @@ export function loadServers(): SavedServer[] {
     if (raw) {
       const list = JSON.parse(raw) as SavedServer[];
       if (Array.isArray(list)) {
-        return list.map((s) => ({ ...newServer(), ...s, serverPassword: "" }));
+        return dedupeById(
+          list.map((s) => ({ ...newServer(), ...s, serverPassword: "" })),
+          uid,
+        );
       }
     }
   } catch {

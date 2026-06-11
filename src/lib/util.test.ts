@@ -1,5 +1,25 @@
 import { describe, it, expect } from "vitest";
-import { acronym, encryptText, decryptText, ENC_MARKER } from "./util";
+import { acronym, encryptText, decryptText, ENC_MARKER, dedupeById } from "./util";
+
+describe("dedupeById", () => {
+  let n = 0;
+  const mint = () => "minted" + n++;
+  it("keeps the first of each duplicate id", () => {
+    const out = dedupeById([{ id: "a", v: 1 }, { id: "a", v: 2 }, { id: "b", v: 3 }], mint);
+    expect(out.map((x) => x.v)).toEqual([1, 2, 3]); // all kept, but...
+    expect(out.map((x) => x.id)).not.toEqual(["a", "a", "b"]); // ...the dup got a fresh id
+    expect(new Set(out.map((x) => x.id)).size).toBe(3); // ids are now unique
+  });
+  it("mints ids for blank ones", () => {
+    const out = dedupeById([{ id: "" }, { id: "" }], mint);
+    expect(new Set(out.map((x) => x.id)).size).toBe(2);
+    expect(out.every((x) => x.id)).toBe(true);
+  });
+  it("leaves an already-unique list untouched", () => {
+    const list = [{ id: "x" }, { id: "y" }];
+    expect(dedupeById(list, mint)).toEqual(list);
+  });
+});
 
 describe("acronym", () => {
   it("expands known acronyms (case/punctuation-insensitive)", () => {

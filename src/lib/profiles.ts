@@ -4,6 +4,7 @@
 // never written in plaintext.
 
 import { secretGet, secretSet, secretDelete } from "./secrets";
+import { dedupeById } from "./util";
 
 const SECRET_PREFIX = "profilepw:";
 
@@ -50,7 +51,10 @@ export function loadProfiles(): NickProfile[] {
       const list = JSON.parse(raw) as NickProfile[];
       // Backfill any fields missing from profiles saved before they existed,
       // and ensure no plaintext password lingers from older versions.
-      return list.map((p) => ({ ...newProfile(), ...p, nickservPassword: "" }));
+      return dedupeById(
+        list.map((p) => ({ ...newProfile(), ...p, nickservPassword: "" })),
+        uid,
+      );
     }
   } catch {
     /* ignore */
