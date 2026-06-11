@@ -10,6 +10,14 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.21] — 2026-06-12
+
+- **Fixed a crash from a duplicated nick in the user list.** When the same nick
+  appeared twice — a nick-change onto an existing name, a case-only rename, or a
+  ZNC buffer replay listing it in two cases — the channel nicklist could hold two
+  entries with the same nick and crash the render. The list now dedupes by nick
+  (case-insensitively), keeping op status and host.
+
 ## [0.1.20] — 2026-06-12
 
 - **Fixed a UI freeze when opening Settings or Channel Manager.** On some

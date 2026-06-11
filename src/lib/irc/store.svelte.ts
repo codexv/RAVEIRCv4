@@ -552,6 +552,26 @@ export class IrcStore {
   // ---- sorting -------------------------------------------------------------
 
   private sortUsers(buf: Buffer, serverId: number) {
+    // Dedupe by nick (case-insensitive) before sorting. The user list is keyed
+    // by nick in the UI, so two entries with the same nick — which a nick-change
+    // onto an existing nick, a case-only rename, or a ZNC buffer replay can
+    // produce — would crash the render with `each_key_duplicate`. Merge any
+    // non-empty fields into the first entry so op status / host aren't lost.
+    if (buf.users.length > 1) {
+      const seen = new Map<string, ChanUser>();
+      for (const u of buf.users) {
+        const key = u.nick.toLowerCase();
+        const prev = seen.get(key);
+        if (prev) {
+          if (!prev.prefix && u.prefix) prev.prefix = u.prefix;
+          if (!prev.user && u.user) prev.user = u.user;
+          if (!prev.host && u.host) prev.host = u.host;
+        } else {
+          seen.set(key, u);
+        }
+      }
+      if (seen.size !== buf.users.length) buf.users = [...seen.values()];
+    }
     const order = this.prefixSymbols(serverId);
     const rank = (u: ChanUser) => {
       // Empty prefix = normal user = lowest rank. Guard the indexOf("") === 0 trap.

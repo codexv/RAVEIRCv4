@@ -155,6 +155,32 @@ describe("IrcStore event handling", () => {
     expect(order.indexOf("anormal")).toBeLessThan(order.indexOf("znormal"));
   });
 
+  it("never lists the same nick twice (case-insensitive) — guards each_key_duplicate", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    // NAMES lists "Bob"; a later JOIN/WHO arrives as "bob" (different case).
+    emit({
+      kind: "message",
+      serverId: 1,
+      raw: "",
+      message: msg("353", ["rave", "=", "#makati", "@Bob rave"]),
+    });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "bob") });
+
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    const bobs = chan.users.filter((u) => u.nick.toLowerCase() === "bob");
+    expect(bobs).toHaveLength(1);
+    expect(bobs[0].prefix).toBe("@"); // op status preserved through the merge
+
+    // A nick-change onto an already-present nick must not duplicate either.
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("NICK", ["BOB"], "rave") });
+    const finalBobs = irc.buffers
+      .find((b) => b.name === "#makati")!
+      .users.filter((u) => u.nick.toLowerCase() === "bob");
+    expect(finalBobs).toHaveLength(1);
+  });
+
   it("adds an incoming channel message to the right buffer", () => {
     emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
     emit({ kind: "registered", serverId: 1, nick: "rave" });
