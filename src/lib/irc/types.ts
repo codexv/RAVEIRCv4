@@ -28,6 +28,8 @@ export type IrcEvent =
 
 /** Connection parameters passed to the `irc_connect` command. */
 export interface ServerConfig {
+  /** Friendly display name for the tree (saved-server name or network preset). */
+  name?: string;
   host: string;
   port: number;
   tls: boolean;

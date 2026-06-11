@@ -178,7 +178,11 @@
 
   async function connect() {
     if (!host || !nick) return;
+    // Friendly tree name: saved-server name, else the chosen network preset.
+    const savedName = savedServers.find((s) => s.id === selectedServerId)?.name;
+    const displayName = savedName || (presetName && presetName !== "Custom" ? presetName : "");
     const config: ServerConfig = {
+      name: displayName || undefined,
       host,
       port,
       tls,

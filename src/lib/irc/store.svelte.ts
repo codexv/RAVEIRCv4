@@ -505,10 +505,9 @@ export class IrcStore {
         highlight: false,
         joined: kind === "server",
       };
-      if (kind === "channel" || kind === "query") {
-        const f = this.bufferFonts[this.fontKey(serverId, name)];
-        if (f) buf.font = f;
-      }
+      // Any window can carry a /font override (channel, query, and status).
+      const f = this.bufferFonts[this.fontKey(serverId, name)];
+      if (f) buf.font = f;
       this.buffers.push(buf);
     }
     return buf;
@@ -574,13 +573,14 @@ export class IrcStore {
     if (ev.kind !== "connecting" && !this.server(ev.serverId)) return;
     switch (ev.kind) {
       case "connecting": {
+        const label = this.serverNames.get(ev.serverId) || ev.host;
         let s = this.server(ev.serverId);
         if (!s) {
-          s = { id: ev.serverId, name: ev.host, nick: "", status: "connecting", isupport: {} };
+          s = { id: ev.serverId, name: label, nick: "", status: "connecting", isupport: {} };
           this.servers.push(s);
         } else {
           s.status = "connecting";
-          s.name = ev.host;
+          s.name = label;
         }
         this.ensureBuffer(ev.serverId, "(server)", "server");
         this.addServer(ev.serverId, "system", `Connecting to ${ev.host}:${ev.port}…`);
@@ -1201,7 +1201,17 @@ export class IrcStore {
   /** Connect-time identity (in-memory) — auto-identify fallback for the connect nick. */
   private connectIdentity = new Map<number, { nick: string; password: string }>();
 
+  /** Friendly display names for server windows (saved-server / preset name). */
+  private serverNames = new Map<number, string>();
+
   private rememberIdentity(serverId: number, config: ServerConfig) {
+    if (config.name) {
+      this.serverNames.set(serverId, config.name);
+      // The web transport emits "connecting" synchronously before this runs, so
+      // update the already-created server window too.
+      const s = this.server(serverId);
+      if (s) s.name = config.name;
+    }
     if (config.nickservPassword && config.autoIdentify !== false) {
       this.connectIdentity.set(serverId, { nick: config.nick, password: config.nickservPassword });
     } else {
@@ -1649,11 +1659,9 @@ export class IrcStore {
     }
   }
 
-  /** /font [size] [name] — set this window's chat font; /font reset clears it. */
+  /** /font [size] [name] — set this window's chat font; /font reset clears it.
+   *  Works in any window — channel, query, and the server/status window. */
   private setFont(buf: Buffer, arg: string) {
-    if (buf.kind !== "channel" && buf.kind !== "query") {
-      return this.add(buf, "error", "/font only works in a channel or query window.");
-    }
     const a = arg.trim();
     if (!a) {
       // No args → open the font face/size picker for this window.

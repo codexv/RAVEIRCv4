@@ -40,15 +40,40 @@ export const THEMES: Record<ThemeId, Theme> = {
 
 export const UI_FONTS: { label: string; value: string }[] = [
   { label: "System", value: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' },
+  { label: "Inter (bundled)", value: '"Inter", system-ui, sans-serif' },
   { label: "Sans", value: 'Helvetica, Arial, sans-serif' },
+  { label: "Helvetica", value: 'Helvetica, Arial, sans-serif' },
+  { label: "Arial", value: "Arial, sans-serif" },
+  { label: "Segoe UI", value: '"Segoe UI", system-ui, sans-serif' },
+  { label: "Roboto", value: "Roboto, system-ui, sans-serif" },
+  { label: "Verdana", value: "Verdana, Geneva, sans-serif" },
+  { label: "Tahoma", value: "Tahoma, Geneva, sans-serif" },
+  { label: "Trebuchet MS", value: '"Trebuchet MS", Helvetica, sans-serif' },
+  { label: "Calibri", value: "Calibri, Candara, Segoe, sans-serif" },
   { label: "Serif", value: 'Georgia, "Times New Roman", serif' },
+  { label: "Georgia", value: 'Georgia, "Times New Roman", serif' },
+  { label: "Times New Roman", value: '"Times New Roman", Times, serif' },
+  { label: "Palatino", value: '"Palatino Linotype", "Book Antiqua", Palatino, serif' },
   { label: "Monospace", value: "ui-monospace, SFMono-Regular, Menlo, monospace" },
 ];
 
 export const MONO_FONTS: { label: string; value: string }[] = [
   { label: "System Mono", value: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" },
+  { label: "SF Mono", value: '"SF Mono", ui-monospace, Menlo, monospace' },
   { label: "Menlo", value: "Menlo, monospace" },
-  { label: "Courier", value: '"Courier New", Courier, monospace' },
+  { label: "Monaco", value: "Monaco, monospace" },
+  { label: "Consolas", value: "Consolas, monospace" },
+  { label: "Cascadia Code", value: '"Cascadia Code", "Cascadia Mono", Consolas, monospace' },
+  { label: "Courier New", value: '"Courier New", Courier, monospace' },
+  { label: "Lucida Console", value: '"Lucida Console", Monaco, monospace' },
+  { label: "DejaVu Sans Mono", value: '"DejaVu Sans Mono", monospace' },
+  { label: "Ubuntu Mono", value: '"Ubuntu Mono", monospace' },
+  { label: "Fira Code", value: '"Fira Code", "Fira Mono", monospace' },
+  { label: "JetBrains Mono", value: '"JetBrains Mono", monospace' },
+  { label: "Source Code Pro", value: '"Source Code Pro", monospace' },
+  { label: "IBM Plex Mono", value: '"IBM Plex Mono", monospace' },
+  { label: "Roboto Mono", value: '"Roboto Mono", monospace' },
+  { label: "Inconsolata", value: "Inconsolata, monospace" },
   { label: "System UI", value: 'system-ui, -apple-system, sans-serif' },
 ];
 
