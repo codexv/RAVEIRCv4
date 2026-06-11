@@ -8,6 +8,7 @@ use std::sync::Arc;
 use parking_lot::{Mutex, RwLock};
 use tauri::AppHandle;
 use tokio::sync::mpsc::UnboundedSender;
+use tokio::sync::Notify;
 
 use super::connection::{self, ServerConfig};
 use crate::rave::RaveConfig;
@@ -22,6 +23,9 @@ struct ConnectionHandle {
     /// Whether the driver should auto-reconnect on connection loss. Cleared on a
     /// user-initiated disconnect so we don't reconnect after /quit.
     reconnect: Arc<AtomicBool>,
+    /// Wakes the read loop so a disconnect tears down immediately, even if the
+    /// server (e.g. a ZNC bouncer) doesn't close the socket after QUIT.
+    shutdown: Arc<Notify>,
 }
 
 /// Tracks all server connections. Cheap to clone-free share via Tauri state.
@@ -54,6 +58,7 @@ impl IrcManager {
         let server_id = self.next_id.fetch_add(1, Ordering::Relaxed) + 1;
         let (out_tx, out_rx) = tokio::sync::mpsc::unbounded_channel::<String>();
         let reconnect = Arc::new(AtomicBool::new(true));
+        let shutdown = Arc::new(Notify::new());
 
         self.connections.lock().insert(
             server_id,
@@ -61,6 +66,7 @@ impl IrcManager {
                 out_tx: out_tx.clone(),
                 nick: config.nick.clone(),
                 reconnect: Arc::clone(&reconnect),
+                shutdown: Arc::clone(&shutdown),
             },
         );
 
@@ -69,7 +75,8 @@ impl IrcManager {
         // Tauri's async runtime is Tokio-backed and always available; plain
         // tokio::spawn would panic here since command threads have no runtime.
         tauri::async_runtime::spawn(async move {
-            connection::run(app, server_id, driver_config, rave, out_rx, out_tx, reconnect).await;
+            connection::run(app, server_id, driver_config, rave, out_rx, out_tx, reconnect, shutdown)
+                .await;
         });
 
         server_id
@@ -102,9 +109,10 @@ impl IrcManager {
         // Stop the driver from auto-reconnecting after this intentional quit.
         handle.reconnect.store(false, Ordering::Relaxed);
         let msg = quit_msg.unwrap_or_else(|| "RAVEIRC".to_string());
-        // Best-effort QUIT; the server then closes the socket and the driver,
-        // seeing reconnect=false, exits instead of retrying.
+        // Best-effort QUIT, then wake the read loop so it tears down immediately
+        // (don't wait for the server/ZNC to close the socket, which it may not).
         let _ = handle.out_tx.send(format!("QUIT :{msg}"));
+        handle.shutdown.notify_waiters();
         Ok(())
     }
 

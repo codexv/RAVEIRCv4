@@ -150,6 +150,7 @@ pub async fn run(
     out_rx: UnboundedReceiver<String>,
     out_tx: UnboundedSender<String>,
     reconnect: Arc<std::sync::atomic::AtomicBool>,
+    shutdown: Arc<tokio::sync::Notify>,
 ) {
     use std::sync::atomic::Ordering;
 
@@ -195,7 +196,8 @@ pub async fn run(
                 let (read_half, write_half) = tokio::io::split(stream);
                 *current.lock().await = Some(write_half);
                 register(&config, &out_tx);
-                last_reason = read_loop(&app, server_id, &config, &rave, read_half, &out_tx).await;
+                last_reason =
+                    read_loop(&app, server_id, &config, &rave, read_half, &out_tx, &shutdown).await;
                 *current.lock().await = None;
             }
             Err(e) => {
@@ -294,6 +296,7 @@ async fn read_loop(
     rave: &Arc<RwLock<RaveConfig>>,
     read_half: tokio::io::ReadHalf<Box<dyn Stream>>,
     out: &UnboundedSender<String>,
+    shutdown: &tokio::sync::Notify,
 ) -> Option<String> {
     let mut reader = BufReader::new(read_half);
     let mut buf = Vec::with_capacity(1024);
@@ -311,11 +314,16 @@ async fn read_loop(
     let mut idle: u64 = 0;
 
     loop {
-        let read = tokio::time::timeout(
-            std::time::Duration::from_secs(TICK),
-            reader.read_until(b'\n', &mut buf),
-        )
-        .await;
+        let read = tokio::select! {
+            biased;
+            // A user-initiated disconnect wakes us immediately, even if the
+            // server/ZNC never closes the socket after our QUIT.
+            _ = shutdown.notified() => return Some("disconnected".to_string()),
+            r = tokio::time::timeout(
+                std::time::Duration::from_secs(TICK),
+                reader.read_until(b'\n', &mut buf),
+            ) => r,
+        };
         match read {
             Err(_) => {
                 // No data this tick — buf may hold a partial line; keep it.
