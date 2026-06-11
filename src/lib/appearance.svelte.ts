@@ -57,11 +57,16 @@ export const UI_FONTS: { label: string; value: string }[] = [
   { label: "Monospace", value: "ui-monospace, SFMono-Regular, Menlo, monospace" },
 ];
 
+// Monaco is macOS-only, so the "Monaco" choice (and the default) is a stack:
+// Monaco on Mac → Consolas/Cascadia on Windows → DejaVu Sans Mono on Linux.
+export const MONACO_STACK =
+  'Monaco, Menlo, "Cascadia Mono", Consolas, "DejaVu Sans Mono", ui-monospace, monospace';
+
 export const MONO_FONTS: { label: string; value: string }[] = [
+  { label: "Monaco (cross-platform)", value: MONACO_STACK },
   { label: "System Mono", value: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" },
   { label: "SF Mono", value: '"SF Mono", ui-monospace, Menlo, monospace' },
   { label: "Menlo", value: "Menlo, monospace" },
-  { label: "Monaco", value: "Monaco, monospace" },
   { label: "Consolas", value: "Consolas, monospace" },
   { label: "Cascadia Code", value: '"Cascadia Code", "Cascadia Mono", Consolas, monospace' },
   { label: "Courier New", value: '"Courier New", Courier, monospace' },
