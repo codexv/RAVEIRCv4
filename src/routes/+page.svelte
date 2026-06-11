@@ -125,6 +125,31 @@
     };
     window.addEventListener("contextmenu", noCtx);
 
+    // Surface uncaught errors in a plain-DOM banner (works even if a render
+    // crash has taken down Svelte). Helps diagnose lock-ups on builds without
+    // devtools. Tap to dismiss.
+    const showCrash = (msg: string) => {
+      let el = document.getElementById("rave-crash");
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "rave-crash";
+        el.style.cssText =
+          "position:fixed;top:0;left:0;right:0;z-index:99999;background:#7a1020;color:#fff;" +
+          "font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 12px;white-space:pre-wrap;" +
+          "max-height:40vh;overflow:auto;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5)";
+        el.title = "tap to dismiss";
+        el.addEventListener("click", () => el?.remove());
+        document.body.appendChild(el);
+      }
+      el.textContent = "⚠ RAVEIRC error (tap to dismiss):\n" + msg;
+    };
+    window.addEventListener("error", (e) =>
+      showCrash(`${e.message}\n  at ${(e.filename || "").split("/").pop()}:${e.lineno}:${e.colno}`),
+    );
+    window.addEventListener("unhandledrejection", (e) =>
+      showCrash("unhandled promise: " + (e.reason?.stack || e.reason?.message || String(e.reason))),
+    );
+
     if (isSecondaryWindow) {
       appearance.init(); // theme the standalone window; no IRC init here
       return;

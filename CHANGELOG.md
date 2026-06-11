@@ -10,6 +10,15 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.19] — 2026-06-11
+
+- Default chat font is now **Monaco** (cross-platform stack: Monaco on macOS,
+  Consolas/Cascadia on Windows, DejaVu Sans Mono on Linux).
+- Hardened against UI lock-ups: the mobile-nav backdrop can't get stuck blocking
+  clicks, and an editbox command error can't wedge input.
+- Uncaught errors now show a dismissible on-screen banner (helps diagnose
+  freezes on builds without devtools).
+
 ## [0.1.18] — 2026-06-11
 
 - **Disconnect** now tears down immediately even when the server (e.g. a ZNC
