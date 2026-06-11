@@ -13,6 +13,12 @@ export default defineConfig(async () => ({
     __WEB_BUILD__: JSON.stringify(!!process.env.BASE_PATH),
   },
 
+  // Emit source maps so a crash report's minified stack can be mapped back to
+  // the real component/line (the on-screen error banner shows the raw stack).
+  build: {
+    sourcemap: true,
+  },
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors

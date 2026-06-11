@@ -168,9 +168,15 @@
       );
       box.append(pre, row);
     };
-    window.addEventListener("error", (e) =>
-      showCrash(`${e.message}\n  at ${(e.filename || "").split("/").pop()}:${e.lineno}:${e.colno}`),
-    );
+    window.addEventListener("error", (e) => {
+      // Prefer the Error object's full stack — it names the component frame.
+      // e.filename/lineno point at where the runtime re-throws (always the
+      // Svelte core chunk), which is useless for telling lists apart.
+      const stack = e.error?.stack;
+      showCrash(
+        stack || `${e.message}\n  at ${(e.filename || "").split("/").pop()}:${e.lineno}:${e.colno}`,
+      );
+    });
     window.addEventListener("unhandledrejection", (e) =>
       showCrash("unhandled promise: " + (e.reason?.stack || e.reason?.message || String(e.reason))),
     );

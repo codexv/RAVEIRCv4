@@ -10,6 +10,13 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.23] — 2026-06-12
+
+- **Better crash reports.** The on-screen error banner now shows the full stack
+  trace (the component that actually failed), instead of always pointing at the
+  framework's internal re-throw location — so a report finally says *which* part
+  of the app errored. Builds also ship source maps to make those traces legible.
+
 ## [0.1.22] — 2026-06-12
 
 - **Hardened every saved list against a duplicate-id crash.** Saved servers,
