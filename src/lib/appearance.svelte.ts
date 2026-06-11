@@ -147,8 +147,33 @@ const DEFAULTS = {
 
 const KEY = "raveirc.appearance";
 
-/** Dark text palette used for neutral chat lines/nicks on a light background. */
-const NEUTRAL_LIGHTBG = { fg: "#1f2328", dim: "#57606a", faint: "#8c959f" };
+// Readable defaults for a LIGHT background (GitHub-light semantic palette). Used
+// automatically whenever the effective chat background is light, so roles/events
+// stay distinct AND legible on white instead of washing out.
+const LIGHT_NICK_COLORS: NickColors = {
+  owner: "#cf222e", // red
+  admin: "#bc4c00", // orange
+  op: "#0969da", // blue
+  halfop: "#1a7f37", // green
+  voice: "#9a6700", // amber
+  normal: "#1f2328", // near-black
+  self: "#57606a", // gray
+};
+const LIGHT_EVENT_COLORS: EventColors = {
+  message: "#1f2328",
+  self: "#57606a",
+  notice: "#9a6700",
+  action: "#8250df", // purple
+  join: "#1a7f37",
+  part: "#57606a",
+  quit: "#8c959f",
+  kick: "#bc4c00",
+  nick: "#0969da",
+  mode: "#57606a",
+  topic: "#0969da",
+  system: "#57606a",
+  error: "#cf222e",
+};
 
 /** Relative luminance (0=black, 1=white) of a #rrggbb colour, for contrast checks. */
 function relLuminance(hex: string): number {
@@ -169,24 +194,25 @@ class Appearance {
   nickColors = $state<NickColors>({ ...DEFAULTS.nickColors });
   eventColors = $state<EventColors>({ ...DEFAULTS.eventColors });
 
+  /** True when the effective chat background is light (light theme or light custom bg). */
+  private get lightBg(): boolean {
+    return relLuminance(this.chatBg || THEMES[this.theme].bg) > 0.5;
+  }
+
   /** Resolve the colour for a nick given its prefix and whether it's you. */
   nickColor(prefix: string, isSelf: boolean): string {
-    let c: string;
-    if (isSelf) c = this.nickColors.self;
-    else
-      switch (prefix) {
-        case "~": c = this.nickColors.owner; break;
-        case "&": c = this.nickColors.admin; break;
-        case "@": c = this.nickColors.op; break;
-        case "%": c = this.nickColors.halfop; break;
-        case "+": c = this.nickColors.voice; break;
-        default: c = this.nickColors.normal;
-      }
-    // On a light chat background, swap near-white nick colours for dark text so
-    // they stay visible (keyed on the effective chat background, not the theme).
-    const chatLight = relLuminance(this.chatBg || THEMES[this.theme].bg) > 0.5;
-    if (chatLight && relLuminance(c) > 0.62) return NEUTRAL_LIGHTBG.fg;
-    return c;
+    // Light background → readable light palette (keeps roles distinct);
+    // dark background → the user's colours.
+    const p = this.lightBg ? LIGHT_NICK_COLORS : this.nickColors;
+    if (isSelf) return p.self;
+    switch (prefix) {
+      case "~": return p.owner;
+      case "&": return p.admin;
+      case "@": return p.op;
+      case "%": return p.halfop;
+      case "+": return p.voice;
+      default: return p.normal;
+    }
   }
 
   /** Load saved appearance and apply it. Call once at startup. */
@@ -229,21 +255,12 @@ class Appearance {
     r.setProperty("--ui", this.uiFont);
     r.setProperty("--mono", this.monoFont);
     r.setProperty("--msg-size", `${this.msgSize}px`);
-    // Per-event line colours as CSS variables consumed by MessageView.
-    for (const [k, v] of Object.entries(this.eventColors)) {
+    // Per-event line colours as CSS variables consumed by MessageView. On a light
+    // effective background use the readable light palette so every event kind
+    // (join/nick/kick/notice/error/…) stays legible; otherwise the user's colours.
+    const eventPalette = this.lightBg ? LIGHT_EVENT_COLORS : this.eventColors;
+    for (const [k, v] of Object.entries(eventPalette)) {
       r.setProperty(`--line-${k}`, v);
-    }
-    // The neutral line kinds default to light-on-dark. If the *effective chat
-    // background* is light (a light theme, or a custom light chat colour on any
-    // theme), remap them to dark text so they stay readable — keyed on the chat
-    // background, not the theme, so a custom colour always reads correctly.
-    if (relLuminance(this.chatBg || t.bg) > 0.5) {
-      r.setProperty("--line-message", NEUTRAL_LIGHTBG.fg);
-      r.setProperty("--line-self", NEUTRAL_LIGHTBG.dim);
-      r.setProperty("--line-system", NEUTRAL_LIGHTBG.dim);
-      r.setProperty("--line-mode", NEUTRAL_LIGHTBG.faint);
-      r.setProperty("--line-part", NEUTRAL_LIGHTBG.faint);
-      r.setProperty("--line-quit", NEUTRAL_LIGHTBG.faint);
     }
     this.save();
   }
