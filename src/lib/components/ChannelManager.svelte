@@ -3,6 +3,7 @@
   import { detectNetwork } from "$lib/irc/network";
   import { channelKey, saveRaveConfig, type ProtectionsConfig, type RaveConfig } from "$lib/irc/rave";
   import { loadAutojoin, saveAutojoin } from "$lib/channels";
+  import { deepClone } from "$lib/util";
 
   let config = $state<RaveConfig | null>(null);
   let selectedKey = $state("");
@@ -56,7 +57,7 @@
 
   $effect(() => {
     if (irc.channelManagerOpen && !config) {
-      config = structuredClone($state.snapshot(irc.raveConfig)) as RaveConfig;
+      config = deepClone($state.snapshot(irc.raveConfig)) as RaveConfig;
       joinServer = irc.servers[0]?.id ?? null;
       managed = loadManaged();
       autojoin = loadAutojoin();
@@ -92,7 +93,7 @@
     if (!/^[#&!+]/.test(chan)) chan = "#" + chan;
     const key = channelKey(addNet, chan);
     if (!config.channelProtections[key]) {
-      config.channelProtections[key] = structuredClone($state.snapshot(config.protections)) as ProtectionsConfig;
+      config.channelProtections[key] = deepClone($state.snapshot(config.protections)) as ProtectionsConfig;
     }
     if (!managed.includes(key)) {
       managed = [...managed, key];
@@ -155,7 +156,7 @@
 
   function customize() {
     if (!config || !selectedKey) return;
-    config.channelProtections[selectedKey] = structuredClone($state.snapshot(config.protections)) as ProtectionsConfig;
+    config.channelProtections[selectedKey] = deepClone($state.snapshot(config.protections)) as ProtectionsConfig;
   }
   function resetGlobal() {
     if (!config || !selectedKey) return;

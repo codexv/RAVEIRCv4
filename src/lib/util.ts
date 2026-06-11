@@ -142,3 +142,9 @@ export function beep() {
     /* audio unavailable */
   }
 }
+
+/** Deep-clone plain JSON-able data. Works on every WebView (structuredClone is
+ *  missing on older macOS WebKit, which crashed Settings/Channel Manager). */
+export function deepClone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value));
+}

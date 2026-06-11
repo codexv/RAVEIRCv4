@@ -129,19 +129,44 @@
     // crash has taken down Svelte). Helps diagnose lock-ups on builds without
     // devtools. Tap to dismiss.
     const showCrash = (msg: string) => {
-      let el = document.getElementById("rave-crash");
-      if (!el) {
-        el = document.createElement("div");
-        el.id = "rave-crash";
-        el.style.cssText =
-          "position:fixed;top:0;left:0;right:0;z-index:99999;background:#7a1020;color:#fff;" +
-          "font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 12px;white-space:pre-wrap;" +
-          "max-height:40vh;overflow:auto;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5)";
-        el.title = "tap to dismiss";
-        el.addEventListener("click", () => el?.remove());
-        document.body.appendChild(el);
+      let box = document.getElementById("rave-crash");
+      if (!box) {
+        box = document.createElement("div");
+        box.id = "rave-crash";
+        // Bottom of the screen so it never covers the toolbar / Help menu.
+        box.style.cssText =
+          "position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#7a1020;color:#fff;" +
+          "font:12px/1.4 ui-monospace,Menlo,monospace;padding:10px 12px;box-shadow:0 -4px 16px rgba(0,0,0,.5)";
+        document.body.appendChild(box);
       }
-      el.textContent = "⚠ RAVEIRC error (tap to dismiss):\n" + msg;
+      const text = "RAVEIRC error:\n" + msg;
+      box.innerHTML = "";
+      const pre = document.createElement("div");
+      pre.style.cssText = "white-space:pre-wrap;max-height:30vh;overflow:auto;margin-bottom:8px";
+      pre.textContent = "⚠ " + text;
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;gap:8px";
+      const mk = (label: string, fn: () => void) => {
+        const b = document.createElement("button");
+        b.textContent = label;
+        b.style.cssText =
+          "font:600 12px ui-monospace,monospace;padding:4px 12px;border-radius:6px;border:1px solid #fff6;background:#fff2;color:#fff;cursor:pointer";
+        b.onclick = fn;
+        return b;
+      };
+      row.append(
+        mk("Copy", () => navigator.clipboard?.writeText(text).catch(() => {})),
+        mk("Report", () => {
+          const url =
+            "https://github.com/codexv/RAVEIRCv4/issues/new?title=" +
+            encodeURIComponent("Error: " + msg.split("\n")[0]) +
+            "&body=" +
+            encodeURIComponent("```\n" + text + "\n```\n\nWhat I was doing: ");
+          window.open(url, "_blank");
+        }),
+        mk("Dismiss", () => box?.remove()),
+      );
+      box.append(pre, row);
     };
     window.addEventListener("error", (e) =>
       showCrash(`${e.message}\n  at ${(e.filename || "").split("/").pop()}:${e.lineno}:${e.colno}`),

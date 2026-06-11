@@ -1,6 +1,7 @@
 <script lang="ts">
   import { irc } from "$lib/irc/store.svelte";
   import { detectNetwork } from "$lib/irc/network";
+  import { deepClone } from "$lib/util";
   import {
     aiStatus,
     channelKey,
@@ -63,7 +64,7 @@
   // Snapshot the live config for editing whenever the panel opens.
   $effect(() => {
     if (open && !config) {
-      config = structuredClone($state.snapshot(irc.raveConfig)) as RaveConfig;
+      config = deepClone($state.snapshot(irc.raveConfig)) as RaveConfig;
       protScope = "";
       activeProt = config.protections;
     }
@@ -106,7 +107,7 @@
 
   function customizeChannel() {
     if (!config || !protScope) return;
-    config.channelProtections[protScope] = structuredClone(
+    config.channelProtections[protScope] = deepClone(
       $state.snapshot(config.protections),
     ) as ProtectionsConfig;
     activeProt = config.channelProtections[protScope];

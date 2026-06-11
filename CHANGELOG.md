@@ -10,6 +10,17 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.20] — 2026-06-12
+
+- **Fixed a UI freeze when opening Settings or Channel Manager.** On some
+  WebViews (older macOS WebKit) those dialogs relied on `structuredClone`, which
+  isn't available there — opening them threw and wedged the whole UI (you could
+  still type in the editbox but nothing was clickable). They now use a
+  WebView-universal clone, so they open everywhere.
+- The on-screen error banner moved to the bottom of the window (so it no longer
+  covers the Help / report-bug menu) and gained **Copy** and **Report** buttons
+  to file the error straight to GitHub.
+
 ## [0.1.19] — 2026-06-11
 
 - Default chat font is now **Monaco** (cross-platform stack: Monaco on macOS,
