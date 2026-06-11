@@ -21,7 +21,7 @@
   import NickManager from "$lib/components/NickManager.svelte";
   import FontPicker from "$lib/components/FontPicker.svelte";
   import { updater } from "$lib/update.svelte";
-  import { isTauri } from "$lib/platform";
+  import { isTauri, isWeb } from "$lib/platform";
 
   // This page boots either as the main app or as a standalone secondary window
   // (?view=scripts / ?view=scratchpad), which renders just that component.
@@ -127,6 +127,21 @@
     irc.init();
     appearance.init();
     if (isTauri()) updater.check(); // desktop only — mobile/web updates via the host
+    // PWA auto-update: pick up redeploys without a manual "Check for updates".
+    // When a new service worker takes over (after a deploy), reload once to load
+    // the fresh build. Guarded on an existing controller so first install never
+    // triggers a reload.
+    if (isWeb() && "serviceWorker" in navigator) {
+      if (navigator.serviceWorker.controller) {
+        let reloaded = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (reloaded) return;
+          reloaded = true;
+          location.reload();
+        });
+      }
+      navigator.serviceWorker.getRegistration().then((r) => r?.update());
+    }
     // The scripts window asks the main app to reload + recompile after saving.
     import("@tauri-apps/api/event").then(({ listen }) =>
       listen("scripts-applied", async () => {
