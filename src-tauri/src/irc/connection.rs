@@ -534,17 +534,17 @@ mod tests {
     #[test]
     fn identify_and_ghost_are_network_aware() {
         let dal = test_config("irc.dal.net");
-        assert_eq!(
-            identify_line(&dal).unwrap(),
-            "PRIVMSG NickServ@services.dal.net :IDENTIFY secret"
-        );
+        // Identify uses the idle-safe raw NICKSERV alias (mIRC /ns style) so it
+        // doesn't reset idle time through a ZNC bouncer. GHOST/RELEASE, which
+        // run rarely and aren't idle-sensitive, stay as targeted PRIVMSGs.
+        assert_eq!(identify_line(&dal).unwrap(), "NICKSERV IDENTIFY secret");
         assert_eq!(
             ghost_line(&dal).unwrap(),
             "PRIVMSG NickServ@services.dal.net :GHOST rave secret"
         );
 
         let lib = test_config("irc.libera.chat");
-        assert_eq!(identify_line(&lib).unwrap(), "PRIVMSG NickServ :IDENTIFY secret");
+        assert_eq!(identify_line(&lib).unwrap(), "NICKSERV IDENTIFY secret");
 
         let und = test_config("irc.undernet.org");
         assert_eq!(identify_line(&und).unwrap(), "PRIVMSG X@channels.undernet.org :login rave secret");
