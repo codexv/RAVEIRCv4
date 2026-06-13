@@ -2,12 +2,14 @@
 // CSS custom properties on :root and persisted to localStorage. Pure
 // presentation — no backend round-trip needed.
 
-export type ThemeId = "black" | "charcoal" | "midnight" | "light";
+export type ThemeId = "black" | "obsidian" | "charcoal" | "hacker" | "light";
 
 interface Theme {
   label: string;
   /** True for light backgrounds — flips text colours for readability. */
   light?: boolean;
+  /** Forces the accent colour (overrides the user's pick while active). */
+  accent?: string;
   bg: string;
   panel: string;
   border: string;
@@ -20,11 +22,16 @@ interface Theme {
 
 // Dark themes share the same readable light-on-dark text palette.
 const DARK_FG = { fg: "#e6edf3", fgDim: "#adbac7", fgFaint: "#6e7681" };
+// Phosphor-green terminal palette for the Hacker theme.
+const HACKER_FG = { fg: "#33ff66", fgDim: "#1faa44", fgFaint: "#0f6e2c" };
 
 export const THEMES: Record<ThemeId, Theme> = {
   black: { label: "Black (OLED)", bg: "#000000", panel: "#000000", border: "#363d47", hover: "#101319", ...DARK_FG },
+  // Midway between OLED black and charcoal — darker than charcoal, not pure black.
+  obsidian: { label: "Obsidian", bg: "#0a0c10", panel: "#0e1116", border: "#262b33", hover: "#161a20", ...DARK_FG },
   charcoal: { label: "Charcoal", bg: "#14161a", panel: "#1c1f25", border: "#2c313a", hover: "#23272e", ...DARK_FG },
-  midnight: { label: "Midnight", bg: "#0d1117", panel: "#161b22", border: "#30363d", hover: "#1f262e", ...DARK_FG },
+  // Classic green-phosphor terminal: green on black, green accent.
+  hacker: { label: "Hacker", accent: "#00e676", bg: "#000000", panel: "#020a05", border: "#0f5a25", hover: "#04160a", ...HACKER_FG },
   light: {
     label: "Light",
     light: true,
@@ -205,6 +212,33 @@ const LIGHT_EVENT_COLORS: EventColors = {
   error: "#cf222e",
 };
 
+// Monochrome-green terminal palette (Hacker theme) — phosphor shades so the
+// chat reads like an old CRT instead of the colourful default roles.
+const HACKER_NICK_COLORS: NickColors = {
+  owner: "#7CFFB0",
+  admin: "#5CF591",
+  op: "#33ff66",
+  halfop: "#27c44f",
+  voice: "#1faa44",
+  normal: "#19d24a",
+  self: "#aaffaa",
+};
+const HACKER_EVENT_COLORS: EventColors = {
+  message: "#33ff66",
+  self: "#aaffaa",
+  notice: "#00e676",
+  action: "#7CFFB0",
+  join: "#1faa44",
+  part: "#0f6e2c",
+  quit: "#0c5523",
+  kick: "#00e676",
+  nick: "#5CF591",
+  mode: "#1faa44",
+  topic: "#5CF591",
+  system: "#1faa44",
+  error: "#9dff00",
+};
+
 /** Relative luminance (0=black, 1=white) of a #rrggbb colour, for contrast checks. */
 function relLuminance(hex: string): number {
   const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
@@ -231,9 +265,13 @@ class Appearance {
 
   /** Resolve the colour for a nick given its prefix and whether it's you. */
   nickColor(prefix: string, isSelf: boolean): string {
-    // Light background → readable light palette (keeps roles distinct);
-    // dark background → the user's colours.
-    const p = this.lightBg ? LIGHT_NICK_COLORS : this.nickColors;
+    // Light background → readable light palette; Hacker → green phosphor palette;
+    // otherwise the user's colours.
+    const p = this.lightBg
+      ? LIGHT_NICK_COLORS
+      : this.theme === "hacker"
+        ? HACKER_NICK_COLORS
+        : this.nickColors;
     if (isSelf) return p.self;
     switch (prefix) {
       case "~": return p.owner;
@@ -251,7 +289,8 @@ class Appearance {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const v = JSON.parse(raw);
-        if (v.theme in THEMES) this.theme = v.theme;
+        if (v.theme === "midnight") this.theme = "obsidian"; // retired → closest match
+        else if (v.theme in THEMES) this.theme = v.theme;
         if (typeof v.chatBg === "string") this.chatBg = v.chatBg;
         if (typeof v.accent === "string") this.accent = v.accent;
         if (typeof v.uiFont === "string") this.uiFont = v.uiFont;
@@ -280,15 +319,22 @@ class Appearance {
     r.setProperty("--fg", t.fg);
     r.setProperty("--fg-dim", t.fgDim);
     r.setProperty("--fg-faint", t.fgFaint);
-    r.setProperty("--accent", this.accent);
-    r.setProperty("--accent-soft", this.accent + "33"); // ~20% alpha tint
+    // A theme may force its own accent (e.g. Hacker green) without clobbering
+    // the user's saved accent — switching themes restores their pick.
+    const accent = t.accent ?? this.accent;
+    r.setProperty("--accent", accent);
+    r.setProperty("--accent-soft", accent + "33"); // ~20% alpha tint
     r.setProperty("--ui", this.uiFont);
     r.setProperty("--mono", this.monoFont);
     r.setProperty("--msg-size", `${this.msgSize}px`);
     // Per-event line colours as CSS variables consumed by MessageView. On a light
     // effective background use the readable light palette so every event kind
     // (join/nick/kick/notice/error/…) stays legible; otherwise the user's colours.
-    const eventPalette = this.lightBg ? LIGHT_EVENT_COLORS : this.eventColors;
+    const eventPalette = this.lightBg
+      ? LIGHT_EVENT_COLORS
+      : this.theme === "hacker"
+        ? HACKER_EVENT_COLORS
+        : this.eventColors;
     for (const [k, v] of Object.entries(eventPalette)) {
       r.setProperty(`--line-${k}`, v);
     }

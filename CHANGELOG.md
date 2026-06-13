@@ -10,6 +10,13 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.34] — 2026-06-14
+
+- **New themes.** Replaced *Midnight* with **Obsidian** — a shade midway between
+  Charcoal and OLED black (darker than charcoal, not pure black). Added a
+  **Hacker** theme: classic green-phosphor-on-black terminal look (green accent
+  and chat palette). Anyone previously on Midnight is moved to Obsidian.
+
 ## [0.1.33] — 2026-06-14
 
 - **OLED-black theme: more visible borders.** Dialog windows and dividers had
