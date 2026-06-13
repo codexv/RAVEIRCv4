@@ -25,6 +25,7 @@ export type CommandResult =
         | "topicart"
         | "setkey"
         | "enc"
+        | "ban"
         | "font";
       arg?: string;
     }
@@ -251,6 +252,14 @@ export function parseInput(input: string, ctx: CommandContext): CommandResult {
 
     case "unban":
       return needConn() ?? { type: "service", action: "unban", args };
+
+    case "ban": {
+      // mIRC-style: /ban [-u<seconds>] [#channel] <nick|mask>
+      const e = needConn();
+      if (e) return e;
+      if (!rest.trim()) return { type: "error", message: "Usage: /ban [-u<seconds>] [#channel] <nick|mask>" };
+      return { type: "client", action: "ban", arg: rest };
+    }
 
     case "akick":
       return (

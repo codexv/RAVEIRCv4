@@ -6,7 +6,29 @@
     irc.channelDialogId ? (irc.buffers.find((b) => b.id === irc.channelDialogId) ?? null) : null,
   );
   const isOp = $derived(buf ? irc.isOpIn(buf.serverId, buf.name) : false);
-  const bans = $derived(buf?.bans ?? []);
+
+  // Channel list modes (mIRC Channel Central tabs): bans / excepts / invites.
+  type ListKind = "b" | "e" | "I";
+  const TABS: { kind: ListKind; label: string }[] = [
+    { kind: "b", label: "Bans (+b)" },
+    { kind: "e", label: "Exceptions (+e)" },
+    { kind: "I", label: "Invites (+I)" },
+  ];
+  let tab = $state<ListKind>("b");
+  const entries = $derived(
+    tab === "e" ? (buf?.excepts ?? []) : tab === "I" ? (buf?.invites ?? []) : (buf?.bans ?? []),
+  );
+  const listLoading = $derived(buf?.listLoading?.[tab] ?? false);
+  const countFor = (kind: ListKind) =>
+    (kind === "e" ? buf?.excepts : kind === "I" ? buf?.invites : buf?.bans)?.length ?? 0;
+
+  // Ticking clock so timed-ban countdowns update live while the dialog is open.
+  let now = $state(Date.now());
+  $effect(() => {
+    if (!buf) return;
+    const id = setInterval(() => (now = Date.now()), 1000);
+    return () => clearInterval(id);
+  });
 
   // mIRC Channel Central boolean modes.
   const MODES: { flag: string; label: string }[] = [
@@ -20,7 +42,8 @@
   const flags = $derived(buf?.modeFlags ?? "");
 
   let topicDraft = $state("");
-  let newBan = $state("");
+  let newMask = $state("");
+  let banMinutes = $state(""); // optional timed-ban duration (bans tab only)
   let keyDraft = $state("");
   let limitDraft = $state("");
   // Reset the editable fields whenever a different channel dialog opens.
@@ -28,7 +51,8 @@
   $effect(() => {
     if (buf && buf.id !== lastId) {
       topicDraft = buf.topic;
-      newBan = "";
+      newMask = "";
+      banMinutes = "";
       keyDraft = buf.modeKey ?? "";
       limitDraft = buf.modeLimit ? String(buf.modeLimit) : "";
       lastId = buf.id;
@@ -51,20 +75,36 @@
     if (!buf || !isOp) return;
     if (topicDraft !== buf.topic) irc.setChannelTopic(buf.serverId, buf.name, topicDraft);
   }
-  function unban(mask: string) {
-    if (buf && isOp) irc.removeBan(buf.serverId, buf.name, mask);
+  function removeEntry(mask: string) {
+    if (buf && isOp) irc.removeMask(buf.serverId, buf.name, tab, mask);
   }
-  function addBan() {
-    if (buf && isOp && newBan.trim()) {
-      irc.addBan(buf.serverId, buf.name, newBan);
-      newBan = "";
+  function addEntry() {
+    if (!buf || !isOp || !newMask.trim()) return;
+    const mins = Number(banMinutes);
+    if (tab === "b" && mins > 0) {
+      irc.timedBan(buf.serverId, buf.name, newMask.trim(), Math.round(mins * 60));
+    } else {
+      irc.addMask(buf.serverId, buf.name, tab, newMask.trim());
     }
+    newMask = "";
+    banMinutes = "";
   }
 
   function fmtWhen(ts?: number): string {
     if (!ts) return "";
     const d = new Date(ts * 1000);
     return d.toLocaleDateString() + " " + d.toTimeString().slice(0, 5);
+  }
+
+  /** "expires in 4m 12s" for a timed ban, or "" if permanent. Recomputes on tick. */
+  function expiresLabel(mask: string): string {
+    if (!buf || tab !== "b") return "";
+    const at = irc.banExpiry(buf.serverId, buf.name, mask);
+    if (!at) return "";
+    const left = Math.max(0, Math.round((at - now) / 1000));
+    const m = Math.floor(left / 60);
+    const s = left % 60;
+    return `⏱ ${m > 0 ? `${m}m ` : ""}${s}s`;
   }
 
   // Close only on a true backdrop click (press + release on the overlay).
@@ -181,28 +221,32 @@
         </section>
 
         <section>
-          <div class="ban-head">
-            <span class="lbl">Ban list (+b){bans.length ? ` — ${bans.length}` : ""}</span>
-            <button class="btn small" onclick={() => irc.refreshBans(buf.serverId, buf.name)}>
-              ↻ Refresh
+          <div class="tabs">
+            {#each TABS as t (t.kind)}
+              <button class="tab" class:active={tab === t.kind} onclick={() => (tab = t.kind)}>
+                {t.label}{countFor(t.kind) ? ` (${countFor(t.kind)})` : ""}
+              </button>
+            {/each}
+            <button class="btn small refresh" onclick={() => irc.refreshList(buf.serverId, buf.name, tab)}>
+              ↻
             </button>
           </div>
 
-          {#if buf.bansLoading && bans.length === 0}
+          {#if listLoading && entries.length === 0}
             <div class="empty">Loading…</div>
-          {:else if bans.length === 0}
-            <div class="empty">No bans set.</div>
+          {:else if entries.length === 0}
+            <div class="empty">Empty.</div>
           {:else}
             <div class="bans">
-              {#each bans as b (b.mask)}
+              {#each entries as b (b.mask)}
                 <div class="ban">
                   <span class="mask" title={b.mask}>{b.mask}</span>
                   <span class="meta">
-                    {#if b.by}by {b.by}{/if}{#if b.ts}&nbsp;· {fmtWhen(b.ts)}{/if}
+                    {#if expiresLabel(b.mask)}<span class="timed">{expiresLabel(b.mask)}</span>{:else}{#if b.by}by {b.by}{/if}{#if b.ts}&nbsp;· {fmtWhen(b.ts)}{/if}{/if}
                   </span>
                   {#if isOp}
-                    <button class="btn small danger" onclick={() => unban(b.mask)} title="Remove ban">
-                      Unban
+                    <button class="btn small danger" onclick={() => removeEntry(b.mask)} title="Remove">
+                      Remove
                     </button>
                   {/if}
                 </div>
@@ -211,15 +255,25 @@
           {/if}
 
           {#if isOp}
-            <form class="row" onsubmit={(e) => { e.preventDefault(); addBan(); }}>
+            <form class="row" onsubmit={(e) => { e.preventDefault(); addEntry(); }}>
               <input
                 class="addmask"
-                bind:value={newBan}
-                placeholder="nick!user@host  (add a ban)"
+                bind:value={newMask}
+                placeholder="nick!user@host"
                 spellcheck="false"
                 autocomplete="off"
               />
-              <button class="btn primary" type="submit" disabled={!newBan.trim()}>Add ban</button>
+              {#if tab === "b"}
+                <input
+                  class="kv-in short"
+                  type="number"
+                  min="0"
+                  bind:value={banMinutes}
+                  placeholder="min"
+                  title="Optional: auto-unban after N minutes (timed ban)"
+                />
+              {/if}
+              <button class="btn primary" type="submit" disabled={!newMask.trim()}>Add</button>
             </form>
           {/if}
         </section>
@@ -367,10 +421,34 @@
   .kv-in:focus {
     border-color: var(--accent);
   }
-  .ban-head {
+  .tabs {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--fg-dim);
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .tab:hover {
+    color: var(--fg);
+  }
+  .tab.active {
+    color: var(--fg);
+    border-bottom-color: var(--accent);
+  }
+  .refresh {
+    margin-left: auto;
+  }
+  .timed {
+    color: var(--accent);
   }
   .empty {
     font-size: 12px;

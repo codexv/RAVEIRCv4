@@ -58,6 +58,7 @@ import {
   type Action,
 } from "./protections";
 import type {
+  BanEntry,
   Buffer,
   ChanUser,
   IrcEvent,
@@ -71,6 +72,9 @@ import type {
 const MAX_LINES = 1000;
 const DEFAULT_PREFIX_SYMBOLS = "~&@%+";
 const DEFAULT_PREFIX_MODES = "qaohv";
+
+/** Channel list modes shown in the Channel dialog: bans, excepts, invites. */
+type ListKind = "b" | "e" | "I";
 
 /** After (re)connecting — especially through a ZNC bouncer — the server replays
  *  the channel buffer (missed messages) in a burst. That looks like flooding, so
@@ -102,6 +106,9 @@ export class IrcStore {
   channelManagerOpen = $state(false);
   /** Channel Central dialog (topic + ban list); holds the channel buffer id. */
   channelDialogId = $state<string | null>(null);
+  /** Request to highlight+scroll a nick in the nicklist (clicking a chat nick).
+   *  `seq` bumps each call so repeat clicks on the same nick re-trigger. */
+  nickFocus = $state<{ serverId: number; nick: string; seq: number } | null>(null);
   /** /font picker dialog; fontTargetId is the buffer it applies to. */
   fontPickerOpen = $state(false);
   fontTargetId = $state<string | null>(null);
@@ -738,9 +745,17 @@ export class IrcStore {
       case "324":
         return this.handleChannelModes(serverId, msg); // RPL_CHANNELMODEIS
       case "367":
-        return this.handleBanList(serverId, msg); // RPL_BANLIST
+        return this.handleListEntry(serverId, msg, "b"); // RPL_BANLIST
       case "368":
-        return this.handleBanListEnd(serverId, msg); // RPL_ENDOFBANLIST
+        return this.handleListEnd(serverId, msg, "b"); // RPL_ENDOFBANLIST
+      case "348":
+        return this.handleListEntry(serverId, msg, "e"); // RPL_EXCEPTLIST
+      case "349":
+        return this.handleListEnd(serverId, msg, "e"); // RPL_ENDOFEXCEPTLIST
+      case "346":
+        return this.handleListEntry(serverId, msg, "I"); // RPL_INVITELIST
+      case "347":
+        return this.handleListEnd(serverId, msg, "I"); // RPL_ENDOFINVITELIST
       case "005":
         return this.handleIsupport(serverId, msg);
       case "001":
@@ -1423,17 +1438,22 @@ export class IrcStore {
             u.prefix = "";
           }
         }
-      } else if (ch === "b") {
-        // Ban (+b/-b): track the mask so the Channel dialog's list stays live.
+      } else if (ch === "b" || ch === "e" || ch === "I") {
+        // List modes (+b ban / +e except / +I invite): keep the dialog live.
         const mask = args[argi++];
         if (mask) {
-          buf.bans ??= [];
+          const kind = ch as ListKind;
+          const list = this.chanList(buf, kind);
           if (adding) {
-            if (!buf.bans.some((b) => b.mask === mask)) {
-              buf.bans.push({ mask, by: from, ts: Math.floor(Date.now() / 1000) });
+            if (!list.some((b) => b.mask === mask)) {
+              list.push({ mask, by: from, ts: Math.floor(Date.now() / 1000) });
             }
           } else {
-            buf.bans = buf.bans.filter((b) => b.mask !== mask);
+            const next = list.filter((b) => b.mask !== mask);
+            if (kind === "b") buf.bans = next;
+            else if (kind === "e") buf.excepts = next;
+            else buf.invites = next;
+            if (kind === "b") this.clearBanTimer(serverId, target, mask);
           }
         }
       } else if (ch === "k") {
@@ -1444,9 +1464,9 @@ export class IrcStore {
         // User limit: +l <n> takes an argument; -l takes none.
         if (adding) buf.modeLimit = Number(args[argi++]) || 0;
         else buf.modeLimit = 0;
-      } else if ("eIfLjJ".includes(ch)) {
-        // list/param modes we don't surface (exceptions, invites, flood, …).
-        if (adding || "eIfLjJ".includes(ch)) argi++;
+      } else if ("fLjJ".includes(ch)) {
+        // other param modes we don't surface (flood, join-throttle, …).
+        argi++;
       } else {
         // Boolean channel mode (n, t, m, i, s, p, c, …): track for the dialog.
         const flags = new Set((buf.modeFlags ?? "").split(""));
@@ -1480,35 +1500,55 @@ export class IrcStore {
     buf.modeFlags = [...flags].sort().join("");
   }
 
-  /** RPL_BANLIST (367): one ban entry. params: <me> <chan> <mask> [<by> <ts>] */
-  private handleBanList(serverId: number, msg: IrcMessage) {
-    const chan = msg.params[1] ?? "";
-    const mask = msg.params[2] ?? "";
-    const buf = this.buffer(serverId, chan);
-    if (!buf || !mask) return;
+  /** The per-buffer array for a list mode ("b" bans, "e" excepts, "I" invites). */
+  private chanList(buf: Buffer, kind: ListKind): BanEntry[] {
+    // Initialize then RE-READ the field: under $state, the value of `x ??= []`
+    // is the raw array, but `x` (read back) is the reactive proxy — push to that.
+    if (kind === "e") {
+      buf.excepts ??= [];
+      return buf.excepts;
+    }
+    if (kind === "I") {
+      buf.invites ??= [];
+      return buf.invites;
+    }
     buf.bans ??= [];
-    if (buf.bans.some((b) => b.mask === mask)) return;
-    const by = msg.params[3] || undefined;
-    const tsRaw = msg.params[4];
-    const ts = tsRaw && /^\d+$/.test(tsRaw) ? Number(tsRaw) : undefined;
-    buf.bans.push({ mask, by, ts });
+    return buf.bans;
   }
 
-  /** RPL_ENDOFBANLIST (368): the +b dump is complete. */
-  private handleBanListEnd(serverId: number, msg: IrcMessage) {
+  /** RPL_BANLIST (367) / EXCEPTLIST (348) / INVITELIST (346): one entry.
+   *  params: <me> <chan> <mask> [<by> <ts>] */
+  private handleListEntry(serverId: number, msg: IrcMessage, kind: ListKind) {
+    const mask = msg.params[2] ?? "";
     const buf = this.buffer(serverId, msg.params[1] ?? "");
-    if (buf) buf.bansLoading = false;
+    if (!buf || !mask) return;
+    const list = this.chanList(buf, kind);
+    if (list.some((b) => b.mask === mask)) return;
+    const tsRaw = msg.params[4];
+    list.push({
+      mask,
+      by: msg.params[3] || undefined,
+      ts: tsRaw && /^\d+$/.test(tsRaw) ? Number(tsRaw) : undefined,
+    });
+  }
+
+  /** RPL_ENDOF{BAN,EXCEPT,INVITE}LIST (368/349/347): the dump is complete. */
+  private handleListEnd(serverId: number, msg: IrcMessage, kind: ListKind) {
+    const buf = this.buffer(serverId, msg.params[1] ?? "");
+    if (buf) buf.listLoading = { ...buf.listLoading, [kind]: false };
   }
 
   // ---- Channel Central dialog (double-click a channel) ---------------------
 
-  /** Open the topic + modes + ban-list dialog for a channel, refreshing all. */
+  /** Open the topic + modes + ban/except/invite dialog for a channel. */
   openChannelDialog(bufId: string) {
     const buf = this.buffers.find((b) => b.id === bufId);
     if (!buf || buf.kind !== "channel") return;
     this.channelDialogId = bufId;
     this.raw(buf.serverId, `MODE ${buf.name}`); // current channel modes (→ 324)
-    this.refreshBans(buf.serverId, buf.name);
+    this.refreshList(buf.serverId, buf.name, "b");
+    this.refreshList(buf.serverId, buf.name, "e");
+    this.refreshList(buf.serverId, buf.name, "I");
   }
 
   /** Toggle a boolean channel mode (op action), e.g. setMode("#c", "m", true). */
@@ -1527,24 +1567,70 @@ export class IrcStore {
     else this.raw(serverId, `MODE ${chan} -l`);
   }
 
-  /** Ask the server for the channel +b list (RPL_BANLIST replies repopulate it). */
-  refreshBans(serverId: number, chan: string) {
+  /** Ask the server for a channel list (+b/+e/+I); replies repopulate it. */
+  refreshList(serverId: number, chan: string, kind: ListKind) {
     const buf = this.buffer(serverId, chan);
     if (!buf) return;
-    buf.bans = [];
-    buf.bansLoading = true;
-    this.raw(serverId, `MODE ${chan} +b`);
+    if (kind === "e") buf.excepts = [];
+    else if (kind === "I") buf.invites = [];
+    else buf.bans = [];
+    buf.listLoading = { ...buf.listLoading, [kind]: true };
+    this.raw(serverId, `MODE ${chan} +${kind}`);
+  }
+  /** @deprecated kept for callers/tests — refreshes the +b list. */
+  refreshBans(serverId: number, chan: string) {
+    this.refreshList(serverId, chan, "b");
   }
 
-  /** Remove a ban (op action). The observed MODE -b also prunes it from the list. */
-  removeBan(serverId: number, chan: string, mask: string) {
-    this.raw(serverId, `MODE ${chan} -b ${mask}`);
-  }
-
-  /** Add a ban (op action). */
-  addBan(serverId: number, chan: string, mask: string) {
+  /** Add an entry to a channel list (+b/+e/+I) — op action. */
+  addMask(serverId: number, chan: string, kind: ListKind, mask: string) {
     const m = mask.trim();
-    if (m) this.raw(serverId, `MODE ${chan} +b ${m}`);
+    if (m) this.raw(serverId, `MODE ${chan} +${kind} ${m}`);
+  }
+  /** Remove an entry from a channel list (-b/-e/-I) — op action. */
+  removeMask(serverId: number, chan: string, kind: ListKind, mask: string) {
+    if (kind === "b") this.clearBanTimer(serverId, chan, mask); // cancel any timed auto-unban
+    this.raw(serverId, `MODE ${chan} -${kind} ${mask}`);
+  }
+  addBan = (serverId: number, chan: string, mask: string) => this.addMask(serverId, chan, "b", mask);
+  removeBan = (serverId: number, chan: string, mask: string) =>
+    this.removeMask(serverId, chan, "b", mask);
+
+  // ---- timed bans (mIRC /ban -uN): auto-unban after N seconds --------------
+
+  /** serverId|chan|mask → epoch ms when the auto-unban fires. */
+  private banTimers = new Map<string, { at: number; handle: ReturnType<typeof setTimeout> }>();
+  private banTimerKey = (serverId: number, chan: string, mask: string) =>
+    `${serverId}|${chan.toLowerCase()}|${mask}`;
+
+  /** Set a ban that auto-lifts after `seconds` (0 = permanent). */
+  timedBan(serverId: number, chan: string, mask: string, seconds: number) {
+    const m = mask.trim();
+    if (!m) return;
+    this.addMask(serverId, chan, "b", m);
+    this.clearBanTimer(serverId, chan, m);
+    if (seconds > 0) {
+      const key = this.banTimerKey(serverId, chan, m);
+      const handle = setTimeout(() => {
+        this.banTimers.delete(key);
+        this.raw(serverId, `MODE ${chan} -b ${m}`);
+      }, seconds * 1000);
+      this.banTimers.set(key, { at: Date.now() + seconds * 1000, handle });
+    }
+  }
+
+  /** Epoch ms when a timed ban expires, or undefined if it's permanent. */
+  banExpiry(serverId: number, chan: string, mask: string): number | undefined {
+    return this.banTimers.get(this.banTimerKey(serverId, chan, mask))?.at;
+  }
+
+  private clearBanTimer(serverId: number, chan: string, mask: string) {
+    const key = this.banTimerKey(serverId, chan, mask);
+    const t = this.banTimers.get(key);
+    if (t) {
+      clearTimeout(t.handle);
+      this.banTimers.delete(key);
+    }
   }
 
   /** Set (or clear) a channel topic — server enforces +t op-only itself. */
@@ -1555,6 +1641,11 @@ export class IrcStore {
   /** Public: are we op-or-higher in this channel? (drives the dialog's controls.) */
   isOpIn(serverId: number, chan: string): boolean {
     return this.amOp(serverId, chan);
+  }
+
+  /** Ask the nicklist to highlight + scroll to a nick (clicking it in chat). */
+  focusNickInList(serverId: number, nick: string) {
+    this.nickFocus = { serverId, nick, seq: (this.nickFocus?.seq ?? 0) + 1 };
   }
 
   // ---- actions (called by UI) ----------------------------------------------
@@ -1960,6 +2051,8 @@ export class IrcStore {
       }
       case "font":
         return this.setFont(buf, arg ?? "");
+      case "ban":
+        return this.banCommand(buf, arg ?? "");
       case "scratchpad":
         this.scratchpadOpen = true;
         return;
@@ -2317,12 +2410,43 @@ export class IrcStore {
     this.raw(serverId, `KICK ${chan} ${nick}${reason ? ` :${reason}` : ""}`);
   }
 
+  /** Build a ban mask for a target: a literal mask passes through; a known nick
+   *  becomes *!*@host (from the IAL), else nick!*@*. */
+  banMaskFor(serverId: number, chan: string, target: string): string {
+    if (/[!@*?]/.test(target)) return target; // already a mask
+    const addr = this.address(serverId, chan, target);
+    const hostPart = addr?.split("@")[1];
+    return hostPart ? `*!*@${hostPart}` : `${target}!*@*`;
+  }
+
   /** Ban a user by host mask (from IAL), falling back to a nick mask. */
   banUser(serverId: number, chan: string, nick: string) {
-    const addr = this.address(serverId, chan, nick);
-    const hostPart = addr?.split("@")[1];
-    const mask = hostPart ? `*!*@${hostPart}` : `${nick}!*@*`;
-    this.raw(serverId, `MODE ${chan} +b ${mask}`);
+    this.raw(serverId, `MODE ${chan} +b ${this.banMaskFor(serverId, chan, nick)}`);
+  }
+
+  /** mIRC `/ban -uN`: ban a nick/mask, auto-unbanning after `seconds` (0 = perm). */
+  timedBanUser(serverId: number, chan: string, target: string, seconds: number) {
+    this.timedBan(serverId, chan, this.banMaskFor(serverId, chan, target), seconds);
+  }
+
+  /** /ban [-u<seconds>] [#channel] <nick|mask> — parses mIRC's timed-ban syntax. */
+  private banCommand(buf: Buffer, arg: string) {
+    let s = arg.trim();
+    let seconds = 0;
+    const um = /^-u(\d+)\s+/.exec(s);
+    if (um) {
+      seconds = Number(um[1]);
+      s = s.slice(um[0].length);
+    }
+    const parts = s.split(/\s+/).filter(Boolean);
+    let chan = buf.kind === "channel" ? buf.name : "";
+    if (parts[0] && this.isChannel(buf.serverId, parts[0])) chan = parts.shift()!;
+    const target = parts[0];
+    if (!chan || !target) {
+      this.add(buf, "error", "Usage: /ban [-u<seconds>] [#channel] <nick|mask>");
+      return;
+    }
+    this.timedBanUser(buf.serverId, chan, target, seconds);
   }
 
   kickBan(serverId: number, chan: string, nick: string, reason = "") {

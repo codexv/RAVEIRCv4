@@ -5,12 +5,30 @@
   import { irc } from "$lib/irc/store.svelte";
   import { focusInput } from "$lib/focus";
   import { fontStyle } from "$lib/fonts";
+  import NickMenu from "./NickMenu.svelte";
 
   let { buffer }: { buffer: Buffer | null } = $props();
 
   let viewport = $state<HTMLDivElement | null>(null);
   let pinned = $state(true);
   let menu = $state<{ x: number; y: number } | null>(null);
+  // Right-click menu for a nick clicked in the chat (separate from the window menu).
+  let nickMenu = $state<{ x: number; y: number; nick: string } | null>(null);
+
+  // Left-click a chat nick → highlight it in the nicklist. Right-click → menu.
+  function nickClick(e: MouseEvent, nick: string) {
+    e.stopPropagation();
+    if (buffer) irc.focusNickInList(buffer.serverId, nick);
+  }
+  function nickContext(e: MouseEvent, nick: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    nickMenu = {
+      x: Math.min(e.clientX, window.innerWidth - 200),
+      y: Math.min(e.clientY, window.innerHeight - 360),
+      nick,
+    };
+  }
 
   function openMenu(e: MouseEvent) {
     if (!buffer) return;
@@ -127,14 +145,29 @@
           <!-- ZNC virtual user (e.g. *status): show text without the <*status> wrapper -->
           <span class="text">{@html renderMirc(line.text)}</span>
         {:else if line.kind === "message" || line.kind === "self"}
-          <span class="nick" style="color:{line.kind === 'self' ? 'var(--accent)' : nickColor(line.from ?? '')}">
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
+          <span
+            class="nick clickable"
+            style="color:{line.kind === 'self' ? 'var(--accent)' : nickColor(line.from ?? '')}"
+            title="Click to find in nicklist · right-click for actions"
+            onclick={(e) => nickClick(e, line.from ?? '')}
+            oncontextmenu={(e) => nickContext(e, line.from ?? '')}
+          >
             &lt;{#if prefixFor(line.from ?? '')}<span class="uprefix">{prefixFor(line.from ?? '')}</span>{/if}{line.from}&gt;
           </span>
           <span class="text">{@html renderMirc(line.text)}</span>
         {:else if line.kind === "notice" && svc}
           <span class="text">{@html renderMirc(line.text)}</span>
         {:else if line.kind === "notice"}
-          <span class="nick notice-nick">-{line.from}-</span>
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
+          <span
+            class="nick notice-nick clickable"
+            title="Click to find in nicklist · right-click for actions"
+            onclick={(e) => nickClick(e, line.from ?? '')}
+            oncontextmenu={(e) => nickContext(e, line.from ?? '')}
+          >-{line.from}-</span>
           <span class="text">{@html renderMirc(line.text)}</span>
         {:else if line.kind === "action"}
           <span class="star">*</span>
@@ -177,6 +210,17 @@
       <button onclick={() => run("/close")}>Close window</button>
     {/if}
   </div>
+{/if}
+
+{#if nickMenu && buffer}
+  <NickMenu
+    sid={buffer.serverId}
+    chan={buffer.kind === "channel" ? buffer.name : ""}
+    nick={nickMenu.nick}
+    x={nickMenu.x}
+    y={nickMenu.y}
+    onClose={() => (nickMenu = null)}
+  />
 {/if}
 
 <style>
@@ -278,6 +322,12 @@
   .nick {
     flex-shrink: 0;
     font-weight: 600;
+  }
+  .nick.clickable {
+    cursor: pointer;
+  }
+  .nick.clickable:hover {
+    text-decoration: underline;
   }
   .uprefix {
     color: var(--accent);

@@ -229,7 +229,7 @@ describe("IrcStore event handling", () => {
 
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
       serverId: 1,
-      line: "PRIVMSG ChanServ@services.dal.net :OP #makati bob",
+      line: "CHANSERV OP #makati bob",
     });
   });
 
@@ -242,7 +242,7 @@ describe("IrcStore event handling", () => {
 
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", {
       serverId: 1,
-      line: "PRIVMSG ChanServ@services.dal.net :OP #makati rave",
+      line: "CHANSERV OP #makati rave",
     });
   });
 
@@ -666,7 +666,7 @@ describe("IrcStore event handling", () => {
     const chan = irc.buffers.find((b) => b.name === "#makati")!;
     expect(chan.bans?.map((b) => b.mask)).toEqual(["*!*@bad.com", "troll!*@*"]);
     expect(chan.bans?.[0]).toMatchObject({ by: "op", ts: 1700000000 });
-    expect(chan.bansLoading).toBe(false);
+    expect(chan.listLoading?.b).toBe(false);
   });
 
   it("openChannelDialog requests +b and sets the dialog id", () => {
@@ -678,7 +678,7 @@ describe("IrcStore event handling", () => {
     irc.openChannelDialog(chan.id);
     expect(irc.channelDialogId).toBe(chan.id);
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +b" });
-    expect(chan.bansLoading).toBe(true);
+    expect(chan.listLoading?.b).toBe(true);
   });
 
   it("tracks observed MODE +b / -b on the live ban list", () => {
@@ -703,6 +703,57 @@ describe("IrcStore event handling", () => {
     await Promise.resolve();
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati -b x!*@*" });
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "TOPIC #makati :new topic" });
+  });
+
+  it("populates exception (+e) and invite (+I) lists from 348/349 and 346/347", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("348", ["rave", "#makati", "good!*@host"]) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("349", ["rave", "#makati"]) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("346", ["rave", "#makati", "friend!*@*"]) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("347", ["rave", "#makati"]) });
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.excepts?.map((b) => b.mask)).toEqual(["good!*@host"]);
+    expect(chan.invites?.map((b) => b.mask)).toEqual(["friend!*@*"]);
+    // Live MODE +e / +I are tracked too.
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("MODE", ["#makati", "+e", "e2!*@*"], "op") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("MODE", ["#makati", "-I", "friend!*@*"], "op") });
+    const c2 = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(c2.excepts?.map((b) => b.mask)).toEqual(["good!*@host", "e2!*@*"]);
+    expect(c2.invites?.map((b) => b.mask)).toEqual([]);
+  });
+
+  it("timed ban: sets +b, records an expiry, and auto-unbans after the delay", () => {
+    vi.useFakeTimers();
+    try {
+      emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+      emit({ kind: "registered", serverId: 1, nick: "rave" });
+      joinAsOp("#makati");
+      h.invokeMock.mockClear();
+      irc.timedBan(1, "#makati", "troll!*@*", 60);
+      expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +b troll!*@*" });
+      expect(irc.banExpiry(1, "#makati", "troll!*@*")).toBeGreaterThan(0);
+      h.invokeMock.mockClear();
+      vi.advanceTimersByTime(60_000);
+      expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati -b troll!*@*" });
+      expect(irc.banExpiry(1, "#makati", "troll!*@*")).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("/ban -u600 builds a host mask and sets a timed ban", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    // Give the IAL a host for the offender.
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "troll", { host: "evil.com" }) });
+    endPlayback();
+    h.invokeMock.mockClear();
+    await irc.sendInput("/ban -u600 troll");
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +b *!*@evil.com" });
+    expect(irc.banExpiry(1, "#makati", "*!*@evil.com")).toBeGreaterThan(0);
   });
 
   it("tracks channel modes from RPL_CHANNELMODEIS (324) and live MODE changes", () => {

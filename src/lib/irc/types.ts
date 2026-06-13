@@ -119,8 +119,12 @@ export interface Buffer {
   font?: import("../fonts").BufferFont;
   /** Channel +b ban list — populated on demand by the Channel dialog. */
   bans?: BanEntry[];
-  /** True while the ban list is being (re)fetched. */
-  bansLoading?: boolean;
+  /** Channel +e ban-exception list. */
+  excepts?: BanEntry[];
+  /** Channel +I invite list. */
+  invites?: BanEntry[];
+  /** Which lists are mid-(re)fetch, keyed by mode letter ("b"/"e"/"I"). */
+  listLoading?: { b?: boolean; e?: boolean; I?: boolean };
   /** Active boolean channel modes (e.g. "nt"), tracked for the Channel dialog. */
   modeFlags?: string;
   /** +k channel key ("" = none). */

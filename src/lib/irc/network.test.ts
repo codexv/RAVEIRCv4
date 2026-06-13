@@ -35,16 +35,14 @@ describe("detectNetwork", () => {
 });
 
 describe("service profiles", () => {
-  it("DALnet ops via ChanServ at services.dal.net", () => {
+  it("DALnet ops via the idle-safe CHANSERV alias (not a PRIVMSG)", () => {
     const p = serviceProfile(srv("irc.dal.net"));
-    expect(p.op("#makati", "bob")).toEqual([
-      "PRIVMSG ChanServ@services.dal.net :OP #makati bob",
-    ]);
+    expect(p.op("#makati", "bob")).toEqual(["CHANSERV OP #makati bob"]);
   });
 
-  it("Libera ops via plain ChanServ", () => {
+  it("Libera ops via the idle-safe CHANSERV alias", () => {
     const p = serviceProfile(srv("irc.libera.chat", "Libera.Chat"));
-    expect(p.op("#test", "bob")).toEqual(["PRIVMSG ChanServ :OP #test bob"]);
+    expect(p.op("#test", "bob")).toEqual(["CHANSERV OP #test bob"]);
   });
 
   it("Undernet ops via the X bot", () => {
@@ -61,10 +59,10 @@ describe("service profiles", () => {
     ]);
   });
 
-  it("DALnet akick add maps to AKICK ... ADD", () => {
+  it("DALnet akick add maps to CHANSERV AKICK ... ADD", () => {
     const p = serviceProfile(srv("irc.dal.net"));
     expect(p.akickAdd("#makati", "*!*@spam.com")).toEqual([
-      "PRIVMSG ChanServ@services.dal.net :AKICK #makati ADD *!*@spam.com",
+      "CHANSERV AKICK #makati ADD *!*@spam.com",
     ]);
   });
 
@@ -83,7 +81,7 @@ describe("service profiles", () => {
   it("Rizon uses atheme plain ChanServ/NickServ", () => {
     const p = serviceProfile(srv("irc.rizon.net", "Rizon"));
     expect(p.hasServices).toBe(true);
-    expect(p.op("#x", "bob")).toEqual(["PRIVMSG ChanServ :OP #x bob"]);
+    expect(p.op("#x", "bob")).toEqual(["CHANSERV OP #x bob"]);
     // identify uses the raw NICKSERV alias (idle-safe), not a PRIVMSG.
     expect(p.identify("me", "pw")).toEqual(["NICKSERV IDENTIFY me pw"]);
   });

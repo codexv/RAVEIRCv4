@@ -59,48 +59,36 @@ export interface ServiceProfile {
 //     no idle-safe path exists, so we keep PRIVMSG there.
 const privmsg = (target: string, body: string): string => `PRIVMSG ${target} :${body}`;
 
-/** ChanServ/atheme-style profile, parameterized by service targets. */
-function athemeStyle(
-  id: NetworkId,
-  label: string,
-  t: { cs: string; ns: string; ms: string },
-): ServiceProfile {
+/** ChanServ/atheme-style profile. Every services interaction goes through the
+ *  raw CHANSERV/NICKSERV/MEMOSERV server aliases (like mIRC's /cs /ns /ms) rather
+ *  than a PRIVMSG to the service nick — bahamut (DALnet), solanum (Libera) and
+ *  atheme route these to services WITHOUT resetting your idle time (important
+ *  through a ZNC bouncer). */
+function athemeStyle(id: NetworkId, label: string): ServiceProfile {
   return {
     id,
     label,
     hasServices: true,
-    // Use the raw NICKSERV server alias (like mIRC's /ns) rather than a PRIVMSG
-    // to NickServ — the ircd routes it to services WITHOUT resetting your idle
-    // time (important through a ZNC bouncer).
     identify: (account, password) => [`NICKSERV IDENTIFY ${account} ${password}`.trim()],
-    op: (c, n) => [privmsg(t.cs, `OP ${c} ${n}`)],
-    deop: (c, n) => [privmsg(t.cs, `DEOP ${c} ${n}`)],
-    voice: (c, n) => [privmsg(t.cs, `VOICE ${c} ${n}`)],
-    devoice: (c, n) => [privmsg(t.cs, `DEVOICE ${c} ${n}`)],
-    invite: (c, n) => [n ? `INVITE ${n} ${c}` : privmsg(t.cs, `INVITE ${c}`)],
-    unban: (c, target) => [privmsg(t.cs, `UNBAN ${c}${target ? ` ${target}` : ""}`)],
-    akickAdd: (c, m) => [privmsg(t.cs, `AKICK ${c} ADD ${m}`)],
-    akickDel: (c, m) => [privmsg(t.cs, `AKICK ${c} DEL ${m}`)],
-    akickList: (c) => [privmsg(t.cs, `AKICK ${c} LIST`)],
-    info: (c) => [privmsg(t.cs, `INFO ${c}`)],
-    cs: (args) => [privmsg(t.cs, args)],
-    // /ns goes through the raw NICKSERV alias too (idle-safe, mIRC-style).
+    op: (c, n) => [`CHANSERV OP ${c} ${n}`],
+    deop: (c, n) => [`CHANSERV DEOP ${c} ${n}`],
+    voice: (c, n) => [`CHANSERV VOICE ${c} ${n}`],
+    devoice: (c, n) => [`CHANSERV DEVOICE ${c} ${n}`],
+    invite: (c, n) => [n ? `INVITE ${n} ${c}` : `CHANSERV INVITE ${c}`],
+    unban: (c, target) => [`CHANSERV UNBAN ${c}${target ? ` ${target}` : ""}`],
+    akickAdd: (c, m) => [`CHANSERV AKICK ${c} ADD ${m}`],
+    akickDel: (c, m) => [`CHANSERV AKICK ${c} DEL ${m}`],
+    akickList: (c) => [`CHANSERV AKICK ${c} LIST`],
+    info: (c) => [`CHANSERV INFO ${c}`],
+    cs: (args) => [`CHANSERV ${args}`],
     ns: (args) => [`NICKSERV ${args}`],
-    ms: (args) => [privmsg(t.ms, args ?? "READ")],
+    ms: (args) => [`MEMOSERV ${args ?? "READ"}`],
   };
 }
 
-const DALNET = athemeStyle("dalnet", "DALnet", {
-  cs: "ChanServ@services.dal.net",
-  ns: "NickServ@services.dal.net",
-  ms: "MemoServ@services.dal.net",
-});
+const DALNET = athemeStyle("dalnet", "DALnet");
 
-const LIBERA = athemeStyle("libera", "Libera.Chat", {
-  cs: "ChanServ",
-  ns: "NickServ",
-  ms: "MemoServ",
-});
+const LIBERA = athemeStyle("libera", "Libera.Chat");
 
 /** Undernet routes everything through the X bot; no ChanServ/NickServ. */
 const UNDERNET_X = "X@channels.undernet.org";
@@ -125,18 +113,10 @@ const UNDERNET: ServiceProfile = {
 };
 
 /** Rizon runs atheme services with plain service nicks. */
-const RIZON = athemeStyle("rizon", "Rizon", {
-  cs: "ChanServ",
-  ns: "NickServ",
-  ms: "MemoServ",
-});
+const RIZON = athemeStyle("rizon", "Rizon");
 
 /** Freenode (defunct since 2021; Libera is its successor) was also atheme. */
-const FREENODE = athemeStyle("freenode", "freenode", {
-  cs: "ChanServ",
-  ns: "NickServ",
-  ms: "MemoServ",
-});
+const FREENODE = athemeStyle("freenode", "freenode");
 
 /** QuakeNet routes everything through the Q bot; auth is `AUTH`, no MemoServ. */
 const QUAKENET_Q = "Q@CServe.quakenet.org";
@@ -186,14 +166,8 @@ function modeStyle(id: NetworkId, label: string): ServiceProfile {
 const EFNET = modeStyle("efnet", "EFnet");
 const IRCNET = modeStyle("ircnet", "IRCnet");
 
-/** Generic fallback: plain ChanServ/NickServ, best-effort. */
-const GENERIC = athemeStyle("generic", "Generic", {
-  cs: "ChanServ",
-  ns: "NickServ",
-  ms: "MemoServ",
-});
-GENERIC.id = "generic";
-GENERIC.label = "Generic";
+/** Generic fallback: raw CHANSERV/NICKSERV/MEMOSERV aliases, best-effort. */
+const GENERIC = athemeStyle("generic", "Generic");
 
 const PROFILES: Record<NetworkId, ServiceProfile> = {
   dalnet: DALNET,

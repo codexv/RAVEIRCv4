@@ -10,6 +10,21 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.27] — 2026-06-13
+
+- **Channel Central — full mIRC parity.** The channel dialog now has **Bans (+b),
+  Exceptions (+e), and Invites (+I)** tabs, each fetched live with add/remove for
+  operators. **Timed bans**: set a ban to auto-lift after N minutes (with a live
+  countdown in the list), via the dialog or `/ban [-u<seconds>] [#chan] <nick|mask>`.
+- **Clickable nicks in chat.** Click a chatter's name to highlight + scroll to
+  them in the nicklist; right-click for the full actions menu (whois, query,
+  op/voice, kick, ban, kick+ban, CTCP, AI). The nicklist and chat now share one menu.
+- **Idle-safe services.** `/cs`, `/ns`, `/ms` — and all ChanServ/MemoServ actions
+  (op, deop, voice, akick, unban, info…) — now use the raw `CHANSERV`/`NICKSERV`/
+  `MEMOSERV` server aliases instead of a `PRIVMSG` to the service, so they no
+  longer reset your idle time (matters through a ZNC bouncer). Bot-based networks
+  (Undernet X, QuakeNet Q) keep their required PRIVMSG route.
+
 ## [0.1.26] — 2026-06-13
 
 - **Your own `/msg`, `/notice`, `/me` now echo locally — including from an alias.**
