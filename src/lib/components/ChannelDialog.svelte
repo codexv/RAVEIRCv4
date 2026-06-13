@@ -636,8 +636,15 @@
     color: #fff;
     font-weight: 600;
   }
+  /* When enabled (a selection exists) the remove button is solid red. */
+  .btn.danger:not(:disabled) {
+    background: #c0392b;
+    border-color: #c0392b;
+    color: #fff;
+    font-weight: 600;
+  }
   .btn.danger:hover:not(:disabled) {
+    background: #d2453a;
     border-color: #d2453a;
-    color: #ff6b5e;
   }
 </style>

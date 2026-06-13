@@ -10,6 +10,11 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.30] — 2026-06-13
+
+- The **Remove selected** button under the ban list is now a solid **red** button
+  when it's armed (something is selected), so it's obvious when it'll act.
+
 ## [0.1.29] — 2026-06-13
 
 - **Ban/exception/invite lists are now a proper table** with a **resizable Mask
