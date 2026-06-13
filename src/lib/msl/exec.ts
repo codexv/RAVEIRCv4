@@ -9,6 +9,12 @@ export interface MslHost {
   sendRaw(line: string): void;
   /** Echo text to the user's active window. */
   echo(text: string): void;
+  /** Send a PRIVMSG and echo it locally (like mIRC). Falls back to sendRaw. */
+  message?(target: string, text: string): void;
+  /** Send a NOTICE and echo it locally (like mIRC). Falls back to sendRaw. */
+  notice?(target: string, text: string): void;
+  /** Send a CTCP ACTION (/me, /describe) and echo it locally. */
+  action?(target: string, text: string): void;
   /**
    * Resolve a live (host-backed) identifier the built-ins/aliases don't cover —
    * $network, $server, $comchan, $ial, $chan, $nick, $hget, $read, … Returns
@@ -261,19 +267,24 @@ function dispatch(cmd: string, rest: string, ctx: EvalCtx, host: MslHost): Signa
       return "normal";
     }
     case "say":
-      host.sendRaw(`PRIVMSG ${ctx.chan || ctx.target} :${rest}`);
+      if (host.message) host.message(ctx.chan || ctx.target, rest);
+      else host.sendRaw(`PRIVMSG ${ctx.chan || ctx.target} :${rest}`);
       return "normal";
     case "msg":
-      host.sendRaw(`PRIVMSG ${first} :${after}`);
+      if (host.message) host.message(first, after);
+      else host.sendRaw(`PRIVMSG ${first} :${after}`);
       return "normal";
     case "notice":
-      host.sendRaw(`NOTICE ${first} :${after}`);
+      if (host.notice) host.notice(first, after);
+      else host.sendRaw(`NOTICE ${first} :${after}`);
       return "normal";
     case "describe":
-      host.sendRaw(`PRIVMSG ${first} :ACTION ${after}`);
+      if (host.action) host.action(first, after);
+      else host.sendRaw(`PRIVMSG ${first} :ACTION ${after}`);
       return "normal";
     case "me":
-      host.sendRaw(`PRIVMSG ${ctx.chan || ctx.target} :ACTION ${rest}`);
+      if (host.action) host.action(ctx.chan || ctx.target, rest);
+      else host.sendRaw(`PRIVMSG ${ctx.chan || ctx.target} :ACTION ${rest}`);
       return "normal";
     case "kick":
       host.sendRaw(`KICK ${first} ${after}`);

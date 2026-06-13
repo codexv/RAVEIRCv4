@@ -27,6 +27,37 @@ describe("MslEngine aliases", () => {
     expect(sent).toContain("PRIVMSG #makati :hello bob");
   });
 
+  it("routes msg/notice/me through the echoing host methods when present", () => {
+    // Regression: an alias for /notice (e.g. /n) was silent — it only sent raw
+    // and never echoed locally, unlike mIRC and the built-in /notice command.
+    const e = new MslEngine();
+    e.load("alias n /notice $1 $2-\nalias mm /msg $1 $2-\nalias act /me $1-", "", "");
+    const calls: string[] = [];
+    const host: MslHost = {
+      sendRaw: (l) => calls.push("RAW:" + l),
+      echo: () => {},
+      message: (t, x) => calls.push(`MSG:${t}:${x}`),
+      notice: (t, x) => calls.push(`NOTICE:${t}:${x}`),
+      action: (t, x) => calls.push(`ACTION:${t}:${x}`),
+    };
+    e.runAlias("n", "bob hello there", data(), host);
+    e.runAlias("mm", "#makati hi all", data(), host);
+    e.runAlias("act", "waves", data(), host);
+    expect(calls).toContain("NOTICE:bob:hello there");
+    expect(calls).toContain("MSG:#makati:hi all");
+    expect(calls).toContain("ACTION:#makati:waves");
+    // Nothing fell through to a silent raw send.
+    expect(calls.some((c) => c.startsWith("RAW:"))).toBe(false);
+  });
+
+  it("falls back to sendRaw for msg/notice when the host has no echo methods", () => {
+    const e = new MslEngine();
+    e.load("alias n /notice $1 $2-", "", "");
+    const { sent, host } = harness(); // bare host: sendRaw + echo only
+    e.runAlias("n", "bob hi", data(), host);
+    expect(sent).toContain("NOTICE bob :hi");
+  });
+
   it("resolves a user alias used as an identifier ($alias) with its return value", () => {
     const e = new MslEngine();
     e.load(

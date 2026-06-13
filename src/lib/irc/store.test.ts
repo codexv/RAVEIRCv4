@@ -705,6 +705,39 @@ describe("IrcStore event handling", () => {
     expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "TOPIC #makati :new topic" });
   });
 
+  it("tracks channel modes from RPL_CHANNELMODEIS (324) and live MODE changes", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("324", ["rave", "#makati", "+ntkl", "sekret", "50"]) });
+    let chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.modeFlags).toBe("nt");
+    expect(chan.modeKey).toBe("sekret");
+    expect(chan.modeLimit).toBe(50);
+
+    // Live: +m adds, -k clears the key, -l clears the limit.
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("MODE", ["#makati", "+m-k", "sekret"], "op") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("MODE", ["#makati", "-l"], "op") });
+    chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.modeFlags).toBe("mnt");
+    expect(chan.modeKey).toBe("");
+    expect(chan.modeLimit).toBe(0);
+  });
+
+  it("setChannelMode / key / limit send the right raw lines", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    h.invokeMock.mockClear();
+    irc.setChannelMode(1, "#makati", "m", true);
+    irc.setChannelLimit(1, "#makati", 25);
+    irc.setChannelKey(1, "#makati", "hunter2");
+    await Promise.resolve();
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +m" });
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +l 25" });
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +k hunter2" });
+  });
+
   // ---- ZNC playback: don't enforce protections on replayed buffer --------
 
   it("does NOT enforce protections during the post-registration playback window", () => {

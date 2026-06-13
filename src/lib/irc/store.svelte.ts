@@ -225,6 +225,11 @@ export class IrcStore {
         const b = this.active ?? this.ensureBuffer(serverId, "(server)", "server");
         this.add(b, "echo", text);
       },
+      // Echo locally as well as send (mIRC shows your own /msg, /notice, /me even
+      // when issued from an alias — they were previously silent).
+      message: (target, text) => this.emitMessage(serverId, target, text),
+      notice: (target, text) => this.emitNotice(serverId, target, text),
+      action: (target, text) => this.emitAction(serverId, target, text),
       ident: (name, args, prop) => this.mslIdent(serverId, name, args, prop),
       command: (name, rest, ctx) =>
         this.hash.command(name, rest) ||
@@ -730,6 +735,8 @@ export class IrcStore {
         return this.handleMonitor(serverId, msg, false);
       case "366":
         return; // end of names
+      case "324":
+        return this.handleChannelModes(serverId, msg); // RPL_CHANNELMODEIS
       case "367":
         return this.handleBanList(serverId, msg); // RPL_BANLIST
       case "368":
@@ -1429,14 +1436,48 @@ export class IrcStore {
             buf.bans = buf.bans.filter((b) => b.mask !== mask);
           }
         }
-      } else if ("eIkflLjq".includes(ch)) {
-        // other modes that take a parameter (approximate common set)
-        if (adding || "eIklfLjq".includes(ch)) argi++;
+      } else if (ch === "k") {
+        // Channel key (+k key / -k key): both forms carry the key argument.
+        const key = args[argi++];
+        buf.modeKey = adding ? (key ?? "") : "";
+      } else if (ch === "l") {
+        // User limit: +l <n> takes an argument; -l takes none.
+        if (adding) buf.modeLimit = Number(args[argi++]) || 0;
+        else buf.modeLimit = 0;
+      } else if ("eIfLjJ".includes(ch)) {
+        // list/param modes we don't surface (exceptions, invites, flood, …).
+        if (adding || "eIfLjJ".includes(ch)) argi++;
+      } else {
+        // Boolean channel mode (n, t, m, i, s, p, c, …): track for the dialog.
+        const flags = new Set((buf.modeFlags ?? "").split(""));
+        if (adding) flags.add(ch);
+        else flags.delete(ch);
+        buf.modeFlags = [...flags].sort().join("");
       }
     }
     this.sortUsers(buf, serverId);
     this.add(buf, "mode", `${from} sets mode ${[modeStr, ...args].join(" ")}`, from);
     this.dispatchScript(serverId, "MODE", { nick: from, chan: target, text: [modeStr, ...args].join(" ") });
+  }
+
+  /** RPL_CHANNELMODEIS (324): current channel modes. params: <me> <chan> <+modes> [args] */
+  private handleChannelModes(serverId: number, msg: IrcMessage) {
+    const chan = msg.params[1] ?? "";
+    const buf = this.buffer(serverId, chan);
+    if (!buf) return;
+    const modeStr = msg.params[2] ?? "";
+    const args = msg.params.slice(3);
+    const flags = new Set<string>();
+    buf.modeKey = "";
+    buf.modeLimit = 0;
+    let argi = 0;
+    for (const ch of modeStr) {
+      if (ch === "+" || ch === "-") continue;
+      if (ch === "k") buf.modeKey = args[argi++] ?? "";
+      else if (ch === "l") buf.modeLimit = Number(args[argi++]) || 0;
+      else flags.add(ch);
+    }
+    buf.modeFlags = [...flags].sort().join("");
   }
 
   /** RPL_BANLIST (367): one ban entry. params: <me> <chan> <mask> [<by> <ts>] */
@@ -1461,12 +1502,29 @@ export class IrcStore {
 
   // ---- Channel Central dialog (double-click a channel) ---------------------
 
-  /** Open the topic + ban-list dialog for a channel buffer, and refresh both. */
+  /** Open the topic + modes + ban-list dialog for a channel, refreshing all. */
   openChannelDialog(bufId: string) {
     const buf = this.buffers.find((b) => b.id === bufId);
     if (!buf || buf.kind !== "channel") return;
     this.channelDialogId = bufId;
+    this.raw(buf.serverId, `MODE ${buf.name}`); // current channel modes (→ 324)
     this.refreshBans(buf.serverId, buf.name);
+  }
+
+  /** Toggle a boolean channel mode (op action), e.g. setMode("#c", "m", true). */
+  setChannelMode(serverId: number, chan: string, flag: string, on: boolean) {
+    this.raw(serverId, `MODE ${chan} ${on ? "+" : "-"}${flag}`);
+  }
+
+  /** Set or clear the channel key (+k) / limit (+l) (op action). */
+  setChannelKey(serverId: number, chan: string, key: string) {
+    const buf = this.buffer(serverId, chan);
+    if (key) this.raw(serverId, `MODE ${chan} +k ${key}`);
+    else if (buf?.modeKey) this.raw(serverId, `MODE ${chan} -k ${buf.modeKey}`);
+  }
+  setChannelLimit(serverId: number, chan: string, limit: number) {
+    if (limit > 0) this.raw(serverId, `MODE ${chan} +l ${limit}`);
+    else this.raw(serverId, `MODE ${chan} -l`);
   }
 
   /** Ask the server for the channel +b list (RPL_BANLIST replies repopulate it). */
@@ -1588,36 +1646,49 @@ export class IrcStore {
       case "raw":
         for (const line of result.lines) await this.raw(buf.serverId, line);
         return;
-      case "message": {
-        await sendMessage(buf.serverId, result.target, result.text);
-        const dest = this.ensureBuffer(
-          buf.serverId,
-          result.target,
-          this.isChannel(buf.serverId, result.target) ? "channel" : "query",
-        );
-        this.add(dest, "self", result.text, this.ownNick(buf.serverId));
+      case "message":
+        this.emitMessage(buf.serverId, result.target, result.text);
         return;
-      }
-      case "action": {
-        await this.raw(buf.serverId, `PRIVMSG ${result.target} :\x01ACTION ${result.text}\x01`);
-        const dest = this.ensureBuffer(
-          buf.serverId,
-          result.target,
-          this.isChannel(buf.serverId, result.target) ? "channel" : "query",
-        );
-        this.add(dest, "action", `${this.ownNick(buf.serverId)} ${result.text}`);
+      case "action":
+        this.emitAction(buf.serverId, result.target, result.text);
         return;
-      }
-      case "notice": {
-        await this.raw(buf.serverId, `NOTICE ${result.target} :${result.text}`);
-        this.add(buf, "notice", `-> -${result.target}- ${result.text}`);
+      case "notice":
+        this.emitNotice(buf.serverId, result.target, result.text, buf);
         return;
-      }
       case "client":
         return this.clientCommand(result.action, result.arg, buf);
       case "service":
         return this.resolveService(buf, result.action, result.args);
     }
+  }
+
+  /** Send a PRIVMSG to a target and echo it locally (mIRC shows your own msg). */
+  private emitMessage(serverId: number, target: string, text: string) {
+    void sendMessage(serverId, target, text);
+    const dest = this.ensureBuffer(
+      serverId,
+      target,
+      this.isChannel(serverId, target) ? "channel" : "query",
+    );
+    this.add(dest, "self", text, this.ownNick(serverId));
+  }
+
+  /** Send a CTCP ACTION (/me, /describe) and echo it locally. */
+  private emitAction(serverId: number, target: string, text: string) {
+    void this.raw(serverId, `PRIVMSG ${target} :\x01ACTION ${text}\x01`);
+    const dest = this.ensureBuffer(
+      serverId,
+      target,
+      this.isChannel(serverId, target) ? "channel" : "query",
+    );
+    this.add(dest, "action", `${this.ownNick(serverId)} ${text}`);
+  }
+
+  /** Send a NOTICE and echo it locally (to the active/origin window, mIRC-style). */
+  private emitNotice(serverId: number, target: string, text: string, fromBuf?: Buffer) {
+    void this.raw(serverId, `NOTICE ${target} :${text}`);
+    const dest = fromBuf ?? this.active ?? this.ensureBuffer(serverId, "(server)", "server");
+    this.add(dest, "notice", `-> -${target}- ${text}`);
   }
 
   /** Handle /timer[name] and /timers. Returns true if the input was a timer command. */

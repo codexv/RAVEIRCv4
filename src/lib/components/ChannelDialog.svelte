@@ -8,16 +8,38 @@
   const isOp = $derived(buf ? irc.isOpIn(buf.serverId, buf.name) : false);
   const bans = $derived(buf?.bans ?? []);
 
+  // mIRC Channel Central boolean modes.
+  const MODES: { flag: string; label: string }[] = [
+    { flag: "m", label: "Moderated (+m)" },
+    { flag: "n", label: "No external messages (+n)" },
+    { flag: "t", label: "Only ops set topic (+t)" },
+    { flag: "i", label: "Invite only (+i)" },
+    { flag: "s", label: "Secret (+s)" },
+    { flag: "p", label: "Private (+p)" },
+  ];
+  const flags = $derived(buf?.modeFlags ?? "");
+
   let topicDraft = $state("");
   let newBan = $state("");
+  let keyDraft = $state("");
+  let limitDraft = $state("");
   // Reset the editable fields whenever a different channel dialog opens.
   let lastId = $state<string | null>(null);
   $effect(() => {
     if (buf && buf.id !== lastId) {
       topicDraft = buf.topic;
       newBan = "";
+      keyDraft = buf.modeKey ?? "";
+      limitDraft = buf.modeLimit ? String(buf.modeLimit) : "";
       lastId = buf.id;
     }
+  });
+  // Keep key/limit drafts synced when the server reports new values.
+  $effect(() => {
+    keyDraft = buf?.modeKey ?? "";
+  });
+  $effect(() => {
+    limitDraft = buf?.modeLimit ? String(buf.modeLimit) : "";
   });
 
   function close() {
@@ -94,6 +116,66 @@
               </button>
             {:else}
               <span class="hint">Op required to change the topic.</span>
+            {/if}
+          </div>
+        </section>
+
+        <section>
+          <span class="lbl">Channel modes</span>
+          <div class="modes">
+            {#each MODES as m (m.flag)}
+              <label class="mode" class:dim={!isOp}>
+                <input
+                  type="checkbox"
+                  checked={flags.includes(m.flag)}
+                  disabled={!isOp}
+                  onchange={(e) =>
+                    buf && irc.setChannelMode(buf.serverId, buf.name, m.flag, e.currentTarget.checked)}
+                />
+                {m.label}
+              </label>
+            {/each}
+          </div>
+          <div class="row">
+            <label class="kv">
+              Key (+k)
+              <input
+                class="kv-in"
+                bind:value={keyDraft}
+                readonly={!isOp}
+                placeholder="none"
+                spellcheck="false"
+                autocomplete="off"
+              />
+            </label>
+            {#if isOp}
+              <button
+                class="btn small"
+                onclick={() => buf && irc.setChannelKey(buf.serverId, buf.name, keyDraft.trim())}
+                disabled={keyDraft.trim() === (buf.modeKey ?? "")}
+              >
+                Set
+              </button>
+            {/if}
+            <label class="kv">
+              Limit (+l)
+              <input
+                class="kv-in short"
+                type="number"
+                min="0"
+                bind:value={limitDraft}
+                readonly={!isOp}
+                placeholder="none"
+              />
+            </label>
+            {#if isOp}
+              <button
+                class="btn small"
+                onclick={() => buf && irc.setChannelLimit(buf.serverId, buf.name, Number(limitDraft) || 0)}
+                disabled={(Number(limitDraft) || 0) === (buf.modeLimit ?? 0)}
+              >
+                Set
+              </button>
             {/if}
           </div>
         </section>
@@ -245,6 +327,45 @@
   .hint {
     font-size: 12px;
     color: var(--fg-dim);
+  }
+  .modes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 14px;
+  }
+  .mode {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--fg);
+  }
+  .mode.dim {
+    color: var(--fg-dim);
+  }
+  .kv {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fg-dim);
+  }
+  .kv-in {
+    width: 120px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 5px 8px;
+    outline: none;
+  }
+  .kv-in.short {
+    width: 70px;
+  }
+  .kv-in:focus {
+    border-color: var(--accent);
   }
   .ban-head {
     display: flex;

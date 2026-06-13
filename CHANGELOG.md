@@ -10,6 +10,18 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.26] — 2026-06-13
+
+- **Your own `/msg`, `/notice`, `/me` now echo locally — including from an alias.**
+  A custom alias like `/n` for `/notice` was silent (it sent but you never saw
+  it); aliased `/me`/`/describe` were also missing the CTCP wrapper. All now
+  display in the right window, matching mIRC and the built-in commands.
+- **Channel Central gains channel-mode controls** (mIRC parity). Double-click a
+  channel and, as an op, toggle moderated / no-external / topic-ops-only /
+  invite-only / secret / private, and set the key (+k) and user limit (+l). The
+  controls reflect the live channel modes. (mIRC has no *timed*-ban feature, so
+  the ban list shows masks with who-set and when-set, not an expiry.)
+
 ## [0.1.25] — 2026-06-13
 
 - **Channel Central** (mIRC-style): double-click a channel window to open a

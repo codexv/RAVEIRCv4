@@ -121,6 +121,12 @@ export interface Buffer {
   bans?: BanEntry[];
   /** True while the ban list is being (re)fetched. */
   bansLoading?: boolean;
+  /** Active boolean channel modes (e.g. "nt"), tracked for the Channel dialog. */
+  modeFlags?: string;
+  /** +k channel key ("" = none). */
+  modeKey?: string;
+  /** +l user limit (0 = none). */
+  modeLimit?: number;
 }
 
 export interface Server {
