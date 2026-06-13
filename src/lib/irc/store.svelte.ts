@@ -1563,6 +1563,16 @@ export class IrcStore {
     this.raw(serverId, `MODE ${chan} ${on ? "+" : "-"}${flag}`);
   }
 
+  /** Apply several boolean (no-argument) mode changes in ONE command, e.g.
+   *  add=["i","s","p"], remove=["n"] → `MODE #chan +isp-n`. (Parameterized
+   *  modes like +k/+l are sent separately.) */
+  setChannelModeFlags(serverId: number, chan: string, add: string[], remove: string[]) {
+    let s = "";
+    if (add.length) s += "+" + add.join("");
+    if (remove.length) s += "-" + remove.join("");
+    if (s) this.raw(serverId, `MODE ${chan} ${s}`);
+  }
+
   /** Set or clear the channel key (+k) / limit (+l) (op action). */
   setChannelKey(serverId: number, chan: string, key: string) {
     const buf = this.buffer(serverId, chan);

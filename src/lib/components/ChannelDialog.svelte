@@ -153,10 +153,11 @@
   function applyChanges() {
     if (buf && isOp) {
       const cur = new Set((buf.modeFlags ?? "").split("").filter(Boolean));
-      for (const m of MODES) {
-        const want = modeDraft.has(m.flag);
-        if (want !== cur.has(m.flag)) irc.setChannelMode(buf.serverId, buf.name, m.flag, want);
-      }
+      // Batch the boolean checkbox changes into one command (e.g. +isp-n).
+      const add = MODES.filter((m) => modeDraft.has(m.flag) && !cur.has(m.flag)).map((m) => m.flag);
+      const remove = MODES.filter((m) => !modeDraft.has(m.flag) && cur.has(m.flag)).map((m) => m.flag);
+      irc.setChannelModeFlags(buf.serverId, buf.name, add, remove);
+      // Parameterized modes (+k key / +l limit) go as their own commands.
       if (keyDraft.trim() !== (buf.modeKey ?? "")) {
         irc.setChannelKey(buf.serverId, buf.name, keyDraft.trim());
       }

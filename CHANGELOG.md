@@ -10,6 +10,13 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.32] — 2026-06-14
+
+- **Channel-mode checkboxes apply in one command.** Pressing OK after toggling
+  several modes now sends a single combined `MODE` (e.g. `+isp-n`) instead of one
+  per checkbox. Key (+k) and limit (+l), which carry a parameter, are still sent
+  separately.
+
 ## [0.1.31] — 2026-06-13
 
 - **Operator dialog now applies on OK.** Channel-mode checkboxes, the key (+k),

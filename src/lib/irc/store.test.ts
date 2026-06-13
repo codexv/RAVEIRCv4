@@ -799,6 +799,20 @@ describe("IrcStore event handling", () => {
     expect(chan.modeLimit).toBe(0);
   });
 
+  it("batches boolean mode toggles into one MODE command", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    h.invokeMock.mockClear();
+    irc.setChannelModeFlags(1, "#makati", ["i", "s", "p"], ["n"]);
+    await Promise.resolve();
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +isp-n" });
+    // No changes → no command sent.
+    h.invokeMock.mockClear();
+    irc.setChannelModeFlags(1, "#makati", [], []);
+    expect(h.invokeMock).not.toHaveBeenCalled();
+  });
+
   it("setChannelMode / key / limit send the right raw lines", async () => {
     emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
     emit({ kind: "registered", serverId: 1, nick: "rave" });
