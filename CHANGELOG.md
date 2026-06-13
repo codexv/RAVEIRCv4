@@ -10,6 +10,21 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.31] — 2026-06-13
+
+- **Operator dialog now applies on OK.** Channel-mode checkboxes, the key (+k),
+  the limit (+l) and the topic are staged and only sent when you press **OK**
+  (**Cancel** discards) — no more toggling a checkbox firing a mode change
+  instantly. **Removing bans still applies immediately.**
+- **Active channel modes** are shown next to the channel name in the top bar
+  (mIRC format, e.g. `+ntkl`); click the chip to open Channel Central. Key/limit
+  values are in the tooltip.
+- **Full topic on demand** — click the topic bar to expand it to the whole topic,
+  click again to collapse.
+- **Version moved** off the top bar to the **bottom of the channel sidebar**.
+- **macOS title bar is now dark** (matches the app instead of a light strip)
+  while keeping contrast against the OLED-black content.
+
 ## [0.1.30] — 2026-06-13
 
 - The **Remove selected** button under the ban list is now a solid **red** button

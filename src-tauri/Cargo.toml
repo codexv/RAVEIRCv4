@@ -1,6 +1,6 @@
 [package]
 name = "raveirc"
-version = "0.1.30"
+version = "0.1.31"
 description = "RAVEIRC - cross-platform IRC client with native RAVE operator toolkit"
 authors = ["RAVE"]
 edition = "2021"

@@ -97,42 +97,86 @@
     { flag: "s", label: "Secret (+s)" },
     { flag: "p", label: "Private (+p)" },
   ];
-  const flags = $derived(buf?.modeFlags ?? "");
-
+  // Staged edits — topic / modes / key / limit don't apply until OK is pressed.
+  // `dirty` freezes the drafts so the server's live values (incl. the 324 modes
+  // reply that arrives just after opening) stop overwriting the user's edits.
+  let modeDraft = $state<Set<string>>(new Set());
   let topicDraft = $state("");
   let newMask = $state("");
   let banMinutes = $state(""); // optional timed-ban duration (bans tab only)
   let keyDraft = $state("");
   let limitDraft = $state("");
-  // Reset the editable fields whenever a different channel dialog opens.
+  let dirty = $state(false);
   let lastId = $state<string | null>(null);
+
+  // New channel dialog → reset everything (including any staged edits).
   $effect(() => {
-    if (buf && buf.id !== lastId) {
-      topicDraft = buf.topic;
+    const id = buf?.id ?? null;
+    if (id !== lastId) {
+      lastId = id;
+      dirty = false;
       newMask = "";
       banMinutes = "";
-      keyDraft = buf.modeKey ?? "";
-      limitDraft = buf.modeLimit ? String(buf.modeLimit) : "";
-      lastId = buf.id;
     }
   });
-  // Keep key/limit drafts synced when the server reports new values.
+  // While the user hasn't staged anything, mirror the server's live values so
+  // the controls reflect reality (324 modes, external mode changes). Once they
+  // edit, `dirty` halts this until OK/Cancel.
   $effect(() => {
-    keyDraft = buf?.modeKey ?? "";
-  });
-  $effect(() => {
-    limitDraft = buf?.modeLimit ? String(buf.modeLimit) : "";
+    if (!buf) return;
+    const flags = buf.modeFlags ?? "";
+    const key = buf.modeKey ?? "";
+    const limit = buf.modeLimit ?? 0;
+    const topic = buf.topic;
+    if (dirty) return;
+    modeDraft = new Set(flags.split("").filter(Boolean));
+    keyDraft = key;
+    limitDraft = limit ? String(limit) : "";
+    topicDraft = topic;
   });
 
   function close() {
     irc.channelDialogId = null;
     lastId = null;
+    dirty = false;
   }
 
-  function saveTopic() {
-    if (!buf || !isOp) return;
-    if (topicDraft !== buf.topic) irc.setChannelTopic(buf.serverId, buf.name, topicDraft);
+  function toggleMode(flag: string) {
+    const next = new Set(modeDraft);
+    if (next.has(flag)) next.delete(flag);
+    else next.add(flag);
+    modeDraft = next;
+    dirty = true;
   }
+
+  /** OK: apply staged topic + boolean modes + key + limit, then close. */
+  function applyChanges() {
+    if (buf && isOp) {
+      const cur = new Set((buf.modeFlags ?? "").split("").filter(Boolean));
+      for (const m of MODES) {
+        const want = modeDraft.has(m.flag);
+        if (want !== cur.has(m.flag)) irc.setChannelMode(buf.serverId, buf.name, m.flag, want);
+      }
+      if (keyDraft.trim() !== (buf.modeKey ?? "")) {
+        irc.setChannelKey(buf.serverId, buf.name, keyDraft.trim());
+      }
+      if ((Number(limitDraft) || 0) !== (buf.modeLimit ?? 0)) {
+        irc.setChannelLimit(buf.serverId, buf.name, Number(limitDraft) || 0);
+      }
+      if (topicDraft !== buf.topic) irc.setChannelTopic(buf.serverId, buf.name, topicDraft);
+    }
+    close();
+  }
+
+  /** Are there unsaved staged changes? (enables OK). */
+  const hasChanges = $derived.by(() => {
+    if (!buf) return false;
+    if (topicDraft !== buf.topic) return true;
+    if (keyDraft.trim() !== (buf.modeKey ?? "")) return true;
+    if ((Number(limitDraft) || 0) !== (buf.modeLimit ?? 0)) return true;
+    const flags = buf.modeFlags ?? "";
+    return MODES.some((m) => modeDraft.has(m.flag) !== flags.includes(m.flag));
+  });
   function addEntry() {
     if (!buf || !isOp || !newMask.trim()) return;
     const mins = Number(banMinutes);
@@ -200,19 +244,11 @@
             readonly={!isOp}
             rows="3"
             placeholder={isOp ? "Set the channel topic…" : "(no topic)"}
+            oninput={() => (dirty = true)}
           ></textarea>
-          <div class="row">
-            {#if isOp}
-              <button class="btn primary" onclick={saveTopic} disabled={topicDraft === buf.topic}>
-                Set topic
-              </button>
-              <button class="btn" onclick={() => (topicDraft = buf.topic)} disabled={topicDraft === buf.topic}>
-                Revert
-              </button>
-            {:else}
-              <span class="hint">Op required to change the topic.</span>
-            {/if}
-          </div>
+          {#if !isOp}
+            <div class="row"><span class="hint">Op required to change channel settings.</span></div>
+          {/if}
         </section>
 
         <section>
@@ -222,10 +258,9 @@
               <label class="mode" class:dim={!isOp}>
                 <input
                   type="checkbox"
-                  checked={flags.includes(m.flag)}
+                  checked={modeDraft.has(m.flag)}
                   disabled={!isOp}
-                  onchange={(e) =>
-                    buf && irc.setChannelMode(buf.serverId, buf.name, m.flag, e.currentTarget.checked)}
+                  onchange={() => toggleMode(m.flag)}
                 />
                 {m.label}
               </label>
@@ -241,17 +276,9 @@
                 placeholder="none"
                 spellcheck="false"
                 autocomplete="off"
+                oninput={() => (dirty = true)}
               />
             </label>
-            {#if isOp}
-              <button
-                class="btn small"
-                onclick={() => buf && irc.setChannelKey(buf.serverId, buf.name, keyDraft.trim())}
-                disabled={keyDraft.trim() === (buf.modeKey ?? "")}
-              >
-                Set
-              </button>
-            {/if}
             <label class="kv">
               Limit (+l)
               <input
@@ -261,17 +288,10 @@
                 bind:value={limitDraft}
                 readonly={!isOp}
                 placeholder="none"
+                oninput={() => (dirty = true)}
               />
             </label>
-            {#if isOp}
-              <button
-                class="btn small"
-                onclick={() => buf && irc.setChannelLimit(buf.serverId, buf.name, Number(limitDraft) || 0)}
-                disabled={(Number(limitDraft) || 0) === (buf.modeLimit ?? 0)}
-              >
-                Set
-              </button>
-            {/if}
+            <span class="hint staged">Applied on OK</span>
           </div>
         </section>
 
@@ -350,6 +370,15 @@
           {/if}
         </section>
       </div>
+
+      <div class="footer">
+        {#if isOp}
+          <button class="btn" onclick={close}>Cancel</button>
+          <button class="btn primary" onclick={applyChanges} disabled={!hasChanges}>OK</button>
+        {:else}
+          <button class="btn" onclick={close}>Close</button>
+        {/if}
+      </div>
     </div>
   </div>
 {/if}
@@ -421,6 +450,19 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .hint.staged {
+    margin-left: auto;
+    font-style: italic;
+    opacity: 0.8;
   }
   .lbl {
     display: block;

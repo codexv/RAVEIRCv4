@@ -133,6 +133,10 @@
       </div>
     {/if}
   </div>
+
+  <div class="tb-foot" title="RAVEIRC version">
+    {#if irc.appVersion}RAVE<span>IRC</span> v{irc.appVersion}{/if}
+  </div>
 </div>
 
 {#if menu}
@@ -219,6 +223,20 @@
     display: flex;
     flex-direction: column;
     user-select: none;
+  }
+  .tb-foot {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--fg-faint);
+    font-family: var(--mono);
+    text-align: center;
+    min-height: 14px;
+  }
+  .tb-foot span {
+    color: var(--accent);
   }
   .tb-head {
     display: flex;

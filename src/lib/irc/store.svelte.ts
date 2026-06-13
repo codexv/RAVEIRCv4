@@ -930,8 +930,10 @@ export class IrcStore {
       if (!this.isReplay(serverId, msg) || this.activeId === this.serverBufId(serverId)) {
         this.activeId = buf.id;
       }
-      // Populate the IAL (per-user host map) for this channel.
+      // Populate the IAL (per-user host map) and current channel modes (→ 324),
+      // so the title bar can show them right away.
       this.raw(serverId, `WHO ${chan}`);
+      this.raw(serverId, `MODE ${chan}`);
     } else {
       const existing = buf.users.find((u) => u.nick === from);
       if (existing) {

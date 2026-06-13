@@ -306,6 +306,28 @@
     if (active.kind === "server") return server?.name ?? "server";
     return active.name;
   }
+
+  // Active channel modes in mIRC format — chip shows the letters (+ntkl), the
+  // tooltip carries key/limit values (keeps a +k key out of plain sight).
+  const chanModes = $derived.by(() => {
+    if (active?.kind !== "channel") return { short: "", full: "" };
+    let letters = active.modeFlags ?? "";
+    const args: string[] = [];
+    if (active.modeKey) {
+      letters += "k";
+      args.push(active.modeKey);
+    }
+    if (active.modeLimit) {
+      letters += "l";
+      args.push(String(active.modeLimit));
+    }
+    if (!letters) return { short: "", full: "" };
+    const sorted = letters.split("").sort().join("");
+    return { short: `+${sorted}`, full: `+${sorted}${args.length ? " " + args.join(" ") : ""}` };
+  });
+
+  // Full-topic viewer: the topic bar truncates to one line; click to expand.
+  let topicExpanded = $state(false);
 </script>
 
 {#if isScriptsWindow}
@@ -335,7 +357,13 @@
       <div class="title-block">
         <button class="hamburger" onclick={() => (mobileNav = !mobileNav)} aria-label="Toggle navigation">☰</button>
         <span class="title">{title()}</span>
-        {#if irc.appVersion}<span class="ver" title="RAVEIRC version">v{irc.appVersion}</span>{/if}
+        {#if chanModes.short}
+          <button
+            class="chanmodes"
+            title="Channel modes: {chanModes.full} · click to manage"
+            onclick={() => active && irc.openChannelDialog(active.id)}
+          >{chanModes.short}</button>
+        {/if}
       </div>
       <div class="top-actions">
         {#if active}
@@ -362,7 +390,20 @@
     </div>
 
     {#if active?.kind === "channel" && active.topic}
-      <div class="topicbar" title={active.topic}>{@html renderMirc(active.topic)}</div>
+      <div
+        class="topicbar"
+        class:expanded={topicExpanded}
+        role="button"
+        tabindex="0"
+        title={topicExpanded ? "Click to collapse" : "Click to view the full topic"}
+        onclick={() => (topicExpanded = !topicExpanded)}
+        onkeydown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            topicExpanded = !topicExpanded;
+          }
+        }}
+      >{@html renderMirc(active.topic)}</div>
     {/if}
 
     <div class="body">
@@ -446,11 +487,19 @@
     color: var(--fg);
     flex-shrink: 0;
   }
-  .ver {
+  .chanmodes {
     font-size: 11px;
-    color: var(--fg-faint);
+    color: var(--accent);
     flex-shrink: 0;
     font-family: var(--mono);
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 8px;
+    cursor: pointer;
+  }
+  .chanmodes:hover {
+    border-color: var(--accent);
   }
   .topicbar {
     padding: 5px 14px;
@@ -463,6 +512,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-shrink: 0;
+    cursor: pointer;
+  }
+  /* Click to expand the topic bar to the full, wrapped topic. */
+  .topicbar.expanded {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-height: 30vh;
+    overflow-y: auto;
   }
   .top-actions {
     display: flex;
