@@ -10,6 +10,12 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.33] — 2026-06-14
+
+- **OLED-black theme: more visible borders.** Dialog windows and dividers had
+  near-invisible edges against the pure-black background; the border colour is
+  now a clearer dark gray so panels/dialogs read distinctly.
+
 ## [0.1.32] — 2026-06-14
 
 - **Channel-mode checkboxes apply in one command.** Pressing OK after toggling
