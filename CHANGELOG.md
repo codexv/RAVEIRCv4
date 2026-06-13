@@ -10,6 +10,11 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.35] — 2026-06-14
+
+- **Hacker theme: dimmer greens** (softer phosphor shades, easier on the eyes)
+  and a **pure-black** background/panels.
+
 ## [0.1.34] — 2026-06-14
 
 - **New themes.** Replaced *Midnight* with **Obsidian** — a shade midway between

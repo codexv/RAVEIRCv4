@@ -22,8 +22,8 @@ interface Theme {
 
 // Dark themes share the same readable light-on-dark text palette.
 const DARK_FG = { fg: "#e6edf3", fgDim: "#adbac7", fgFaint: "#6e7681" };
-// Phosphor-green terminal palette for the Hacker theme.
-const HACKER_FG = { fg: "#33ff66", fgDim: "#1faa44", fgFaint: "#0f6e2c" };
+// Phosphor-green terminal palette for the Hacker theme (dimmed, easy on the eyes).
+const HACKER_FG = { fg: "#33bf5c", fgDim: "#1f8b41", fgFaint: "#125c2a" };
 
 export const THEMES: Record<ThemeId, Theme> = {
   black: { label: "Black (OLED)", bg: "#000000", panel: "#000000", border: "#363d47", hover: "#101319", ...DARK_FG },
@@ -31,7 +31,7 @@ export const THEMES: Record<ThemeId, Theme> = {
   obsidian: { label: "Obsidian", bg: "#0a0c10", panel: "#0e1116", border: "#262b33", hover: "#161a20", ...DARK_FG },
   charcoal: { label: "Charcoal", bg: "#14161a", panel: "#1c1f25", border: "#2c313a", hover: "#23272e", ...DARK_FG },
   // Classic green-phosphor terminal: green on black, green accent.
-  hacker: { label: "Hacker", accent: "#00e676", bg: "#000000", panel: "#020a05", border: "#0f5a25", hover: "#04160a", ...HACKER_FG },
+  hacker: { label: "Hacker", accent: "#1fab4d", bg: "#000000", panel: "#000000", border: "#0e4a20", hover: "#04140a", ...HACKER_FG },
   light: {
     label: "Light",
     light: true,
@@ -215,28 +215,28 @@ const LIGHT_EVENT_COLORS: EventColors = {
 // Monochrome-green terminal palette (Hacker theme) — phosphor shades so the
 // chat reads like an old CRT instead of the colourful default roles.
 const HACKER_NICK_COLORS: NickColors = {
-  owner: "#7CFFB0",
-  admin: "#5CF591",
-  op: "#33ff66",
-  halfop: "#27c44f",
-  voice: "#1faa44",
-  normal: "#19d24a",
-  self: "#aaffaa",
+  owner: "#5cc47a",
+  admin: "#48b066",
+  op: "#33bf5c",
+  halfop: "#259544",
+  voice: "#1f8b41",
+  normal: "#2ba14c",
+  self: "#7fcf95",
 };
 const HACKER_EVENT_COLORS: EventColors = {
-  message: "#33ff66",
-  self: "#aaffaa",
-  notice: "#00e676",
-  action: "#7CFFB0",
-  join: "#1faa44",
-  part: "#0f6e2c",
-  quit: "#0c5523",
-  kick: "#00e676",
-  nick: "#5CF591",
-  mode: "#1faa44",
-  topic: "#5CF591",
-  system: "#1faa44",
-  error: "#9dff00",
+  message: "#33bf5c",
+  self: "#7fcf95",
+  notice: "#1fab4d",
+  action: "#5cc47a",
+  join: "#1f8b41",
+  part: "#125c2a",
+  quit: "#0e4a22",
+  kick: "#1fab4d",
+  nick: "#48b066",
+  mode: "#1f8b41",
+  topic: "#48b066",
+  system: "#1f8b41",
+  error: "#8fae1f",
 };
 
 /** Relative luminance (0=black, 1=white) of a #rrggbb colour, for contrast checks. */
