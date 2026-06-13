@@ -10,6 +10,15 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.24] — 2026-06-13
+
+- **Fixed the crash when opening Settings.** The Interface-font dropdown had two
+  pairs of entries that resolved to the same font (Sans/Helvetica and
+  Serif/Georgia); because the list was keyed by that value, opening Settings
+  threw `each_key_duplicate` and froze the UI. The font lists are now keyed by
+  their (unique) label, and a test guards every font/accent list against
+  duplicate keys. (Pinpointed via the full stack trace added in 0.1.23.)
+
 ## [0.1.23] — 2026-06-12
 
 - **Better crash reports.** The on-screen error banner now shows the full stack

@@ -264,13 +264,13 @@
 
           <label style="margin-top:14px">Interface font
             <select bind:value={appearance.uiFont} onchange={() => appearance.apply()}>
-              {#each UI_FONTS as f (f.value)}<option value={f.value}>{f.label}</option>{/each}
+              {#each UI_FONTS as f (f.label)}<option value={f.value}>{f.label}</option>{/each}
             </select>
           </label>
 
           <label>Message font
             <select bind:value={appearance.monoFont} onchange={() => appearance.apply()}>
-              {#each MONO_FONTS as f (f.value)}<option value={f.value}>{f.label}</option>{/each}
+              {#each MONO_FONTS as f (f.label)}<option value={f.value}>{f.label}</option>{/each}
             </select>
           </label>
 
