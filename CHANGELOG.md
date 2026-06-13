@@ -10,6 +10,18 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.25] — 2026-06-13
+
+- **Channel Central** (mIRC-style): double-click a channel window to open a
+  dialog showing the **ban list** and the **topic**. Operators can edit the
+  topic, add bans, and remove (unban) entries; the list refreshes from the
+  server and stays live as `+b`/`-b` modes are observed.
+- **ZNC-friendly protections.** After (re)connecting, the bouncer replays missed
+  conversations in a burst that previously looked like flooding and could
+  trigger bans. Protections are now suppressed for a short grace window after
+  registration, and any line carrying an old server-time tag is treated as
+  replay — so reattaching no longer auto-bans people over historical chatter.
+
 ## [0.1.24] — 2026-06-13
 
 - **Fixed the crash when opening Settings.** The Interface-font dropdown had two

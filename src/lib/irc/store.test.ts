@@ -66,6 +66,14 @@ describe("IrcStore event handling", () => {
       raw: "",
       message: msg("353", ["rave", "=", chan, "@rave"]),
     });
+    // Live enforcement tests want protections active immediately. End the
+    // post-registration ZNC-playback grace window so messages count as live.
+    endPlayback();
+  }
+
+  /** Clear the per-server playback-suppression window (test-only access). */
+  function endPlayback(serverId = 1) {
+    (irc as unknown as { playbackUntil: Map<number, number> }).playbackUntil.set(serverId, 0);
   }
 
   it("creates a server + console buffer with a numeric serverId", () => {
@@ -644,5 +652,96 @@ describe("IrcStore event handling", () => {
     emit({ kind: "disconnected", serverId: 1, reason: "ping timeout" });
     expect(irc.servers).toHaveLength(0);
     expect(irc.buffers.filter((b) => b.serverId === 1)).toHaveLength(0);
+  });
+
+  // ---- Channel Central dialog: topic + ban list --------------------------
+
+  it("populates the ban list from RPL_BANLIST (367) and ends on 368", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("367", ["rave", "#makati", "*!*@bad.com", "op", "1700000000"]) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("367", ["rave", "#makati", "troll!*@*"]) });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("368", ["rave", "#makati"]) });
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.bans?.map((b) => b.mask)).toEqual(["*!*@bad.com", "troll!*@*"]);
+    expect(chan.bans?.[0]).toMatchObject({ by: "op", ts: 1700000000 });
+    expect(chan.bansLoading).toBe(false);
+  });
+
+  it("openChannelDialog requests +b and sets the dialog id", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    const chan = irc.buffers.find((b) => b.name === "#makati")!;
+    h.invokeMock.mockClear();
+    irc.openChannelDialog(chan.id);
+    expect(irc.channelDialogId).toBe(chan.id);
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati +b" });
+    expect(chan.bansLoading).toBe(true);
+  });
+
+  it("tracks observed MODE +b / -b on the live ban list", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("MODE", ["#makati", "+b", "x!*@*"], "op") });
+    let chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.bans?.map((b) => b.mask)).toEqual(["x!*@*"]);
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("MODE", ["#makati", "-b", "x!*@*"], "op") });
+    chan = irc.buffers.find((b) => b.name === "#makati")!;
+    expect(chan.bans?.map((b) => b.mask)).toEqual([]);
+  });
+
+  it("removeBan / setChannelTopic send the right raw lines", async () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati");
+    h.invokeMock.mockClear();
+    irc.removeBan(1, "#makati", "x!*@*");
+    irc.setChannelTopic(1, "#makati", "new topic");
+    await Promise.resolve();
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "MODE #makati -b x!*@*" });
+    expect(h.invokeMock).toHaveBeenCalledWith("irc_send_raw", { serverId: 1, line: "TOPIC #makati :new topic" });
+  });
+
+  // ---- ZNC playback: don't enforce protections on replayed buffer --------
+
+  it("does NOT enforce protections during the post-registration playback window", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    // op up WITHOUT clearing the playback window (don't use joinAsOp here)
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#makati"], "rave") });
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("353", ["rave", "=", "#makati", "@rave"]) });
+    irc.raveConfig.antispam.enabled = true;
+    irc.raveConfig.antispam.repeatLimit = 2;
+    h.invokeMock.mockClear();
+    // A flood of identical lines that WOULD normally trip the repeat guard.
+    for (let i = 0; i < 5; i++) {
+      emit({ kind: "message", serverId: 1, raw: "", message: msg("PRIVMSG", ["#makati", "BUY NOW"], "spammer", { host: "h" }) });
+    }
+    const banned = h.invokeMock.mock.calls.some(
+      ([c, a]) => c === "irc_send_raw" && String((a as { line?: string }).line).includes("+b"),
+    );
+    expect(banned).toBe(false); // suppressed: looks like ZNC replay
+  });
+
+  it("treats a message with an old server-time tag as replay (no enforcement)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    joinAsOp("#makati"); // clears the time-window grace, so only the tag matters
+    irc.raveConfig.antispam.enabled = true;
+    irc.raveConfig.antispam.repeatLimit = 2;
+    h.invokeMock.mockClear();
+    const old = new Date(Date.now() - 5 * 60_000).toISOString();
+    for (let i = 0; i < 5; i++) {
+      const m = msg("PRIVMSG", ["#makati", "BUY NOW"], "spammer", { host: "h" });
+      m.tags = { time: old };
+      emit({ kind: "message", serverId: 1, raw: "", message: m });
+    }
+    const banned = h.invokeMock.mock.calls.some(
+      ([c, a]) => c === "irc_send_raw" && String((a as { line?: string }).line).includes("+b"),
+    );
+    expect(banned).toBe(false);
   });
 });

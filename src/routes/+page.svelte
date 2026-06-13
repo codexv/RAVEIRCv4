@@ -18,6 +18,7 @@
   import BugReport from "$lib/components/BugReport.svelte";
   import About from "$lib/components/About.svelte";
   import ChannelManager from "$lib/components/ChannelManager.svelte";
+  import ChannelDialog from "$lib/components/ChannelDialog.svelte";
   import NickManager from "$lib/components/NickManager.svelte";
   import FontPicker from "$lib/components/FontPicker.svelte";
   import { updater } from "$lib/update.svelte";
@@ -394,6 +395,7 @@
 <BugReport />
 <About />
 <ChannelManager />
+<ChannelDialog />
 <FontPicker />
 {/if}
 

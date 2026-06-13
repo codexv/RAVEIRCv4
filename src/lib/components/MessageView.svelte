@@ -34,9 +34,12 @@
     const sel = window.getSelection()?.toString();
     if (sel) await navigator.clipboard.writeText(sel);
   }
-  // Double-clicking inside a query window whoises the person you're talking to.
+  // Double-clicking a query window whoises the person you're talking to;
+  // double-clicking a channel opens its Channel Central (topic + ban list),
+  // mirroring mIRC.
   function onDblClick() {
     if (buffer?.kind === "query") irc.sendInput(`/whois ${buffer.name}`);
+    else if (buffer?.kind === "channel") irc.openChannelDialog(buffer.id);
   }
 
   function fmtTime(ts: number): string {

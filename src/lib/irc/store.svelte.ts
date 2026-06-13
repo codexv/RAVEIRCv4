@@ -72,6 +72,13 @@ const MAX_LINES = 1000;
 const DEFAULT_PREFIX_SYMBOLS = "~&@%+";
 const DEFAULT_PREFIX_MODES = "qaohv";
 
+/** After (re)connecting — especially through a ZNC bouncer — the server replays
+ *  the channel buffer (missed messages) in a burst. That looks like flooding, so
+ *  protections (flood/repeat/bans) are suppressed for this grace window after
+ *  registration. Buffered lines older than this (by their server-time tag) are
+ *  also treated as replay. */
+const PLAYBACK_GRACE_MS = 10_000;
+
 let lineSeq = 0;
 
 /** Human-readable interval for timer status lines. */
@@ -93,9 +100,13 @@ export class IrcStore {
   bugReportOpen = $state(false);
   aboutOpen = $state(false);
   channelManagerOpen = $state(false);
+  /** Channel Central dialog (topic + ban list); holds the channel buffer id. */
+  channelDialogId = $state<string | null>(null);
   /** /font picker dialog; fontTargetId is the buffer it applies to. */
   fontPickerOpen = $state(false);
   fontTargetId = $state<string | null>(null);
+  /** Per-server timestamp until which replayed buffer is suppressed (ZNC). */
+  private playbackUntil = new Map<number, number>();
   /** Open script-defined dialogs (rendered by DialogHost). */
   dialogsOpen = $state<OpenDialog[]>([]);
   private dialogDefs = new Map<string, DialogDef>();
@@ -617,6 +628,9 @@ export class IrcStore {
           s.status = "registered";
           s.nick = ev.nick;
         }
+        // Suppress protections briefly: a ZNC bouncer replays the channel buffer
+        // right after we register, and that burst would look like flooding.
+        this.playbackUntil.set(ev.serverId, Date.now() + PLAYBACK_GRACE_MS);
         this.addServer(ev.serverId, "system", `Registered as ${ev.nick}.`);
         // Notify/watch list: ask the server to MONITOR these nicks.
         if (this.raveConfig.notify.length > 0) {
@@ -716,6 +730,10 @@ export class IrcStore {
         return this.handleMonitor(serverId, msg, false);
       case "366":
         return; // end of names
+      case "367":
+        return this.handleBanList(serverId, msg); // RPL_BANLIST
+      case "368":
+        return this.handleBanListEnd(serverId, msg); // RPL_ENDOFBANLIST
       case "005":
         return this.handleIsupport(serverId, msg);
       case "001":
@@ -850,7 +868,9 @@ export class IrcStore {
         u.host = msg.prefix.host ?? u.host;
       }
     }
-    if (toChannel && !notice) this.checkMessage(serverId, target, from, text);
+    if (toChannel && !notice && !this.isReplay(serverId, msg)) {
+      this.checkMessage(serverId, target, from, text);
+    }
 
     // Fire mSL TEXT/NOTICE events to user scripts.
     const addr = msg.prefix?.host ? `${from}!${msg.prefix.user ?? "*"}@${msg.prefix.host}` : "";
@@ -895,8 +915,10 @@ export class IrcStore {
       }
       this.sortUsers(buf, serverId);
       this.add(buf, "join", `${from} (${user}@${host}) has joined ${chan}`, from);
-      // Hook: channel-join protections run here (filled in by the protections module).
-      this.onUserJoin(serverId, chan, from, user, host);
+      // Hook: channel-join protections run here (filled in by the protections
+      // module) — skipped for replayed joins so a ZNC reattach can't trip raid
+      // detection or auto-bans on historical activity.
+      if (!this.isReplay(serverId, msg)) this.onUserJoin(serverId, chan, from, user, host);
       this.dispatchScript(serverId, "JOIN", {
         nick: from,
         chan,
@@ -1049,6 +1071,19 @@ export class IrcStore {
   }
 
   /** Run message-based protections (bad words, antispam, flood) on a line. */
+  /** Is this message replayed buffer (ZNC playback) rather than live? Within the
+   *  post-registration grace window, or carrying a server-time tag well in the
+   *  past. Replayed lines are shown but never trigger protections. */
+  private isReplay(serverId: number, msg: IrcMessage): boolean {
+    if (Date.now() < (this.playbackUntil.get(serverId) ?? 0)) return true;
+    const t = msg.tags?.time;
+    if (t) {
+      const ms = Date.parse(t);
+      if (!Number.isNaN(ms) && Date.now() - ms > 30_000) return true;
+    }
+    return false;
+  }
+
   private checkMessage(serverId: number, chan: string, nick: string, text: string) {
     if (nick === this.ownNick(serverId)) return;
     if (!this.amOp(serverId, chan)) return;
@@ -1381,14 +1416,87 @@ export class IrcStore {
             u.prefix = "";
           }
         }
-      } else if ("beIkflLjq".includes(ch)) {
-        // modes that take a parameter (approximate common set)
-        if (adding || "beIklfLjq".includes(ch)) argi++;
+      } else if (ch === "b") {
+        // Ban (+b/-b): track the mask so the Channel dialog's list stays live.
+        const mask = args[argi++];
+        if (mask) {
+          buf.bans ??= [];
+          if (adding) {
+            if (!buf.bans.some((b) => b.mask === mask)) {
+              buf.bans.push({ mask, by: from, ts: Math.floor(Date.now() / 1000) });
+            }
+          } else {
+            buf.bans = buf.bans.filter((b) => b.mask !== mask);
+          }
+        }
+      } else if ("eIkflLjq".includes(ch)) {
+        // other modes that take a parameter (approximate common set)
+        if (adding || "eIklfLjq".includes(ch)) argi++;
       }
     }
     this.sortUsers(buf, serverId);
     this.add(buf, "mode", `${from} sets mode ${[modeStr, ...args].join(" ")}`, from);
     this.dispatchScript(serverId, "MODE", { nick: from, chan: target, text: [modeStr, ...args].join(" ") });
+  }
+
+  /** RPL_BANLIST (367): one ban entry. params: <me> <chan> <mask> [<by> <ts>] */
+  private handleBanList(serverId: number, msg: IrcMessage) {
+    const chan = msg.params[1] ?? "";
+    const mask = msg.params[2] ?? "";
+    const buf = this.buffer(serverId, chan);
+    if (!buf || !mask) return;
+    buf.bans ??= [];
+    if (buf.bans.some((b) => b.mask === mask)) return;
+    const by = msg.params[3] || undefined;
+    const tsRaw = msg.params[4];
+    const ts = tsRaw && /^\d+$/.test(tsRaw) ? Number(tsRaw) : undefined;
+    buf.bans.push({ mask, by, ts });
+  }
+
+  /** RPL_ENDOFBANLIST (368): the +b dump is complete. */
+  private handleBanListEnd(serverId: number, msg: IrcMessage) {
+    const buf = this.buffer(serverId, msg.params[1] ?? "");
+    if (buf) buf.bansLoading = false;
+  }
+
+  // ---- Channel Central dialog (double-click a channel) ---------------------
+
+  /** Open the topic + ban-list dialog for a channel buffer, and refresh both. */
+  openChannelDialog(bufId: string) {
+    const buf = this.buffers.find((b) => b.id === bufId);
+    if (!buf || buf.kind !== "channel") return;
+    this.channelDialogId = bufId;
+    this.refreshBans(buf.serverId, buf.name);
+  }
+
+  /** Ask the server for the channel +b list (RPL_BANLIST replies repopulate it). */
+  refreshBans(serverId: number, chan: string) {
+    const buf = this.buffer(serverId, chan);
+    if (!buf) return;
+    buf.bans = [];
+    buf.bansLoading = true;
+    this.raw(serverId, `MODE ${chan} +b`);
+  }
+
+  /** Remove a ban (op action). The observed MODE -b also prunes it from the list. */
+  removeBan(serverId: number, chan: string, mask: string) {
+    this.raw(serverId, `MODE ${chan} -b ${mask}`);
+  }
+
+  /** Add a ban (op action). */
+  addBan(serverId: number, chan: string, mask: string) {
+    const m = mask.trim();
+    if (m) this.raw(serverId, `MODE ${chan} +b ${m}`);
+  }
+
+  /** Set (or clear) a channel topic — server enforces +t op-only itself. */
+  setChannelTopic(serverId: number, chan: string, topic: string) {
+    this.raw(serverId, topic ? `TOPIC ${chan} :${topic}` : `TOPIC ${chan} :`);
+  }
+
+  /** Public: are we op-or-higher in this channel? (drives the dialog's controls.) */
+  isOpIn(serverId: number, chan: string): boolean {
+    return this.amOp(serverId, chan);
   }
 
   // ---- actions (called by UI) ----------------------------------------------

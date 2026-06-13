@@ -92,6 +92,15 @@ export interface ChanUser {
   host?: string;
 }
 
+/** One entry on a channel +b ban list (RPL_BANLIST / observed MODE +b). */
+export interface BanEntry {
+  mask: string;
+  /** Who set it (nick or nick!user@host), when known. */
+  by?: string;
+  /** Unix seconds when set, when known. */
+  ts?: number;
+}
+
 /** A buffer = a server console, a channel, or a private query. */
 export interface Buffer {
   id: string;
@@ -108,6 +117,10 @@ export interface Buffer {
   peak?: number;
   /** Per-window font override set with /font (family/size). */
   font?: import("../fonts").BufferFont;
+  /** Channel +b ban list — populated on demand by the Channel dialog. */
+  bans?: BanEntry[];
+  /** True while the ban list is being (re)fetched. */
+  bansLoading?: boolean;
 }
 
 export interface Server {
