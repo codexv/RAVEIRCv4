@@ -10,6 +10,16 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.29] — 2026-06-13
+
+- **Ban/exception/invite lists are now a proper table** with a **resizable Mask
+  column** (drag the divider) so a long "set by / when" can never hide the mask.
+- **Select entries to remove them in bulk.** Click a row to select it,
+  Shift-click for a range, Ctrl/Cmd-click to toggle several, then hit one
+  **Remove selected (N)** button — much faster than removing bans one by one.
+- **Black theme is now true OLED black** (#000000) — the panels/sidebar/nicklist
+  are pure black too, not just the chat area.
+
 ## [0.1.28] — 2026-06-13
 
 - **Joining a channel now auto-opens (focuses) its window**, mIRC-style — no more

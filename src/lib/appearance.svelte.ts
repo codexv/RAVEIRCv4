@@ -22,7 +22,7 @@ interface Theme {
 const DARK_FG = { fg: "#e6edf3", fgDim: "#adbac7", fgFaint: "#6e7681" };
 
 export const THEMES: Record<ThemeId, Theme> = {
-  black: { label: "Black", bg: "#000000", panel: "#0c0e12", border: "#20262e", hover: "#15191f", ...DARK_FG },
+  black: { label: "Black (OLED)", bg: "#000000", panel: "#000000", border: "#1b1f26", hover: "#101319", ...DARK_FG },
   charcoal: { label: "Charcoal", bg: "#14161a", panel: "#1c1f25", border: "#2c313a", hover: "#23272e", ...DARK_FG },
   midnight: { label: "Midnight", bg: "#0d1117", panel: "#161b22", border: "#30363d", hover: "#1f262e", ...DARK_FG },
   light: {

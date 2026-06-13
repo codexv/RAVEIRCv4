@@ -30,6 +30,64 @@
     return () => clearInterval(id);
   });
 
+  // --- list selection (multi-select for batch removal) + resizable column ---
+  let selected = $state<Set<string>>(new Set());
+  let lastClicked = $state<string | null>(null);
+  // Clear the selection when the tab or channel changes.
+  $effect(() => {
+    void tab;
+    void buf?.id;
+    selected = new Set();
+    lastClicked = null;
+  });
+
+  function rowClick(e: MouseEvent, mask: string) {
+    const masks = entries.map((x) => x.mask);
+    if (e.shiftKey && lastClicked && masks.includes(lastClicked)) {
+      const a = masks.indexOf(lastClicked);
+      const b = masks.indexOf(mask);
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const next = new Set(selected);
+      for (let i = lo; i <= hi; i++) next.add(masks[i]);
+      selected = next;
+    } else if (e.ctrlKey || e.metaKey) {
+      const next = new Set(selected);
+      if (next.has(mask)) next.delete(mask);
+      else next.add(mask);
+      selected = next;
+      lastClicked = mask;
+    } else {
+      selected = new Set([mask]);
+      lastClicked = mask;
+    }
+  }
+
+  function removeSelected() {
+    if (!buf || !isOp || selected.size === 0) return;
+    for (const mask of selected) irc.removeMask(buf.serverId, buf.name, tab, mask);
+    selected = new Set();
+    lastClicked = null;
+  }
+
+  // Resizable "mask" column width (px), dragged via the header divider.
+  let maskW = $state(230);
+  let tableEl = $state<HTMLDivElement | null>(null);
+  function startResize(e: PointerEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = maskW;
+    const move = (ev: PointerEvent) => {
+      const max = (tableEl?.clientWidth ?? 480) - 120;
+      maskW = Math.max(90, Math.min(startW + (ev.clientX - startX), max));
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
+
   // mIRC Channel Central boolean modes.
   const MODES: { flag: string; label: string }[] = [
     { flag: "m", label: "Moderated (+m)" },
@@ -74,9 +132,6 @@
   function saveTopic() {
     if (!buf || !isOp) return;
     if (topicDraft !== buf.topic) irc.setChannelTopic(buf.serverId, buf.name, topicDraft);
-  }
-  function removeEntry(mask: string) {
-    if (buf && isOp) irc.removeMask(buf.serverId, buf.name, tab, mask);
   }
   function addEntry() {
     if (!buf || !isOp || !newMask.trim()) return;
@@ -237,21 +292,38 @@
           {:else if entries.length === 0}
             <div class="empty">Empty.</div>
           {:else}
-            <div class="bans">
+            <div class="bans" bind:this={tableEl} style="--maskw:{maskW}px">
+              <!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
+              <div class="ban head">
+                <span class="mask">
+                  Mask
+                  <!-- svelte-ignore a11y_no_static_element_interactions -->
+                  <span class="grip" onpointerdown={startResize} title="Drag to resize"></span>
+                </span>
+                <span class="meta">Set by / when</span>
+              </div>
               {#each entries as b (b.mask)}
-                <div class="ban">
+                <!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
+                <div
+                  class="ban row-item"
+                  class:selected={selected.has(b.mask)}
+                  onclick={(e) => rowClick(e, b.mask)}
+                >
                   <span class="mask" title={b.mask}>{b.mask}</span>
                   <span class="meta">
                     {#if expiresLabel(b.mask)}<span class="timed">{expiresLabel(b.mask)}</span>{:else}{#if b.by}by {b.by}{/if}{#if b.ts}&nbsp;· {fmtWhen(b.ts)}{/if}{/if}
                   </span>
-                  {#if isOp}
-                    <button class="btn small danger" onclick={() => removeEntry(b.mask)} title="Remove">
-                      Remove
-                    </button>
-                  {/if}
                 </div>
               {/each}
             </div>
+            {#if isOp}
+              <div class="row">
+                <button class="btn danger" disabled={selected.size === 0} onclick={removeSelected}>
+                  Remove selected{selected.size ? ` (${selected.size})` : ""}
+                </button>
+                <span class="hint">Click to select · Shift/Ctrl-click for multiple</span>
+              </div>
+            {/if}
           {/if}
 
           {#if isOp}
@@ -456,20 +528,59 @@
     padding: 8px 0;
   }
   .bans {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     max-height: 220px;
     overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    user-select: none;
   }
+  /* Two resizable columns (mask | meta); the mask width is the dragged var. */
   .ban {
-    display: flex;
+    display: grid;
+    grid-template-columns: var(--maskw, 230px) 1fr;
     align-items: center;
     gap: 10px;
     padding: 5px 8px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+  }
+  .row-item {
+    cursor: pointer;
+    border-top: 1px solid var(--border);
+  }
+  .row-item:hover {
+    background: var(--hover);
+  }
+  .row-item.selected {
+    background: var(--accent-soft);
+  }
+  .ban.head {
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-dim);
+    z-index: 1;
+  }
+  .ban.head .mask {
+    position: relative;
+  }
+  /* Draggable divider sitting on the mask column's right edge. */
+  .grip {
+    position: absolute;
+    right: -10px;
+    top: -5px;
+    bottom: -5px;
+    width: 12px;
+    cursor: col-resize;
+  }
+  .grip::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
   }
   .mask {
     font-family: var(--mono);
@@ -478,12 +589,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
   }
   .meta {
     font-size: 11px;
     color: var(--fg-dim);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .addmask {
     flex: 1;
