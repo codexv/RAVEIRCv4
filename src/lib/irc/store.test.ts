@@ -124,6 +124,30 @@ describe("IrcStore event handling", () => {
     expect(irc.active?.name).toBe("#makati");
   });
 
+  it("auto-opens (focuses) each channel as you join it", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    endPlayback(); // not a reconnect replay
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#a"], "rave") });
+    expect(irc.active?.name).toBe("#a");
+    // Joining a second channel switches to it (even though we were in #a).
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#b"], "rave") });
+    expect(irc.active?.name).toBe("#b");
+  });
+
+  it("does NOT hijack the active window for replayed JOINs (ZNC reconnect)", () => {
+    emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
+    emit({ kind: "registered", serverId: 1, nick: "rave" });
+    endPlayback();
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#a"], "rave") });
+    expect(irc.active?.name).toBe("#a");
+    // Simulate a reconnect: we're back in the playback window and the bouncer
+    // replays a JOIN for #b — focus should stay on #a.
+    (irc as unknown as { playbackUntil: Map<number, number> }).playbackUntil.set(1, Date.now() + 10_000);
+    emit({ kind: "message", serverId: 1, raw: "", message: msg("JOIN", ["#b"], "rave") });
+    expect(irc.active?.name).toBe("#a");
+  });
+
   it("populates the nicklist with prefixes from NAMES (353)", () => {
     emit({ kind: "connecting", serverId: 1, host: "irc.dal.net", port: 6697 });
     emit({ kind: "registered", serverId: 1, nick: "rave" });

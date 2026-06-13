@@ -1,6 +1,6 @@
 {
   "name": "raveirc",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "description": "RAVEIRC - cross-platform IRC client with native RAVE operator toolkit",
   "type": "module",
   "scripts": {

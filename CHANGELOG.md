@@ -10,6 +10,13 @@ is in public beta (pre-1.0); expect frequent releases.
 
 _Nothing yet._
 
+## [0.1.28] — 2026-06-13
+
+- **Joining a channel now auto-opens (focuses) its window**, mIRC-style — no more
+  staying on the server console after a `/join`. A ZNC reconnect that replays
+  your channels won't hijack focus, though: it only switches if you're still on
+  the console.
+
 ## [0.1.27] — 2026-06-13
 
 - **Channel Central — full mIRC parity.** The channel dialog now has **Bans (+b),

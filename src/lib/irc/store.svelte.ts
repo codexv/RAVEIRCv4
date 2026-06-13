@@ -924,7 +924,12 @@ export class IrcStore {
     if (from === me) {
       buf.joined = true;
       this.add(buf, "join", `Now talking in ${chan}`);
-      if (this.activeId === this.serverBufId(serverId)) this.activeId = buf.id;
+      // Auto-open the channel we just joined (mIRC-style). But on a ZNC reconnect
+      // the bouncer replays JOINs for channels we're already in — don't hijack
+      // focus then, only switch if we're still sitting on the server console.
+      if (!this.isReplay(serverId, msg) || this.activeId === this.serverBufId(serverId)) {
+        this.activeId = buf.id;
+      }
       // Populate the IAL (per-user host map) for this channel.
       this.raw(serverId, `WHO ${chan}`);
     } else {
